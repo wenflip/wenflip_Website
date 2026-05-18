@@ -424,6 +424,20 @@
     border: none; cursor: pointer; box-shadow: 0 8px 30px rgba(236,72,153,0.4);
   }
 
+  .tweet-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin: 10px 20px 14px;
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(29,161,242,0.08); border: 1px solid rgba(29,161,242,0.3);
+    color: rgba(29,161,242,0.9); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.04em; cursor: pointer; text-decoration: none;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .tweet-btn:hover { background: rgba(29,161,242,0.18); border-color: rgba(29,161,242,0.6); }
+
+  .btn-pulsex { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.45); color: #f9a8d4; }
+  .btn-pulsex:hover { background: rgba(236,72,153,0.25); border-color: rgba(236,72,153,0.7); box-shadow: 0 8px 30px rgba(236,72,153,0.3); }
+
   footer { margin-top: 80px; padding: 40px 0 60px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
@@ -471,10 +485,9 @@
   </div>
 
   <section class="cta">
-    <h2>Pick your coin. Climb the ladder.</h2>
+    <h2>Wen actually flip? Get on PulseChain.</h2>
     <div class="cta-buttons">
-      <a class="btn btn-primary" href="https://x.com/Wen_Flip" target="_blank" rel="noopener">Follow @Wen_Flip on X</a>
-      <a class="btn btn-telegram" href="https://t.me/wen_flip" target="_blank" rel="noopener">Flip alerts on Telegram</a>
+      <a class="btn btn-pulsex" href="https://app.pulsex.com" target="_blank" rel="noopener">Buy PLS on PulseX →</a>
     </div>
   </section>
 
@@ -483,7 +496,18 @@
   <footer>
     <div class="ftag">Real prices. Real flips. Real dumb.</div>
     <div class="disc">Not financial advice. Just memes and math.</div>
-    <div class="disc" style="margin-top:6px;opacity:0.55;">WenFlip · Powered by PulseChain</div>
+    <div class="flinks" style="margin-top:16px;">
+      <a href="https://x.com/Wen_Flip" target="_blank" rel="noopener">Follow @Wen_Flip on X</a>
+      <a href="https://t.me/wen_flip" target="_blank" rel="noopener">Flip alerts on Telegram</a>
+    </div>
+    <div class="disc" style="margin-top:12px;opacity:0.6;">
+      <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy PLS</a>
+      &nbsp;·&nbsp;
+      <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy HEX</a>
+      &nbsp;·&nbsp;
+      <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy PLSX</a>
+    </div>
+    <div class="disc" style="margin-top:10px;opacity:0.45;">WenFlip · Powered by PulseChain</div>
   </footer>
 </div>
 
@@ -937,6 +961,12 @@
     el.innerHTML = `<span class="api-label">API Status:</span>` + html;
   }
 
+  function tweetUrl(t, prev) {
+    const flipText = prev ? prev.name : 'something';
+    const text = encodeURIComponent(`${t.sym} just flipped ${flipText} 👀 wenflip.com/#${t.sym}`);
+    return `https://twitter.com/intent/tweet?text=${text}`;
+  }
+
   function renderLadder() {
     const el = document.getElementById('clusters');
     const ready = state.filter(t => t.price != null);
@@ -1002,6 +1032,7 @@
             </div>
           </div>
           ${prevRow}
+          <a class="tweet-btn" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener">🐦 Tweet this flip</a>
         </div>
       `;
     }).join('');
