@@ -202,7 +202,7 @@
   .btn-telegram:hover { background: rgba(34,158,217,0.25); border-color: rgba(34,158,217,0.7); }
 
   .ladder-head { margin-top: 8px; }
-  .ladder-head-cta { display: flex; justify-content: center; margin-top: 22px; }
+  .ladder-head-cta { display: flex; flex-direction: column; align-items: center; margin-top: 22px; gap: 12px; }
   .view-full-btn {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 16px 32px; border-radius: 999px;
@@ -443,6 +443,129 @@
   footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
   footer .flinks a:hover { color: var(--text); }
   footer .disc { margin-top: 16px; font-size: 12px; opacity: 0.7; }
+
+  /* ===== FLIP CALCULATOR ===== */
+  .calc-open-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px; border-radius: 999px;
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.5);
+    color: var(--text); font-weight: 800; font-size: 16px; cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .calc-open-btn:hover {
+    background: var(--grad); border-color: transparent;
+    box-shadow: 0 10px 40px rgba(139,92,246,0.45), 0 0 60px rgba(236,72,153,0.25);
+    transform: translateY(-2px);
+  }
+  @media (max-width: 600px) {
+    .calc-open-btn { padding: 12px 18px; font-size: 14px; }
+  }
+  .calc-section { padding: 16px 24px; }
+  .calc-section + .calc-section { border-top: 1px solid var(--line); }
+  .calc-lbl {
+    font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 12px;
+  }
+  .coin-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .coin-badge {
+    display: flex; align-items: center; gap: 7px;
+    padding: 8px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+    font-weight: 800; font-size: 13px; cursor: pointer;
+    transition: border-color .15s, background .15s, box-shadow .15s;
+    user-select: none;
+  }
+  .coin-badge img { width: 20px; height: 20px; border-radius: 50%; }
+  .coin-badge:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.1); }
+  .coin-badge.selected {
+    border-color: var(--purple);
+    background: rgba(139,92,246,0.18);
+    box-shadow: 0 0 14px rgba(139,92,246,0.4);
+  }
+  .coin-badge.loading { opacity: 0.45; pointer-events: none; }
+  .calc-search-wrap { position: relative; margin-bottom: 10px; }
+  .calc-search {
+    width: 100%; padding: 11px 16px 11px 38px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    border-radius: 12px; color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
+    outline: none; transition: border-color .15s;
+  }
+  .calc-search:focus { border-color: rgba(139,92,246,0.5); }
+  .calc-search::placeholder { color: var(--muted); }
+  .calc-search-icon {
+    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); font-size: 14px; pointer-events: none;
+  }
+  .target-list {
+    max-height: 190px; overflow-y: auto;
+    border: 1px solid var(--line); border-radius: 12px;
+    background: rgba(255,255,255,0.02);
+    scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.4) transparent;
+  }
+  @media (max-width: 600px) { .target-list { max-height: 130px; } }
+  .target-item {
+    padding: 9px 16px; font-size: 14px; cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    transition: background .1s;
+  }
+  .target-item:last-child { border-bottom: none; }
+  .target-item:hover { background: rgba(255,255,255,0.05); }
+  .target-item.selected { background: rgba(139,92,246,0.15); }
+  .ti-name { flex: 1; }
+  .ti-price { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .target-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 14px; }
+  .calc-result-section { padding: 20px 24px; border-top: 1px solid var(--line); }
+  .calc-result-placeholder { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; }
+  .calc-result-card {
+    padding: 24px 20px 32px; border-radius: 16px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(236,72,153,0.10));
+    border: 1px solid rgba(139,92,246,0.3);
+    text-align: center; position: relative;
+  }
+  .calc-line-1 { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+  .calc-line-mult {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(52px, 13vw, 84px);
+    font-weight: 700; line-height: 1;
+    background: var(--grad);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 0 20px rgba(236,72,153,0.35));
+    margin-bottom: 10px;
+  }
+  .calc-line-mult.flipped {
+    background: none; -webkit-background-clip: initial; background-clip: initial;
+    color: var(--green); filter: drop-shadow(0 0 16px rgba(34,197,94,0.4));
+  }
+  .calc-line-3 { font-size: 15px; color: var(--text); font-weight: 600; }
+  .calc-wm {
+    position: absolute; bottom: 8px; right: 12px;
+    font-size: 10px; color: rgba(139,92,246,0.45); font-weight: 700; letter-spacing: 0.08em;
+  }
+  .calc-share-row { margin-top: 14px; display: flex; justify-content: center; }
+  .calc-share-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 24px; border-radius: 999px;
+    background: var(--grad); border: none; color: white;
+    font-weight: 800; font-size: 14px; cursor: pointer; font-family: 'Inter', sans-serif;
+    box-shadow: 0 8px 30px rgba(236,72,153,0.35);
+    transition: transform .15s, box-shadow .2s;
+  }
+  .calc-share-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(236,72,153,0.5); }
+  .calc-share-btn:disabled { opacity: 0.5; pointer-events: none; }
+  .calc-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: rgba(34,197,94,0.92); color: #fff;
+    padding: 12px 26px; border-radius: 999px;
+    font-weight: 800; font-size: 14px;
+    box-shadow: 0 8px 30px rgba(34,197,94,0.4);
+    opacity: 0; pointer-events: none; z-index: 9999;
+    transition: opacity .3s ease, transform .3s ease;
+    white-space: nowrap;
+  }
+  .calc-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -472,6 +595,9 @@
       <div class="ladder-head-cta">
         <button class="view-full-btn" id="openFull">
           Click To View The Full Ladder ↗
+        </button>
+        <button class="calc-open-btn" id="openCalc">
+          🧮 How far is YOUR coin from flipping?
         </button>
       </div>
       <div class="clusters" id="clusters">
@@ -1179,6 +1305,270 @@
 
   refreshAll().then(handleDeepLink);
   setInterval(refreshAll, 60_000);
+
+  // ==== FLIP CALCULATOR ====
+  let calcCoin = null;
+  let calcTarget = null;
+
+  function openCalcModal() {
+    renderCalcCoinBadges();
+    renderCalcTargetList('');
+    updateCalcResult();
+    document.getElementById('calcModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // reset search
+    const s = document.getElementById('calcSearch');
+    s.value = '';
+    setTimeout(() => s.focus(), 120);
+  }
+  function closeCalcModal() {
+    document.getElementById('calcModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('openCalc').addEventListener('click', openCalcModal);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal(); closeCalcModal(); }
+  });
+
+  function htmlAttr(str) {
+    return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+  }
+
+  function renderCalcCoinBadges() {
+    const wrap = document.getElementById('calcCoinBadges');
+    wrap.innerHTML = TOKENS.map(t => {
+      const s = state.find(x => x.sym === t.sym);
+      const loading = !s || s.price == null;
+      const selected = calcCoin === t.sym ? 'selected' : '';
+      const loadingCls = loading ? 'loading' : '';
+      return `<button class="coin-badge ${selected} ${loadingCls}" data-sym="${t.sym}" title="${t.name}${loading ? ' (loading…)' : ''}">
+        <img src="${t.logo}" alt="${t.sym}" loading="lazy" />
+        <span>${t.sym}</span>
+      </button>`;
+    }).join('');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('calcCoinBadges').addEventListener('click', function(e) {
+      const badge = e.target.closest('.coin-badge');
+      if (!badge || badge.classList.contains('loading')) return;
+      calcCoin = badge.dataset.sym;
+      renderCalcCoinBadges();
+      updateCalcResult();
+    });
+
+    document.getElementById('calcTargetList').addEventListener('click', function(e) {
+      const item = e.target.closest('.target-item');
+      if (!item) return;
+      calcTarget = { name: item.dataset.name, price: parseFloat(item.dataset.price) };
+      const q = document.getElementById('calcSearch').value;
+      renderCalcTargetList(q);
+      updateCalcResult();
+    });
+
+    document.getElementById('calcSearch').addEventListener('input', function() {
+      renderCalcTargetList(this.value);
+    });
+  });
+
+  function renderCalcTargetList(filter) {
+    const list = document.getElementById('calcTargetList');
+    const q = filter.toLowerCase().trim();
+    const items = LADDER.filter(r => r.price != null && (!q || r.name.toLowerCase().includes(q)));
+    if (items.length === 0) {
+      list.innerHTML = `<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`;
+      return;
+    }
+    list.innerHTML = items.map(r => {
+      const selected = calcTarget && calcTarget.name === r.name ? 'selected' : '';
+      return `<div class="target-item ${selected}" data-name="${htmlAttr(r.name)}" data-price="${r.price}">
+        <span class="ti-name">${r.name}</span>
+        <span class="ti-price">${fmtPrice(r.price)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function fmtMult(mult) {
+    if (mult >= 1e9) return '1B+';
+    if (mult >= 1e6) {
+      const v = mult / 1e6;
+      return (v >= 10 ? Math.round(v) : parseFloat(v.toFixed(1))) + 'M';
+    }
+    if (mult >= 1000) return Math.round(mult).toLocaleString();
+    if (mult >= 10)   return Math.round(mult).toString();
+    if (mult >= 2)    return parseFloat(mult.toFixed(1)).toString();
+    return parseFloat(mult.toFixed(2)).toString();
+  }
+
+  function updateCalcResult() {
+    const placeholder = document.getElementById('calcPlaceholder');
+    const card        = document.getElementById('calcResultCard');
+    const shareRow    = document.getElementById('calcShareRow');
+    const line1       = document.getElementById('calcLine1');
+    const lineMult    = document.getElementById('calcLineMult');
+    const line3       = document.getElementById('calcLine3');
+
+    if (!calcCoin || !calcTarget) {
+      placeholder.style.display = '';
+      card.style.display = 'none';
+      shareRow.style.display = 'none';
+      if (!calcCoin && !calcTarget) placeholder.textContent = 'Pick a coin and a target to see the math.';
+      else if (!calcCoin)           placeholder.textContent = 'Now pick your coin.';
+      else                          placeholder.textContent = 'Now pick a target item.';
+      return;
+    }
+
+    const s = state.find(x => x.sym === calcCoin);
+    if (!s || !s.price) {
+      placeholder.style.display = '';
+      placeholder.textContent = `Price unavailable for ${calcCoin}. Try again shortly.`;
+      card.style.display = 'none'; shareRow.style.display = 'none';
+      return;
+    }
+
+    placeholder.style.display = 'none';
+    card.style.display = ''; shareRow.style.display = '';
+
+    const coinPrice   = s.price;
+    const targetPrice = calcTarget.price;
+    const mult        = targetPrice / coinPrice;
+
+    line1.textContent = `1 ${calcCoin} currently = ${fmtPrice(coinPrice)}`;
+
+    if (mult <= 1) {
+      const n = coinPrice / targetPrice;
+      const nFmt = n >= 10000 ? Math.round(n).toLocaleString() : n >= 10 ? Math.round(n) : parseFloat(n.toFixed(1));
+      lineMult.textContent = 'FLIPPED ✓';
+      lineMult.className = 'calc-line-mult flipped';
+      line3.textContent = `1 ${calcCoin} = ${nFmt}× ${calcTarget.name}`;
+      line3.removeAttribute('title');
+    } else {
+      lineMult.className = 'calc-line-mult';
+      lineMult.textContent = fmtMult(mult) + 'x';
+      line3.textContent = `to flip ${calcTarget.name}`;
+      if (mult >= 1e9) line3.setAttribute('title', `Exact: ${Math.round(mult).toLocaleString()}x`);
+      else line3.removeAttribute('title');
+    }
+  }
+
+  // ==== SHARE: Copy/Save as image ====
+  const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+  async function loadHtml2Canvas() {
+    if (window.html2canvas) return;
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+      s.integrity = 'sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
+      s.crossOrigin = 'anonymous';
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('html2canvas failed to load'));
+      document.head.appendChild(s);
+    });
+  }
+
+  // Update share button label for iOS on load
+  (function() {
+    if (_isIOS) {
+      const icon = document.getElementById('calcShareIcon');
+      const txt  = document.getElementById('calcShareText');
+      if (icon) icon.textContent = '💾';
+      if (txt)  txt.textContent  = 'Save image';
+    }
+  })();
+
+  async function calcCopyImage() {
+    const btn  = document.getElementById('calcShareBtn');
+    const icon = document.getElementById('calcShareIcon');
+    const txt  = document.getElementById('calcShareText');
+    btn.disabled = true;
+    icon.textContent = '⏳'; txt.textContent = 'Generating…';
+
+    try {
+      await loadHtml2Canvas();
+      const card   = document.getElementById('calcResultCard');
+
+      // html2canvas can't render background-clip:text — swap to solid color before capture
+      const multEl = card.querySelector('.calc-line-mult');
+      const isFlipped = multEl.classList.contains('flipped');
+      const savedStyle = multEl.getAttribute('style') || '';
+      if (!isFlipped) {
+        multEl.style.cssText = savedStyle +
+          ';background:none!important;-webkit-background-clip:initial!important;background-clip:initial!important;color:#d946ef!important;filter:drop-shadow(0 0 20px rgba(236,72,153,0.5))!important;';
+      }
+
+      const srcCanvas = await window.html2canvas(card, {
+        backgroundColor: '#11111f', scale: 2, useCORS: true, logging: false,
+      });
+
+      // Restore original style
+      if (!isFlipped) multEl.setAttribute('style', savedStyle);
+
+      // Composite onto a 1200×675 Twitter-card canvas
+      const out = document.createElement('canvas');
+      out.width = 1200; out.height = 675;
+      const ctx = out.getContext('2d');
+      // bg gradient
+      const bg = ctx.createLinearGradient(0,0,0,675);
+      bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14');
+      ctx.fillStyle = bg; ctx.fillRect(0,0,1200,675);
+      // pink glow at top
+      const glow = ctx.createRadialGradient(600,0,0,600,0,600);
+      glow.addColorStop(0,'rgba(236,72,153,0.14)'); glow.addColorStop(1,'transparent');
+      ctx.fillStyle = glow; ctx.fillRect(0,0,1200,675);
+      // scale & center the card
+      const scale  = Math.min((1200-160)/srcCanvas.width, (675-140)/srcCanvas.height);
+      const dw = srcCanvas.width * scale, dh = srcCanvas.height * scale;
+      const dx = (1200-dw)/2, dy = (675-dh)/2;
+      ctx.drawImage(srcCanvas, dx, dy, dw, dh);
+      // watermark
+      ctx.fillStyle = 'rgba(139,92,246,0.55)';
+      ctx.font = 'bold 20px "Space Grotesk", system-ui, sans-serif';
+      ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+      ctx.fillText('wenflip.com', 1180, 660);
+
+      if (_isIOS) {
+        // iOS Safari can't write PNG to clipboard — download instead
+        const link = document.createElement('a');
+        link.download = 'wenflip.png';
+        link.href = out.toDataURL('image/png');
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        showCalcToast('Saved! Share it on X. 🔥');
+      } else {
+        out.toBlob(async (blob) => {
+          try {
+            await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
+            showCalcToast('Copied! Paste it into X. 🔥');
+          } catch {
+            // Clipboard API blocked (e.g. non-secure context) — fallback to download
+            const link = document.createElement('a');
+            link.download = 'wenflip.png';
+            link.href = URL.createObjectURL(blob);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+            showCalcToast('Saved! Share it on X. 🔥');
+          }
+        }, 'image/png');
+      }
+    } catch(err) {
+      console.error('Flip calc screenshot error:', err);
+      // Restore multiplier style if capture failed mid-way
+      const multElErr = document.querySelector('#calcResultCard .calc-line-mult');
+      if (multElErr) multElErr.removeAttribute('style');
+      showCalcToast('Screenshot failed — try again 😬');
+    } finally {
+      btn.disabled = false;
+      icon.textContent = _isIOS ? '💾' : '📋';
+      txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
+    }
+  }
+
+  function showCalcToast(msg) {
+    const t = document.getElementById('calcToast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
 </script>
 
 <div class="modal-backdrop" id="modal" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow='';}">
@@ -1194,6 +1584,57 @@
     <button class="back-top" onclick="document.getElementById('modalBody').scrollTo({top:0,behavior:'smooth'})">↑ Back to top</button>
   </div>
 </div>
+
+<!-- FLIP CALCULATOR MODAL -->
+<div class="modal-backdrop" id="calcModal" onclick="if(event.target===this)closeCalcModal()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Flip Calculator">
+    <div class="modal-head">
+      <div>
+        <h3>Flip Calculator <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">🧮</span></h3>
+        <div class="sub">How many times does your coin need to multiply?</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closeCalcModal()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 24px; overflow-y:auto;">
+      <!-- Section 1: Coin picker -->
+      <div class="calc-section">
+        <div class="calc-lbl">Pick your coin</div>
+        <div class="coin-badges" id="calcCoinBadges">
+          <span style="color:var(--muted);font-size:13px;">Loading prices…</span>
+        </div>
+      </div>
+      <!-- Section 2: Target item picker -->
+      <div class="calc-section">
+        <div class="calc-lbl">Pick your target</div>
+        <div class="calc-search-wrap">
+          <span class="calc-search-icon">🔍</span>
+          <input class="calc-search" id="calcSearch" type="text"
+            placeholder="Search items… e.g. Harvard, Big Mac, Cheerio"
+            autocomplete="off" spellcheck="false" />
+        </div>
+        <div class="target-list" id="calcTargetList"></div>
+      </div>
+      <!-- Section 3: Result -->
+      <div class="calc-result-section">
+        <div id="calcPlaceholder" class="calc-result-placeholder">Pick a coin and a target to see the math.</div>
+        <div id="calcResultCard" class="calc-result-card" style="display:none">
+          <div class="calc-line-1" id="calcLine1"></div>
+          <div class="calc-line-mult" id="calcLineMult"></div>
+          <div class="calc-line-3" id="calcLine3"></div>
+          <div class="calc-wm">wenflip.com</div>
+        </div>
+        <div class="calc-share-row" id="calcShareRow" style="display:none">
+          <button class="calc-share-btn" id="calcShareBtn" onclick="calcCopyImage()">
+            <span id="calcShareIcon">📋</span>
+            <span id="calcShareText">Copy as image</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="calc-toast" id="calcToast"></div>
 
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e1aed0de5e18434c8019e1b9cb82b31c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
