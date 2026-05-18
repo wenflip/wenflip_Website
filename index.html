@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  wenflip.com — drop this folder on Cloudflare Pages:
+  /
+  ├── index.html       (this file)
+  ├── sitemap.xml
+  ├── robots.txt
+  └── logos/
+      ├── BTC_logo.png
+      ├── ETH_logo.png
+      ├── HEX_Logo.png
+      ├── INC_logo.png
+      ├── PLS_Logo.png
+      ├── PulseX_logo.png
+      ├── pDAI_logo.png
+      └── pwBTC_Logo.png
+-->
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- Primary meta tags -->
+<title>wenflip.com — Wen flip? Now flip.</title>
+<meta name="description" content="Your coin flips everyday objects. From a grain of sand to a gold-plated toilet. Real prices. Real flips. Real dumb." />
+<link rel="canonical" href="https://wenflip.com/" />
+
+<!-- Open Graph (Telegram, Discord, Slack, iMessage, LinkedIn, Facebook) -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wenflip.com/" />
+<meta property="og:title" content="wenflip.com — Wen flip? Now flip." />
+<meta property="og:description" content="Your coin flips everyday objects. From a grain of sand to a gold-plated toilet. Real prices. Real flips. Real dumb." />
+<meta property="og:site_name" content="wenflip.com" />
+
+<meta property="og:image" content="https://wenflip.com/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<!-- Twitter Card -->
+<meta name="twitter:image" content="https://wenflip.com/og-image.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="wenflip.com — Wen flip? Now flip." />
+<meta name="twitter:description" content="Your coin flips everyday objects. From a grain of sand to a gold-plated toilet. Real prices. Real flips. Real dumb." />
+
+<!-- Favicons & app icons -->
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<meta name="theme-color" content="#a855f7">
+
+<!-- Performance: preconnect to fonts + DexScreener API for faster first paint -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.dexscreener.com">
+<link rel="dns-prefetch" href="https://api.dexscreener.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"></noscript>
+<style>
+  :root {
+    --bg: #0a0a14;
+    --bg-2: #11111f;
+    --bg-3: #161629;
+    --text: #f5f5fa;
+    --muted: #8a8aa8;
+    --line: rgba(255,255,255,0.08);
+    --purple: #8b5cf6;
+    --pink: #ec4899;
+    --green: #22c55e;
+    --red: #ef4444;
+    --gold: #fbbf24;
+    --grad: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    --grad-soft: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(236,72,153,0.15));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body {
+    background:
+      radial-gradient(1000px 600px at 80% -10%, rgba(236,72,153,0.12), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(139,92,246,0.15), transparent 60%),
+      var(--bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  a { color: inherit; text-decoration: none; }
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
+
+  .hero { padding: 80px 0 40px; text-align: center; position: relative; }
+  .logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: clamp(48px, 9vw, 110px);
+    line-height: 1;
+    background: var(--grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    letter-spacing: -0.04em;
+    filter: drop-shadow(0 0 30px rgba(236,72,153,0.25));
+  }
+  .tagline { margin-top: 18px; font-size: clamp(22px, 3.6vw, 38px); font-weight: 800; letter-spacing: -0.01em; }
+  .subhead { margin: 16px auto 0; color: var(--muted); max-width: 680px; font-size: clamp(14px, 1.7vw, 17px); line-height: 1.6; }
+  .subhead-mini {
+    margin: 14px auto 0; color: rgba(245,245,250,0.55);
+    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .pulse-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 12px var(--green);
+    margin-right: 8px; vertical-align: middle;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
+  .live-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-bottom: 18px; padding: 6px 14px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: rgba(255,255,255,0.03);
+    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+  .updated {
+    margin-top: 14px; color: var(--muted); font-size: 12px; letter-spacing: 0.06em;
+    min-height: 18px; /* CLS: reserve line height so text appearance doesn't shift hero */
+  }
+  .updated b { color: var(--text); font-weight: 700; }
+
+  /* CLS fix: ticker height reserved before content loads */
+  .ticker-wrap {
+    margin: 40px 0;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    background: rgba(255,255,255,0.02);
+    overflow: hidden;
+    min-height: 44px; /* matches rendered ticker row height */
+  }
+  .ticker { display: flex; gap: 0; align-items: stretch; animation: scroll 50s linear infinite; width: max-content; }
+  @keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .tick { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-right: 1px solid var(--line); white-space: nowrap; }
+  .tick-sym { font-weight: 800; font-size: 13px; letter-spacing: 0.02em; }
+  .tick-price { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 12px; }
+  .tick-chg { font-size: 11px; font-weight: 700; color: var(--green); }
+  .tick-chg.neg { color: var(--red); }
+  .tick-badge {
+    width: 22px; height: 22px; border-radius: 50%;
+    overflow: hidden;
+    background: var(--grad);
+    box-shadow: 0 0 16px rgba(236,72,153,0.4);
+    flex-shrink: 0;
+  }
+
+  .logo-img {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* CLS fix: lock height of the API debug strip so it doesn't grow as statuses arrive */
+  .api-debug {
+    text-align: center; padding: 14px 12px 4px;
+    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); opacity: 0.45;
+    background: transparent;
+    min-height: 28px;
+  }
+  .api-debug span { display: inline-block; margin: 0 8px; }
+  .api-debug .api-label { font-weight: 800; opacity: 0.8; margin-right: 4px; }
+
+  .main-grid { max-width: 860px; margin: 40px auto 0; }
+
+  .section-eyebrow { color: var(--muted); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .section-title .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  .tier-band {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; margin: 14px 0 0;
+    border-radius: 14px;
+    font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; font-size: 12px;
+    border: 1px solid var(--line);
+  }
+  .tier-heavy   { background: linear-gradient(90deg, rgba(251,191,36,0.18), rgba(251,191,36,0.02)); color: #fde68a; border-color: rgba(251,191,36,0.3); }
+  .tier-snack   { background: linear-gradient(90deg, rgba(34,197,94,0.18), rgba(34,197,94,0.02)); color: #bbf7d0; border-color: rgba(34,197,94,0.3); }
+  .tier-absurd  { background: linear-gradient(90deg, rgba(236,72,153,0.18), rgba(236,72,153,0.02)); color: #fbcfe8; border-color: rgba(236,72,153,0.3); }
+  .tier-dust    { background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(139,92,246,0.02)); color: #ddd6fe; border-color: rgba(139,92,246,0.3); }
+
+  .cta {
+    margin-top: 60px; text-align: center;
+    padding: 60px 20px; border-radius: 24px;
+    background:
+      radial-gradient(600px 300px at 50% 0%, rgba(236,72,153,0.18), transparent 70%),
+      var(--bg-2);
+    border: 1px solid var(--line);
+  }
+  .cta h2 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4.5vw, 44px); font-weight: 700; letter-spacing: -0.02em; }
+  .cta-buttons { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: 12px; font-weight: 800; font-size: 15px; border: 1px solid var(--line); transition: transform .15s ease, box-shadow .2s ease; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--grad); border-color: transparent; color: white; box-shadow: 0 8px 30px rgba(236,72,153,0.35); }
+  .btn-secondary { background: rgba(255,255,255,0.04); }
+  .btn-telegram { background: rgba(34,158,217,0.12); border-color: rgba(34,158,217,0.45); color: #93d3f0; }
+  .btn-telegram:hover { background: rgba(34,158,217,0.25); border-color: rgba(34,158,217,0.7); }
+
+  .ladder-head { margin-top: 8px; }
+  .ladder-head-cta { display: flex; justify-content: center; margin-top: 22px; }
+  .view-full-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 32px; border-radius: 999px;
+    background: rgba(236,72,153,0.08);
+    border: 1px solid rgba(236,72,153,0.5);
+    color: var(--text); font-weight: 800; font-size: 16px; cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .view-full-btn:hover {
+    background: var(--grad); border-color: transparent;
+    box-shadow: 0 10px 40px rgba(236,72,153,0.45), 0 0 60px rgba(139,92,246,0.25);
+    transform: translateY(-2px);
+  }
+
+  /* CLS fix: reserve clusters area so price load doesn't push everything down ~1600px */
+  .clusters {
+    margin-top: 24px;
+    display: flex; flex-direction: column; gap: 28px;
+    min-height: 1700px;
+  }
+  @media (max-width: 760px) {
+    .clusters { min-height: 1900px; } /* mobile clusters stack taller */
+  }
+  .clusters-loading {
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 14px;
+    padding: 80px 20px;
+    color: var(--muted);
+    font-size: 14px; letter-spacing: 0.04em;
+  }
+  .clusters-loading .skel-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--grad);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .cluster {
+    border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
+    position: relative;
+  }
+  .cluster-divider {
+    height: 1px; margin: 0 auto;
+    background: linear-gradient(90deg, transparent, rgba(236,72,153,0.5), rgba(139,92,246,0.5), transparent);
+    width: 70%;
+  }
+
+  .tier-tag {
+    position: absolute; bottom: 10px; right: 12px; z-index: 3;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+  }
+  .tier-tag.heavyweight { background: rgba(251,191,36,0.18); border: 1px solid rgba(251,191,36,0.45); color: #fde68a; }
+  .tier-tag.snack       { background: rgba(34,197,94,0.18);  border: 1px solid rgba(34,197,94,0.45);  color: #bbf7d0; }
+  .tier-tag.absurd_floor{ background: rgba(236,72,153,0.18); border: 1px solid rgba(236,72,153,0.45); color: #fbcfe8; }
+  .tier-tag.time        { background: rgba(139,92,246,0.18); border: 1px solid rgba(139,92,246,0.45); color: #ddd6fe; }
+  @media (max-width: 600px) {
+    .tier-tag { bottom: 8px; right: 8px; padding: 3px 8px; font-size: 9px; }
+  }
+
+  .star {
+    display: inline-block; margin-left: 6px;
+    font-size: 0.95em;
+    filter: drop-shadow(0 0 6px rgba(251,191,36,0.6));
+    cursor: help;
+  }
+
+  .crow {
+    display: grid; grid-template-columns: 48px 1fr 140px;
+    align-items: center; gap: 14px; padding: 16px 20px;
+  }
+  .crow.next  { border-bottom: 1px dashed var(--line); opacity: 0.92; }
+  .crow.prev  { border-top: 1px dashed var(--line); opacity: 0.78; }
+  .crow.featured { background: linear-gradient(90deg, rgba(251,191,36,0.07), rgba(251,191,36,0.01)); }
+  .crow .arrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 800; text-align:center; }
+  .crow .cname { font-weight: 600; font-size: 15px; line-height: 1.4; }
+  .crow .cprice { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; text-align: right; }
+
+  .token-row {
+    display: grid; grid-template-columns: 48px 1fr auto;
+    align-items: center; gap: 14px;
+    padding: 22px 20px;
+    background: linear-gradient(90deg, rgba(139,92,246,0.22), rgba(236,72,153,0.18));
+    border-top: 1px solid rgba(236,72,153,0.35);
+    border-bottom: 1px solid rgba(139,92,246,0.35);
+    box-shadow: inset 0 0 30px rgba(236,72,153,0.12), 0 0 24px rgba(139,92,246,0.18);
+    position: relative;
+    cursor: pointer;
+    transition: background .2s ease, box-shadow .2s ease, transform .15s ease;
+  }
+  .token-row:hover {
+    background: linear-gradient(90deg, rgba(139,92,246,0.30), rgba(236,72,153,0.26));
+    box-shadow: inset 0 0 30px rgba(236,72,153,0.18), 0 0 40px rgba(139,92,246,0.32);
+    transform: translateY(-1px);
+  }
+  .token-row::before {
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: radial-gradient(400px 80px at 50% 50%, rgba(236,72,153,0.18), transparent 70%);
+  }
+  .token-row::after {
+    content: "↗ View on ladder";
+    position: absolute; top: 8px; left: 16px;
+    font-size: 9px; font-weight: 800; letter-spacing: 0.15em;
+    text-transform: uppercase; color: rgba(245,245,250,0.4);
+    pointer-events: none;
+    opacity: 0; transition: opacity .2s ease;
+  }
+  .token-row:hover::after { opacity: 1; }
+  .token-row .tbadge {
+    width: 44px; height: 44px; border-radius: 50%;
+    overflow: hidden;
+    background: var(--grad);
+    box-shadow: 0 0 22px rgba(236,72,153,0.55);
+    animation: glow 2.5s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes glow {
+    0%,100% { box-shadow: 0 0 12px rgba(139,92,246,0.4); }
+    50%     { box-shadow: 0 0 22px rgba(236,72,153,0.7); }
+  }
+  .token-row .tinfo { display: flex; flex-direction: column; gap: 4px; }
+  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
+  .token-row .tsub { color: rgba(245,245,250,0.85); font-size: 13px; font-weight: 600; }
+  .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .token-row .tchg { font-size: 13px; font-weight: 800; margin-top: 4px; }
+  .tchg.pos { color: #86efac; }
+  .tchg.neg { color: #fca5a5; }
+  .tright { text-align: right; }
+
+  @media (max-width: 600px) {
+    .crow { grid-template-columns: 36px 1fr auto; padding: 12px 14px; gap: 10px; }
+    .crow .cprice { font-size: 12px; }
+    .token-row { grid-template-columns: 44px 1fr auto; padding: 16px 14px; }
+    .token-row .tsym, .token-row .tprice { font-size: 18px; }
+    .token-row::after { display: none; }
+    .view-full-btn { padding: 12px 18px; font-size: 14px; }
+  }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(10,10,20,0.78); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+  .modal {
+    width: min(820px, 100%); max-height: 90vh; display: flex; flex-direction: column;
+    background: var(--bg-2);
+    border: 1px solid rgba(236,72,153,0.3);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 20px 80px rgba(236,72,153,0.25), 0 0 0 1px rgba(139,92,246,0.2) inset;
+    position: relative;
+  }
+  .modal::before {
+    content:""; position:absolute; inset:0; pointer-events:none; border-radius: 20px;
+    background: radial-gradient(600px 200px at 50% 0%, rgba(236,72,153,0.18), transparent 70%);
+  }
+  .modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; border-bottom: 1px solid var(--line);
+    background: linear-gradient(90deg, rgba(139,92,246,0.12), rgba(236,72,153,0.12));
+    position: relative; z-index: 1;
+  }
+  .modal-head h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
+  .modal-head .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+  .modal-close {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text);
+    cursor: pointer; font-size: 18px; line-height: 1;
+  }
+  .modal-close:hover { background: var(--grad); border-color: transparent; }
+  .modal-body { overflow-y: auto; padding: 8px 0 80px; position: relative; z-index: 1; scroll-behavior: smooth;}
+  .modal-body .tier-band { margin: 14px 18px 6px; }
+  .modal-body .frung {
+    display: grid; grid-template-columns: 36px 1fr 130px auto;
+    align-items: center; gap: 12px; padding: 10px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px;
+    transition: background .3s ease;
+  }
+  .modal-body .frung:hover { background: rgba(255,255,255,0.03); }
+  .modal-body .frung.has { background: linear-gradient(90deg, rgba(139,92,246,0.12), rgba(236,72,153,0.06)); }
+  .modal-body .frung.featured {
+    background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02));
+  }
+  .modal-body .frung.featured.has {
+    background: linear-gradient(90deg, rgba(139,92,246,0.16), rgba(236,72,153,0.08));
+    border-left: 3px solid rgba(251,191,36,0.6);
+  }
+  /* ZOOM target pulse — applied via JS when modal scrolls to a specific rung */
+  .modal-body .frung.zoom-target {
+    animation: zoomPulse 1.6s ease-in-out 2;
+  }
+  @keyframes zoomPulse {
+    0%   { box-shadow: inset 0 0 0 0 rgba(236,72,153,0.0), 0 0 0 0 rgba(236,72,153,0.0); }
+    30%  { box-shadow: inset 0 0 60px 0 rgba(236,72,153,0.35), 0 0 30px 4px rgba(236,72,153,0.45); }
+    60%  { box-shadow: inset 0 0 40px 0 rgba(139,92,246,0.28), 0 0 25px 3px rgba(139,92,246,0.35); }
+    100% { box-shadow: inset 0 0 0 0 rgba(236,72,153,0.0), 0 0 0 0 rgba(236,72,153,0.0); }
+  }
+  .modal-body .frung .fe { text-align: center; opacity: .7; }
+  .modal-body .frung .fp { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; }
+  .modal-body .ftokens { display: flex; gap: 4px; justify-content: flex-end; }
+  .ftok {
+    width: 26px; height: 26px; border-radius: 50%;
+    overflow: hidden;
+    background: var(--grad);
+    box-shadow: 0 0 12px rgba(236,72,153,0.5);
+    flex-shrink: 0;
+  }
+  .back-top {
+    position: absolute; bottom: 18px; right: 18px; z-index: 2;
+    padding: 10px 16px; border-radius: 999px;
+    background: var(--grad); color: white; font-weight: 800; font-size: 12px;
+    border: none; cursor: pointer; box-shadow: 0 8px 30px rgba(236,72,153,0.4);
+  }
+
+  footer { margin-top: 80px; padding: 40px 0 60px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
+  footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+  footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
+  footer .flinks a:hover { color: var(--text); }
+  footer .disc { margin-top: 16px; font-size: 12px; opacity: 0.7; }
+</style>
+</head>
+<body>
+
+<header class="hero container">
+  <span class="live-pill"><span class="pulse-dot"></span>Live · Multi-chain</span>
+  <h1 class="logo">wenflip.com</h1>
+  <p class="tagline">Wen flip? <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">Now flip.</span></p>
+  <p class="subhead">One ladder. From a grain of sand to a gold-plated toilet — watch your coin eat the universe.</p>
+  <p class="subhead-mini">Real prices. Real flips. Real dumb.</p>
+  <p class="updated" id="updated">Fetching live prices…</p>
+</header>
+
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker"></div>
+</div>
+
+<div class="container">
+  <div class="main-grid">
+    <section>
+      <div class="ladder-head">
+        <div>
+          <div class="section-eyebrow">The Race</div>
+          <h2 class="section-title">What will your coin <span class="grad">flip NEXT?</span></h2>
+        </div>
+      </div>
+      <div class="ladder-head-cta">
+        <button class="view-full-btn" id="openFull">
+          Click To View The Full Ladder ↗
+        </button>
+      </div>
+      <div class="clusters" id="clusters">
+        <div class="clusters-loading">
+          <span class="skel-dot"></span>
+          <span>Loading live prices…</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="cta">
+    <h2>Pick your coin. Climb the ladder.</h2>
+    <div class="cta-buttons">
+      <a class="btn btn-primary" href="https://x.com/Wen_Flip" target="_blank" rel="noopener">Follow @Wen_Flip on X</a>
+      <a class="btn btn-telegram" href="https://t.me/wen_flip" target="_blank" rel="noopener">Flip alerts on Telegram</a>
+    </div>
+  </section>
+
+  <div class="api-debug" id="apiDebug"><span class="api-label">API Status:</span>initializing…</div>
+
+  <footer>
+    <div class="ftag">Real prices. Real flips. Real dumb.</div>
+    <div class="disc">Not financial advice. Just memes and math.</div>
+    <div class="disc" style="margin-top:6px;opacity:0.55;">WenFlip · Powered by PulseChain</div>
+  </footer>
+</div>
+
+<script>
+  // ==== TOKEN CONFIG ====
+  const TOKENS = [
+    { sym: 'BTC',   name: 'Bitcoin',   chain: 'ethereum',   pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', target: 1000000, logo: './logos/BTC_logo.png',     chartUrl: 'https://dexscreener.com/ethereum/0x4585fe77225b41b697c938b018e2ac67ac5a20c0' },
+    { sym: 'ETH',   name: 'Ethereum',  chain: 'bsc',        pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', target: 1000000, logo: './logos/ETH_logo.png',     chartUrl: 'https://dexscreener.com/bsc/0x531febfeb9a61d948c384acfbe6dcc51057aea7e' },
+    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', target: 80000,   logo: './logos/pwBTC_Logo.png',   chartUrl: 'https://dexscreener.com/pulsechain/0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c' },
+    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', target: 1.00,    logo: './logos/INC_logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa' },
+    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', target: 1.00,    logo: './logos/pDAI_logo.png',    chartUrl: 'https://dexscreener.com/pulsechain/0xfc64556faa683e6087f425819c7ca3c558e13ac1' },
+    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', target: 10.00,   logo: './logos/HEX_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65' },
+    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', target: 1.00,    logo: './logos/PulseX_logo.png',  chartUrl: 'https://dexscreener.com/pulsechain/0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9' },
+    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', target: 1.00,    logo: './logos/PLS_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xe56043671df55de5cdf8459710433c10324de0ae' },
+  ];
+  const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null }));
+
+  // ==== LADDER (with $51 Magic Wand, time rungs deduped) ====
+  const LADDER = [
+    { price: 390000, name: "Rolls Royce Ghost (fully optioned)", tier: "heavyweight" },
+    { price: 380000, name: "Thoroughbred racehorse (Keeneland average yearling)", tier: "heavyweight" },
+    { price: 350000, name: "Rolls Royce Ghost (base, new)", tier: "heavyweight" },
+    { price: 315000, name: "Cost of raising one child to age 18 (USDA estimate)", tier: "heavyweight" },
+    { price: 300000, name: "Used Cessna Citation (entry-level private jet)", tier: "heavyweight" },
+    { price: 280000, name: "One year of 24/7 personal security detail", tier: "heavyweight" },
+    { price: 258000, name: "Lamborghini Urus (base, new)", tier: "heavyweight" },
+    { price: 240000, name: "Lamborghini Huracán (entry, new)", tier: "heavyweight" },
+    { price: 220000, name: "Ferrari Roma (base, new)", tier: "heavyweight" },
+    { price: 190000, name: "One of Kim & Kanye's four gold-plated Bel Air toilets", tier: "heavyweight" },
+    { price: 180000, name: "Gold-plated bathtub (bespoke commission)", tier: "heavyweight" },
+    { price: 170000, name: "A forgettable abstract painting at Christie's", tier: "heavyweight" },
+    { price: 160000, name: "One year at Phillips Exeter Academy (boarding)", tier: "heavyweight" },
+    { price: 150000, name: "Full Beverly Hills plastic surgery makeover", tier: "heavyweight" },
+    { price: 140000, name: "One year of luxury nursing home (private room)", tier: "heavyweight" },
+    { price: 130000, name: "Full gestational surrogacy in the USA", tier: "heavyweight" },
+    { price: 120000, name: "One year of live-in nanny (NYC)", tier: "heavyweight" },
+    { price: 115000, name: "Porsche 911 Carrera (base, new)", tier: "heavyweight" },
+    { price: 110000, name: "Gold toilet (18-karat, functional)", tier: "heavyweight" },
+    { price: 100000, name: "Madonna's mailed underwear (2017 auction starting bid)", tier: "heavyweight", featured: true },
+    { price: 90000, name: "Full-mouth dental implants (all teeth)", tier: "heavyweight" },
+    { price: 87000, name: "One year at Harvard (full cost of attendance)", tier: "heavyweight" },
+    { price: 60000, name: "Down payment on a house", tier: "heavyweight" },
+    { price: 52000, name: "Used Porsche 911 (decent year)", tier: "heavyweight" },
+    { price: 48000, name: "Average new car (industry average)", tier: "heavyweight" },
+    { price: 45000, name: "Full IVF package (3 cycles)", tier: "heavyweight" },
+    { price: 43000, name: "One epic bachelor Vegas weekend (party of 12)", tier: "heavyweight" },
+    { price: 40000, name: "Tesla Model 3", tier: "heavyweight" },
+    { price: 35000, name: "One year of NYC private preschool", tier: "heavyweight" },
+    { price: 30000, name: "Wedding photographer (high-end with video)", tier: "heavyweight" },
+    { price: 25000, name: "New compact car", tier: "heavyweight" },
+    { price: 22000, name: "Average wedding (small, intimate)", tier: "heavyweight" },
+    { price: 20000, name: "Engagement ring (nicer)", tier: "heavyweight" },
+    { price: 18000, name: "Used motorcycle (mid-tier touring)", tier: "heavyweight" },
+    { price: 16000, name: "One year of average US daycare", tier: "heavyweight" },
+    { price: 14000, name: "Two weeks at a luxury all-inclusive resort", tier: "heavyweight" },
+    { price: 13500, name: "One year of state college tuition (in-state)", tier: "heavyweight" },
+    { price: 12000, name: "Hermès Birkin bag", tier: "heavyweight" },
+    { price: 10000, name: "Engagement ring (modest)", tier: "heavyweight" },
+    { price: 8500, name: "One year of public university tuition (in-state)", tier: "heavyweight" },
+    { price: 7500, name: "Rhinoplasty (nose job)", tier: "heavyweight" },
+    { price: 6500, name: "One BBL (Brazilian Butt Lift)", tier: "heavyweight" },
+    { price: 6000, name: "Used car (rough condition)", tier: "heavyweight" },
+    { price: 5500, name: "Super Bowl ticket (nosebleeds)", tier: "heavyweight", featured: true },
+    { price: 5500, name: "Bottle of Pappy Van Winkle 23", tier: "heavyweight", featured: true },
+    { price: 5000, name: "Invisalign treatment (full)", tier: "heavyweight" },
+    { price: 5000, name: "One Lambo wheel rim", tier: "heavyweight" },
+    { price: 3500, name: "Mountain bike", tier: "heavyweight" },
+    { price: 3200, name: "C-section copay", tier: "heavyweight" },
+    { price: 2600, name: "One coffin (mid-range)", tier: "heavyweight" },
+    { price: 2500, name: "Epidural during birth", tier: "heavyweight", featured: true },
+    { price: 2400, name: "CrossFit annual membership", tier: "heavyweight" },
+    { price: 2200, name: "One LASIK eye (per eye)", tier: "heavyweight" },
+    { price: 2100, name: "One sterilization procedure (out of pocket)", tier: "heavyweight" },
+    { price: 2000, name: "Decent laptop", tier: "heavyweight" },
+    { price: 1800, name: "One uninsured ER visit (minor)", tier: "heavyweight" },
+    { price: 1650, name: "One veneer (per tooth)", tier: "heavyweight" },
+    { price: 1500, name: "Annual car insurance (cheap)", tier: "heavyweight" },
+    { price: 1400, name: "New gaming console", tier: "heavyweight" },
+    { price: 1300, name: "IUD insertion (out of pocket)", tier: "heavyweight", featured: true },
+    { price: 1250, name: "One root canal", tier: "heavyweight" },
+    { price: 1200, name: "Year of college textbooks", tier: "heavyweight" },
+    { price: 1150, name: "One CoolSculpting session", tier: "heavyweight" },
+    { price: 1100, name: "One vasectomy", tier: "heavyweight", featured: true },
+    { price: 1050, name: "One dental crown", tier: "heavyweight" },
+    { price: 1000, name: "Funeral plot (cheap)", tier: "heavyweight" },
+    { price: 950, name: "Cremation (basic)", tier: "snack" },
+    { price: 900, name: "Weekend Airbnb", tier: "snack" },
+    { price: 880, name: "One year of premium pet insurance", tier: "snack" },
+    { price: 875, name: "One month's rent (small midwest town)", tier: "snack" },
+    { price: 850, name: "One year of average insurance copays", tier: "snack" },
+    { price: 750, name: "Wedding band (men's, plain)", tier: "snack" },
+    { price: 650, name: "Used iPhone", tier: "snack" },
+    { price: 620, name: "One full lip filler session", tier: "snack" },
+    { price: 600, name: "One year of birth control pills (cash)", tier: "snack" },
+    { price: 425, name: "Round-trip domestic flight", tier: "snack" },
+    { price: 420, name: "One eyebrow microblading session", tier: "snack" },
+    { price: 415, name: "Wisdom tooth removal (per tooth)", tier: "snack" },
+    { price: 410, name: "Bottle of Macallan 18", tier: "snack" },
+    { price: 405, name: "Vegas night at the Bellagio", tier: "snack" },
+    { price: 400, name: "One non-surgical cosmetic session", tier: "snack" },
+    { price: 275, name: "Nice dinner for two", tier: "snack" },
+    { price: 260, name: "One shot of Ozempic (per dose)", tier: "snack", featured: true },
+    { price: 250, name: "Roomba (basic)", tier: "snack" },
+    { price: 245, name: "One BBL consultation", tier: "snack" },
+    { price: 240, name: "One year of ChatGPT Plus", tier: "snack" },
+    { price: 240, name: "One year of Xbox Game Pass Ultimate", tier: "snack" },
+    { price: 230, name: "One year of Notion AI", tier: "snack" },
+    { price: 215, name: "One year of Netflix (standard)", tier: "snack" },
+    { price: 210, name: "One bag of designer pre-workout supplement", tier: "snack" },
+    { price: 205, name: "One year of LinkedIn Premium", tier: "snack" },
+    { price: 204, name: "One year of Disney+ (no ads)", tier: "snack" },
+    { price: 200, name: "Cameo from someone you've heard of", tier: "snack" },
+    { price: 200, name: "Bottle of Dom Pérignon", tier: "snack" },
+    { price: 195, name: "IV drip wellness session", tier: "snack" },
+    { price: 190, name: "One hour with a private chef", tier: "snack" },
+    { price: 184, name: "One emergency contraception ER copay", tier: "snack" },
+    { price: 180, name: "One Costco run that got out of hand", tier: "snack" },
+    { price: 179, name: "AirPods (with ANC)", tier: "snack" },
+    { price: 175, name: "One year of Audible", tier: "snack" },
+    { price: 170, name: "One night at a bougie hot pot restaurant", tier: "snack" },
+    { price: 165, name: "One pair of Lululemon leggings", tier: "snack" },
+    { price: 160, name: "Eyelash extension session", tier: "snack" },
+    { price: 156, name: "One Spotify Premium year", tier: "snack" },
+    { price: 155, name: "Therapy session (full cash price)", tier: "snack" },
+    { price: 154, name: "One Substack subscription you regret", tier: "snack" },
+    { price: 150, name: "Emotional support animal certification (online)", tier: "snack" },
+    { price: 145, name: "One AI girlfriend monthly subscription", tier: "snack" },
+    { price: 135, name: "One night at a Holiday Inn Express", tier: "snack" },
+    { price: 130, name: "One paternity test", tier: "snack" },
+    { price: 125, name: "Concert nosebleeds", tier: "snack" },
+    { price: 120, name: "One Hulu year", tier: "snack" },
+    { price: 118, name: "One Midjourney year", tier: "snack" },
+    { price: 105, name: "Global Entry application", tier: "snack" },
+    { price: 102, name: "Hamilton ticket (cheap)", tier: "snack" },
+    { price: 100, name: "DNA test (23andMe)", tier: "snack" },
+    { price: 98, name: "Ring doorbell", tier: "snack" },
+    { price: 90, name: "Private massage (60 min)", tier: "snack" },
+    { price: 85, name: "Pair of jeans", tier: "snack" },
+    { price: 82, name: "TaskRabbit IKEA assembly", tier: "snack" },
+    { price: 80, name: "TSA PreCheck", tier: "snack" },
+    { price: 78, name: "One PlayStation Plus year", tier: "snack" },
+    { price: 77, name: "Vegas night at a budget hotel", tier: "snack" },
+    { price: 76, name: "One ChatGPT API top-up (moderate use month)", tier: "snack" },
+    { price: 75, name: "Hello Fresh meal kit week", tier: "snack" },
+    { price: 72, name: "Lyft surge ride at 2am", tier: "snack" },
+    { price: 71, name: "One Uber Eats order at 2am", tier: "snack" },
+    { price: 70, name: "Personal trainer session", tier: "snack" },
+    { price: 68, name: "Sensory deprivation tank float", tier: "snack" },
+    { price: 66, name: "One bag of premium CBD gummies", tier: "snack" },
+    { price: 63, name: "One annual Costco membership", tier: "snack" },
+    { price: 60, name: "Brazilian wax", tier: "snack" },
+    { price: 58, name: "One mani-pedi combo", tier: "snack" },
+    { price: 55, name: "Tank of gas", tier: "snack" },
+    { price: 52, name: "One Equinox day pass", tier: "snack" },
+    { price: 51, name: "One Magic Wand massager", tier: "snack", featured: true },
+    { price: 50, name: "Sam's Club membership", tier: "snack" },
+    { price: 49, name: "One Tinder Platinum month", tier: "snack" },
+    { price: 48, name: "Plan B (full price OTC)", tier: "snack", featured: true },
+    { price: 45, name: "Cryotherapy session", tier: "snack" },
+    { price: 44, name: "One Peloton All-Access Membership month", tier: "snack" },
+    { price: 40, name: "Steam game", tier: "snack" },
+    { price: 40, name: "Cameo from a C-list celeb", tier: "snack" },
+    { price: 38, name: "SoulCycle class", tier: "snack" },
+    { price: 37, name: "Spray tan", tier: "snack" },
+    { price: 35, name: "Annual gym membership (monthly)", tier: "snack" },
+    { price: 34, name: "Pedicure", tier: "snack" },
+    { price: 33, name: "DoorDash delivery (with all fees)", tier: "snack" },
+    { price: 32, name: "Escape room (per person)", tier: "snack" },
+    { price: 31, name: "Hinge premium month", tier: "snack" },
+    { price: 30, name: "Tinder Gold month", tier: "snack" },
+    { price: 29, name: "Axe-throwing session", tier: "snack" },
+    { price: 27, name: "Large delivery pizza", tier: "snack" },
+    { price: 26, name: "Bumble Boost month", tier: "snack" },
+    { price: 25, name: "Uber ride across town", tier: "snack" },
+    { price: 24, name: "One Erewhon smoothie", tier: "snack" },
+    { price: 24, name: "CrossFit class drop-in", tier: "snack" },
+    { price: 23, name: "Therapy session (typical copay)", tier: "snack" },
+    { price: 22, name: "Planet Fitness Black Card month", tier: "snack" },
+    { price: 21, name: "Budget haircut (Great Clips tier)", tier: "snack" },
+    { price: 20, name: "Full-service car wash", tier: "snack" },
+    { price: 19, name: "Round of drinks at a strip club", tier: "snack" },
+    { price: 18.5, name: "One Claude Pro month", tier: "snack" },
+    { price: 18, name: "Paperback book", tier: "snack" },
+    { price: 17, name: "OnlyFans tip (avg)", tier: "snack", featured: true },
+    { price: 15, name: "Movie ticket", tier: "snack" },
+    { price: 14, name: "One Twitter Blue verification month", tier: "snack" },
+    { price: 13, name: "Chipotle burrito", tier: "snack" },
+    { price: 12, name: "Uniswap gas fee during peak (ETH)", tier: "snack" },
+    { price: 11.5, name: "One Botox unit", tier: "snack", featured: true },
+    { price: 11, name: "Pack of cigarettes", tier: "snack" },
+    { price: 10.5, name: "OnlyFans subscription (avg)", tier: "snack", featured: true },
+    { price: 10, name: "Bottle of poppers", tier: "snack" },
+    { price: 8, name: "Round of mini golf", tier: "snack" },
+    { price: 7.5, name: "Starbucks coffee", tier: "snack" },
+    { price: 7, name: "Tinder profile boost", tier: "snack" },
+    { price: 7, name: "Disposable vape pod", tier: "snack" },
+    { price: 6, name: "Big Mac", tier: "snack" },
+    { price: 5.5, name: "Mid-tier scratch-off ticket", tier: "snack" },
+    { price: 5, name: "Postmates delivery fee", tier: "snack" },
+    { price: 4.75, name: "Cheap cigar", tier: "snack" },
+    { price: 4.5, name: "Mechanical bull ride", tier: "snack" },
+    { price: 4.25, name: "Penny slot pull at max bet", tier: "snack" },
+    { price: 4, name: "Pre-rolled cone", tier: "snack" },
+    { price: 3.75, name: "Four Loko", tier: "snack" },
+    { price: 3.5, name: "Greeting card", tier: "snack" },
+    { price: 3.25, name: "Juul pod", tier: "snack" },
+    { price: 3.2, name: "One ETH bridge transaction (L1->L2)", tier: "snack" },
+    { price: 3.1, name: "Vape coil replacement", tier: "snack" },
+    { price: 3, name: "MetaMask swap fee on ETH", tier: "snack" },
+    { price: 3, name: "Disposable handcuffs (party-store)", tier: "snack" },
+    { price: 2.9, name: "Blindfold from a sleep kit", tier: "snack" },
+    { price: 2.85, name: "Mini bottle of liquor (airplane bottle)", tier: "snack" },
+    { price: 2.75, name: "Can of Monster", tier: "snack" },
+    { price: 2.6, name: "5-Hour Energy shot", tier: "snack" },
+    { price: 2.5, name: "Liquid Death", tier: "snack" },
+    { price: 2.4, name: "White Claw", tier: "snack" },
+    { price: 2.3, name: "Truly seltzer", tier: "snack" },
+    { price: 2, name: "Powerball ticket", tier: "snack" },
+    { price: 1.95, name: "Scratch-off ticket (entry-tier)", tier: "snack" },
+    { price: 1.85, name: "Pickle from 7-Eleven cooler", tier: "snack" },
+    { price: 1.75, name: "Apple", tier: "snack" },
+    { price: 1.65, name: "Slim Jim", tier: "snack" },
+    { price: 1.55, name: "Trojan condom (single)", tier: "snack" },
+    { price: 1.5, name: "Roll of toilet paper", tier: "snack" },
+    { price: 1.5, name: "Hot Wheels car", tier: "snack" },
+    { price: 1.45, name: "Pickle (from a jar)", tier: "snack" },
+    { price: 1.25, name: "Reese's Cup", tier: "snack" },
+    { price: 1.15, name: "Vending machine condom", tier: "snack" },
+    { price: 1.1, name: "Pop Rocks package", tier: "snack" },
+    { price: 1.05, name: "Claw machine attempt", tier: "snack" },
+    { price: 1, name: "Karaoke song credit", tier: "snack" },
+    { price: 0.98, name: "Single cigarette", tier: "snack" },
+    { price: 0.95, name: "Strip club dollar bill (just the bill)", tier: "snack", featured: true },
+    { price: 0.93, name: "Ovulation test strip", tier: "snack", featured: true },
+    { price: 0.9, name: "Onion", tier: "snack" },
+    { price: 0.88, name: "Pear", tier: "snack" },
+    { price: 0.85, name: "AA battery", tier: "snack" },
+    { price: 0.84, name: "One squirt of lube (per use, from a $25 bottle)", tier: "snack" },
+    { price: 0.82, name: "Potato", tier: "snack" },
+    { price: 0.8, name: "Generic Viagra pill (online pharmacy)", tier: "snack", featured: true },
+    { price: 0.78, name: "Tomato", tier: "snack" },
+    { price: 0.75, name: "Orange", tier: "snack" },
+    { price: 0.73, name: "Postage stamp", tier: "snack" },
+    { price: 0.65, name: "Juice box", tier: "snack" },
+    { price: 0.6, name: "Pack of ramen", tier: "snack" },
+    { price: 0.54, name: "One Adderall pill (10mg generic, with insurance)", tier: "snack" },
+    { price: 0.52, name: "Lime", tier: "snack" },
+    { price: 0.5, name: "Condom (from a 12-pack)", tier: "snack" },
+    { price: 0.49, name: "One Viagra cut in half (married-man optimization)", tier: "snack" },
+    { price: 0.48, name: "Lemon", tier: "snack" },
+    { price: 0.45, name: "Disposable razor", tier: "snack" },
+    { price: 0.42, name: "Nicotine gum", tier: "snack" },
+    { price: 0.4, name: "Arcade game token", tier: "snack" },
+    { price: 0.38, name: "CBD gummy", tier: "snack" },
+    { price: 0.35, name: "AAA Battery", tier: "snack" },
+    { price: 0.33, name: "Capri Sun", tier: "snack" },
+    { price: 0.3, name: "Banana", tier: "snack" },
+    { price: 0.28, name: "Gumball", tier: "snack" },
+    { price: 0.25, name: "Single egg", tier: "snack" },
+    { price: 0.23, name: "Nicotine pouch (Zyn)", tier: "snack" },
+    { price: 0.22, name: "Bic pen", tier: "snack" },
+    { price: 0.2, name: "Penny slot pull (min bet)", tier: "snack" },
+    { price: 0.18, name: "Coin-op horse ride outside Walmart", tier: "snack" },
+    { price: 0.17, name: "Intimate wipe", tier: "snack", featured: true },
+    { price: 0.16, name: "Claw machine prize (cost basis)", tier: "snack" },
+    { price: 0.15, name: "Single tortilla", tier: "snack" },
+    { price: 0.14, name: "Snickers fun size", tier: "snack" },
+    { price: 0.13, name: "Single Oreo", tier: "snack" },
+    { price: 0.12, name: "Carrot", tier: "snack" },
+    { price: 0.11, name: "Donut hole", tier: "snack" },
+    { price: 0.095, name: "Tootsie Pop", tier: "snack" },
+    { price: 0.09, name: "Dum Dum lollipop", tier: "snack" },
+    { price: 0.085, name: "Stick of incense", tier: "snack" },
+    { price: 0.08, name: "Slice of bread", tier: "snack" },
+    { price: 0.075, name: "Soft pretzel bite", tier: "snack" },
+    { price: 0.07, name: "Tea bag", tier: "snack" },
+    { price: 0.065, name: "Tylenol tablet", tier: "snack" },
+    { price: 0.06, name: "Melatonin gummy", tier: "snack" },
+    { price: 0.055, name: "Listerine strip", tier: "snack" },
+    { price: 0.05, name: "Pencil", tier: "snack" },
+    { price: 0.048, name: "Solo cup", tier: "snack" },
+    { price: 0.045, name: "Stick of gum", tier: "snack" },
+    { price: 0.04, name: "Paper plate", tier: "snack" },
+    { price: 0.038, name: "Plastic fork", tier: "snack" },
+    { price: 0.035, name: "Vanilla wafer", tier: "snack" },
+    { price: 0.033, name: "Bandaid", tier: "snack" },
+    { price: 0.03, name: "Ketchup packet", tier: "snack" },
+    { price: 0.028, name: "Hershey's Kiss", tier: "snack" },
+    { price: 0.026, name: "Single Altoid mint", tier: "snack" },
+    { price: 0.024, name: "Tums tablet", tier: "snack" },
+    { price: 0.022, name: "Paper fortune from a fortune cookie", tier: "snack", featured: true },
+    { price: 0.02, name: "Ibuprofen tablet", tier: "snack" },
+    { price: 0.018, name: "Single Pringle", tier: "snack" },
+    { price: 0.016, name: "Single Dorito", tier: "snack" },
+    { price: 0.014, name: "Sugar packet", tier: "snack" },
+    { price: 0.013, name: "Plastic spoon", tier: "snack" },
+    { price: 0.012, name: "Popsicle stick", tier: "snack" },
+    { price: 0.011, name: "Tootsie Roll mini", tier: "snack" },
+    { price: 0.0105, name: "Bobby pin", tier: "snack" },
+    { price: 0.01, name: "Thumbtack", tier: "snack" },
+    { price: 0.0095, name: "Plastic straw", tier: "snack" },
+    { price: 0.009, name: "Saltine cracker", tier: "snack" },
+    { price: 0.0085, name: "Single pretzel stick", tier: "snack" },
+    { price: 0.008, name: "Single napkin", tier: "snack" },
+    { price: 0.0075, name: "Single coffee filter", tier: "snack" },
+    { price: 0.007, name: "Single sheet of rolling paper", tier: "snack" },
+    { price: 0.0065, name: "Paperclip", tier: "snack" },
+    { price: 0.006, name: "Square of aluminum foil", tier: "snack" },
+    { price: 0.0055, name: "Single Cheeto", tier: "snack" },
+    { price: 0.005, name: "Q-tip", tier: "snack" },
+    { price: 0.0045, name: "Sheet of printer paper", tier: "snack" },
+    { price: 0.004, name: "Tic Tac", tier: "snack" },
+    { price: 0.0038, name: "Single match", tier: "snack" },
+    { price: 0.0035, name: "Rubber band", tier: "snack" },
+    { price: 0.003, name: "Sheet of toilet paper", tier: "snack" },
+    { price: 0.0028, name: "Single Skittle", tier: "snack" },
+    { price: 0.0025, name: "Toothpick", tier: "snack" },
+    { price: 0.0023, name: "Goldfish cracker", tier: "snack" },
+    { price: 0.002, name: "Single M&M", tier: "snack" },
+    { price: 0.0018, name: "Single coffee bean", tier: "snack" },
+    { price: 0.0016, name: "Single sprinkle (large)", tier: "snack" },
+    { price: 0.0014, name: "Sunflower seed", tier: "snack" },
+    { price: 0.0012, name: "Single Cheerio", tier: "snack" },
+    { price: 0.001, name: "Single staple", tier: "snack" },
+    { price: 0.0008, name: "Froot Loop", tier: "absurd_floor" },
+    { price: 0.0007, name: "Pinch of pepper", tier: "absurd_floor" },
+    { price: 0.0006, name: "Single coffee ground", tier: "absurd_floor" },
+    { price: 0.00055, name: "Single sprinkle (small)", tier: "absurd_floor" },
+    { price: 0.0005, name: "Single eyelash", tier: "absurd_floor" },
+    { price: 0.00045, name: "Piece of confetti", tier: "absurd_floor" },
+    { price: 0.0004, name: "Grain of sugar", tier: "absurd_floor" },
+    { price: 0.00035, name: "Grain of rice", tier: "absurd_floor" },
+    { price: 0.0003, name: "Single mustard seed", tier: "absurd_floor" },
+    { price: 0.00025, name: "Poppy seed", tier: "absurd_floor" },
+    { price: 0.0002, name: "Sesame seed", tier: "absurd_floor" },
+    { price: 0.00015, name: "Speck of dust", tier: "absurd_floor" },
+    { price: 0.00012, name: "One PulseChain transaction", tier: "absurd_floor" },
+    { price: 0.0001, name: "Grain of fine sand", tier: "absurd_floor" },
+    { price: 0.00005, name: "≈ 25 seconds of US minimum-wage work", tier: "time" },
+    { price: 0.00002, name: "≈ 10 seconds (a camera shutter click)", tier: "time" },
+    { price: 0.00001, name: "≈ 5 seconds (a finger snap)", tier: "time" },
+    { price: 0.000005, name: "≈ 2.5 seconds (reading one word)", tier: "time" },
+    { price: 0.000002, name: "≈ 1 second (saying 'Bitcoin')", tier: "time" },
+    { price: 0.000001, name: "≈ 0.5 seconds (a single breath)", tier: "time" },
+  ];
+
+  const TIER_META = {
+    heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',       emoji: '💎' },
+    snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $0.001 to $1,000', emoji: '🏠' },
+    absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',  emoji: '🏖️' },
+    time:         { cls: 'tier-dust',   text: '⏱ Sub-Dust Tier — time, not things',  emoji: '⏱️' },
+  };
+
+  const DISPLAY_TIERS = {
+    heavyweight:  { emoji: '🍔', label: 'Heavyweight'  },
+    snack:        { emoji: '🏠', label: 'Real Life'    },
+    absurd_floor: { emoji: '🤡', label: 'Absurd Floor' },
+    time:         { emoji: '⏱',  label: 'Sub-Dust'     },
+  };
+  function getDisplayTier(price) {
+    if (price == null) return null;
+    if (price >= 1000)    return 'heavyweight';
+    if (price >= 0.001)   return 'snack';
+    if (price >= 0.0001)  return 'absurd_floor';
+    return 'time';
+  }
+
+  const MIN_WAGE_PER_SEC = 7.25 / 3600;
+
+  function fmtPrice(p) {
+    if (p == null) return '—';
+    if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    if (p >= 0.01) return '$' + p.toFixed(3);
+    if (p >= 0.0001) return '$' + p.toFixed(5);
+    if (p >= 0.00001) return '$' + p.toFixed(7);
+    return '$' + p.toFixed(8);
+  }
+
+  function findRungIndex(price) {
+    if (price == null) return -1;
+    for (let i = 0; i < LADDER.length; i++) {
+      if (LADDER[i].price <= price) return i;
+    }
+    return LADDER.length - 1;
+  }
+
+  function fmtTime(seconds) {
+    if (!isFinite(seconds) || seconds <= 0) return '—';
+    const ms = seconds * 1000;
+    if (ms < 1) return parseFloat(ms.toPrecision(2)) + 'ms';
+    if (seconds < 1) {
+      let v;
+      if (ms >= 100) v = Math.round(ms);
+      else if (ms >= 10) v = Math.round(ms);
+      else v = parseFloat(ms.toFixed(1));
+      return v + (v === 1 ? ' millisecond' : ' milliseconds');
+    }
+    if (seconds < 60) {
+      let v;
+      if (seconds >= 10) v = Math.round(seconds);
+      else v = parseFloat(seconds.toFixed(1));
+      return v + (v === 1 ? ' second' : ' seconds');
+    }
+    if (seconds < 3600) {
+      const v = Math.round(seconds / 60);
+      return v + (v === 1 ? ' minute' : ' minutes');
+    }
+    const v = Math.round(seconds / 3600);
+    return v + (v === 1 ? ' hour' : ' hours');
+  }
+  function secsOfWork(price) { return price / MIN_WAGE_PER_SEC; }
+  function timePhrase(price) { return fmtTime(secsOfWork(price)) + ' of minimum-wage work'; }
+  function isTimeMode(t) { return t.price != null && t.price < 0.0001; }
+
+  function rungLabelForToken(rung, timeMode) {
+    if (!rung) return null;
+    if (timeMode) {
+      return { name: timePhrase(rung.price), price: fmtPrice(rung.price), featured: !!rung.featured };
+    }
+    return { name: rung.name, price: fmtPrice(rung.price), featured: !!rung.featured };
+  }
+
+  function starHtml(featured) {
+    if (!featured) return '';
+    return '<span class="star" title="Featured flip — these are the bangers">⭐</span>';
+  }
+
+  function renderTicker() {
+    const html = state.map(t => `
+      <div class="tick">
+        <div class="tick-badge"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></div>
+        <div class="tick-sym">${t.sym}</div>
+        <div class="tick-price">${fmtPrice(t.price)}</div>
+        <div class="tick-chg ${t.chg < 0 ? 'neg' : ''}">${t.chg >= 0 ? '+' : ''}${(t.chg||0).toFixed(2)}%</div>
+      </div>
+    `).join('');
+    document.getElementById('ticker').innerHTML = html + html;
+  }
+
+  function renderDebug() {
+    const el = document.getElementById('apiDebug');
+    if (!el) return;
+    const html = state.map(t => {
+      if (t.status === 'ok' && t.price != null) {
+        return `<span>✅ ${t.sym}: ${fmtPrice(t.price)}</span>`;
+      }
+      const why = t.error || 'no data';
+      return `<span>❌ ${t.sym}: ${why}</span>`;
+    }).join('');
+    el.innerHTML = `<span class="api-label">API Status:</span>` + html;
+  }
+
+  function renderLadder() {
+    const el = document.getElementById('clusters');
+    const ready = state.filter(t => t.price != null);
+    if (!ready.length) {
+      // Keep the loading skeleton in place; do not blank it.
+      return;
+    }
+    const ordered = [...ready].sort((a,b) => b.price - a.price);
+
+    const html = ordered.map((t, idx) => {
+      const i = findRungIndex(t.price);
+      const nextRung = LADDER[i - 1];
+      const prevRung = LADDER[i];
+      const timeMode = isTimeMode(t);
+      const next = rungLabelForToken(nextRung, timeMode);
+      const prev = rungLabelForToken(prevRung, timeMode);
+
+      let tokenSubtitle = '';
+      if (timeMode) {
+        tokenSubtitle = timePhrase(t.price);
+      } else if (nextRung) {
+        const pct = ((nextRung.price - t.price) / t.price) * 100;
+        const pctStr = pct >= 100 ? pct.toFixed(0) : pct.toFixed(1);
+        tokenSubtitle = `${pctStr}% to next flip`;
+      } else {
+        tokenSubtitle = 'at the top of the ladder';
+      }
+
+      const chgCls = t.chg >= 0 ? 'pos' : 'neg';
+      const chgStr = (t.chg >= 0 ? '+' : '') + (t.chg||0).toFixed(2) + '%';
+
+      const dt = getDisplayTier(t.price);
+      const dtMeta = DISPLAY_TIERS[dt] || { emoji: '•', label: '' };
+      const tierBadge = dt ? `<span class="tier-tag ${dt}">${dtMeta.emoji} ${dtMeta.label}</span>` : '';
+
+      const nextRow = next ? `
+        <div class="crow next ${next.featured ? 'featured' : ''}">
+          <div class="arrow">↑ next</div>
+          <div class="cname">${next.name}${starHtml(next.featured)}</div>
+          <div class="cprice">${next.price}</div>
+        </div>` : '';
+      const prevRow = prev ? `
+        <div class="crow prev ${prev.featured ? 'featured' : ''}">
+          <div class="arrow">↓ flipped</div>
+          <div class="cname">${prev.name}${starHtml(prev.featured)}</div>
+          <div class="cprice">${prev.price}</div>
+        </div>` : '';
+
+      return `
+        ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
+        <div class="cluster" data-sym="${t.sym}">
+          ${tierBadge}
+          ${nextRow}
+          <div class="token-row" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="View ${t.sym} on the full ladder">
+            <div class="tbadge"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></div>
+            <div class="tinfo">
+              <div class="tsym">${t.sym}</div>
+              <div class="tsub">${tokenSubtitle}</div>
+            </div>
+            <div class="tright">
+              <div class="tprice">${fmtPrice(t.price)}</div>
+              <div class="tchg ${chgCls}">${chgStr} (24h)</div>
+            </div>
+          </div>
+          ${prevRow}
+        </div>
+      `;
+    }).join('');
+    el.innerHTML = html;
+
+    el.querySelectorAll('.token-row[data-zoom]').forEach(row => {
+      const sym = row.getAttribute('data-zoom');
+      row.addEventListener('click', () => openModalZoomedTo(sym));
+      row.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openModalZoomedTo(sym);
+        }
+      });
+    });
+  }
+
+  function renderFullLadder() {
+    const body = document.getElementById('modalBody');
+    const byRung = {};
+    state.forEach(t => {
+      if (t.price == null) return;
+      const idx = findRungIndex(t.price);
+      (byRung[idx] = byRung[idx] || []).push(t);
+    });
+    const html = ['<div id="modalTop"></div>'];
+    let lastTier = null;
+    LADDER.forEach((rung, i) => {
+      if (rung.tier !== lastTier) {
+        const meta = TIER_META[rung.tier];
+        if (meta) html.push(`<div class="tier-band ${meta.cls}">${meta.text}</div>`);
+        lastTier = rung.tier;
+      }
+      const placed = byRung[i] || [];
+      const meta = TIER_META[rung.tier] || {};
+      const emoji = meta.emoji || '•';
+      // Modal logos: lazy-loaded since modal is hidden until user opens it
+      const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPrice(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
+      const featuredCls = rung.featured ? 'featured' : '';
+      html.push(`
+        <div class="frung ${placed.length ? 'has' : ''} ${featuredCls}" data-rung-index="${i}">
+          <div class="fe">${emoji}</div>
+          <div>${rung.name}${starHtml(rung.featured)}</div>
+          <div class="fp">${fmtPrice(rung.price)}</div>
+          <div class="ftokens">${tokens}</div>
+        </div>
+      `);
+    });
+    body.innerHTML = html.join('');
+  }
+
+  function openModal() {
+    renderFullLadder();
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function openModalZoomedTo(sym) {
+    const t = state.find(s => s.sym === sym);
+    if (!t || t.price == null) {
+      openModal();
+      return;
+    }
+    renderFullLadder();
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    const idx = findRungIndex(t.price);
+    const body = document.getElementById('modalBody');
+    const target = body.querySelector(`.frung[data-rung-index="${idx}"]`);
+    if (target) {
+      requestAnimationFrame(() => {
+        target.scrollIntoView({ behavior: 'instant', block: 'center' });
+        target.classList.remove('zoom-target');
+        void target.offsetWidth;
+        target.classList.add('zoom-target');
+      });
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('openFull').addEventListener('click', openModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  let lastFetch = null;
+  function renderUpdated() {
+    const el = document.getElementById('updated');
+    if (!lastFetch) { el.innerHTML = 'Fetching live prices…'; return; }
+    const secs = Math.round((Date.now() - lastFetch) / 1000);
+    el.innerHTML = `Live prices · last updated <b>${secs}s ago</b> · refreshes every 60s`;
+  }
+  setInterval(renderUpdated, 1000);
+
+  async function fetchOne(t) {
+    const pairAddr = (t.pairAddress || '').trim();
+    const chain = (t.chain || 'pulsechain').trim();
+    const stateIdx = state.findIndex(s => s.sym === t.sym);
+    if (!pairAddr) {
+      if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'no pair address'; }
+      return;
+    }
+    try {
+      const url = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${pairAddr}`;
+      const res = await fetch(url);
+      if (!res.ok) {
+        if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = `HTTP ${res.status}`; }
+        return;
+      }
+      const json = await res.json();
+      const pair = json.pair || (Array.isArray(json.pairs) ? json.pairs[0] : null);
+      if (!pair || !pair.priceUsd) {
+        if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'no pair data'; }
+        return;
+      }
+      if (stateIdx >= 0) {
+        state[stateIdx].price = parseFloat(pair.priceUsd);
+        state[stateIdx].chg = pair.priceChange?.h24 ?? 0;
+        state[stateIdx].status = 'ok';
+        state[stateIdx].error = null;
+      }
+    } catch (e) {
+      console.warn('fetch failed for', t.sym, e);
+      if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'API error'; }
+    }
+  }
+  async function refreshAll() {
+    await Promise.all(TOKENS.map(fetchOne));
+    lastFetch = Date.now();
+    renderTicker();
+    renderLadder();
+    renderDebug();
+    renderUpdated();
+  }
+
+  renderTicker();
+  renderDebug();
+
+  // ==== DEEP LINK ROUTING ====
+  // Supports wenflip.com/pDAI, wenflip.com/BTC, wenflip.com/hex (case-insensitive)
+  function handleDeepLink() {
+    const raw = window.location.hash.replace(/^#/, '').trim();
+    if (!raw) return;
+    const match = TOKENS.find(t => t.sym.toLowerCase() === raw.toLowerCase());
+    if (match) openModalZoomedTo(match.sym);
+  }
+
+  refreshAll().then(handleDeepLink);
+  setInterval(refreshAll, 60_000);
+</script>
+
+<div class="modal-backdrop" id="modal" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow='';}">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Full ladder">
+    <div class="modal-head">
+      <div>
+        <h3>Full ladder <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">— grain to gold toilet</span></h3>
+        <div class="sub" id="modalSub">All rungs · token positions highlighted · ⭐ = featured flip</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="document.getElementById('modal').classList.remove('open');document.body.style.overflow='';">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <button class="back-top" onclick="document.getElementById('modalBody').scrollTo({top:0,behavior:'smooth'})">↑ Back to top</button>
+  </div>
+</div>
+
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e1aed0de5e18434c8019e1b9cb82b31c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
