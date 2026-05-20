@@ -425,18 +425,68 @@
   }
 
   .tweet-btn {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin: 10px 20px 14px;
-    padding: 8px 16px; border-radius: 999px;
-    background: rgba(29,161,242,0.08); border: 1px solid rgba(29,161,242,0.3);
-    color: rgba(29,161,242,0.9); font-size: 12px; font-weight: 700;
-    letter-spacing: 0.04em; cursor: pointer; text-decoration: none;
-    transition: background .15s ease, border-color .15s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    margin: 12px 20px 16px;
+    padding: 11px 22px; border-radius: 999px;
+    background: rgba(29,161,242,0.10); border: 1px solid rgba(29,161,242,0.4);
+    color: rgba(29,161,242,1); font-size: 14px; font-weight: 800;
+    letter-spacing: 0.03em; cursor: pointer; text-decoration: none;
+    transition: background .15s ease, border-color .15s ease, box-shadow .2s ease;
   }
-  .tweet-btn:hover { background: rgba(29,161,242,0.18); border-color: rgba(29,161,242,0.6); }
+  .tweet-btn:hover {
+    background: rgba(29,161,242,0.22); border-color: rgba(29,161,242,0.7);
+    box-shadow: 0 6px 24px rgba(29,161,242,0.3);
+  }
+
+  /* Change 6: dim FLIPPED row */
+  .crow.prev { border-top: 1px dashed var(--line); opacity: 0.42; }
+
+  /* Change 7: price is the dominant element */
+  .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 27px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: rgba(245,245,250,0.8); }
 
   .btn-pulsex { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.45); color: #f9a8d4; }
   .btn-pulsex:hover { background: rgba(236,72,153,0.25); border-color: rgba(236,72,153,0.7); box-shadow: 0 8px 30px rgba(236,72,153,0.3); }
+  .btn-pulsex-large {
+    padding: 18px 40px; font-size: 18px; font-weight: 800;
+    box-shadow: 0 8px 40px rgba(236,72,153,0.35);
+  }
+  .btn-pulsex-large:hover { box-shadow: 0 12px 50px rgba(236,72,153,0.55); transform: translateY(-2px); }
+
+  /* Bridge sentence */
+  .bridge-line {
+    margin: 22px auto 0; max-width: 520px;
+    font-size: clamp(14px, 1.55vw, 17px); font-weight: 700;
+    color: rgba(255,255,255,0.75); text-align: center; line-height: 1.5;
+  }
+  .bridge-arrow { color: rgba(139,92,246,0.5); margin-right: 4px; }
+  .bridge-pulse {
+    background: var(--grad);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+
+  /* CTA subhead */
+  .cta-sub {
+    margin: 10px auto 0; max-width: 420px;
+    color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5;
+  }
+
+  /* Change 3: Progress bar */
+  .flip-progress-wrap {
+    padding: 0 20px 4px;
+    margin-top: -4px;
+  }
+  .flip-progress-track {
+    height: 7px; border-radius: 999px;
+    background: rgba(255,255,255,0.07);
+    overflow: hidden;
+  }
+  .flip-progress-fill {
+    height: 100%; border-radius: 999px;
+    background: var(--grad);
+    transition: width 600ms ease-out;
+    min-width: 2px;
+  }
 
   footer { margin-top: 80px; padding: 40px 0 60px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
@@ -575,7 +625,8 @@
   <h1 class="logo">wenflip.com</h1>
   <p class="tagline">Wen flip? <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">Now flip.</span></p>
   <p class="subhead">Modern America priced you out of healthcare, college, and homeownership. Crypto is the receipt for what they took. We just show the math, one Dorito at a time.</p>
-  <p class="subhead-mini">Real prices. Real flips. Real dumb.</p>
+  <p class="bridge-line"><span class="bridge-arrow">→</span> <span class="bridge-pulse">PulseChain</span> runs the same math for pennies.</p>
+  <p class="subhead-mini">Real prices. Real flips. Real receipts.</p>
   <p class="updated" id="updated">Fetching live prices…</p>
 </header>
 
@@ -586,18 +637,15 @@
 <div class="container">
   <div class="main-grid">
     <section>
-      <div class="ladder-head">
-        <div>
-          <div class="section-eyebrow">The Race</div>
-          <h2 class="section-title">What will your coin <span class="grad">flip NEXT?</span></h2>
-        </div>
+      <div class="ladder-head" style="text-align:center;">
+        <h2 class="section-title">What's your coin about to <span class="grad">flip?</span></h2>
       </div>
       <div class="ladder-head-cta">
         <button class="view-full-btn" id="openFull">
           Click To View The Full Ladder ↗
         </button>
         <button class="calc-open-btn" id="openCalc">
-          🧮 How far is YOUR coin from flipping?
+          🧮 How far is your coin from flipping?
         </button>
       </div>
       <div class="clusters" id="clusters">
@@ -612,15 +660,16 @@
 
   <section class="cta">
     <h2>Wen actually flip? Get on PulseChain.</h2>
+    <p class="cta-sub">PulseChain is the fastest, cheapest crypto network. Start there.</p>
     <div class="cta-buttons">
-      <a class="btn btn-pulsex" href="https://app.pulsex.com" target="_blank" rel="noopener">Buy PLS on PulseX →</a>
+      <a class="btn btn-pulsex btn-pulsex-large" href="https://app.pulsex.com" target="_blank" rel="noopener">Buy PLS on PulseX →</a>
     </div>
   </section>
 
   <div class="api-debug" id="apiDebug"><span class="api-label">API Status:</span>initializing…</div>
 
   <footer>
-    <div class="ftag">Real prices. Real flips. Real dumb.</div>
+    <div class="ftag">Real prices. Real flips. Real receipts.</div>
     <div class="disc">Not financial advice. Just memes and math.</div>
     <div class="flinks" style="margin-top:16px;">
       <a href="https://x.com/Wen_Flip" target="_blank" rel="noopener">Follow @Wen_Flip on X</a>
@@ -1136,6 +1185,20 @@
           <div class="cprice">${prev.price}</div>
         </div>` : '';
 
+      // Progress bar (only when we have a next rung and not time mode)
+      let progressBar = '';
+      if (!timeMode && nextRung) {
+        const pct = Math.min(100, Math.max(0,
+          (t.price / nextRung.price) * 100
+        ));
+        progressBar = `
+          <div class="flip-progress-wrap">
+            <div class="flip-progress-track">
+              <div class="flip-progress-fill" style="width:${pct.toFixed(2)}%"></div>
+            </div>
+          </div>`;
+      }
+
       return `
         ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
         <div class="cluster" data-sym="${t.sym}">
@@ -1152,8 +1215,9 @@
               <div class="tchg ${chgCls}">${chgStr} (24h)</div>
             </div>
           </div>
+          ${progressBar}
           ${prevRow}
-          <a class="tweet-btn" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener">🐦 Tweet this flip</a>
+          <a class="tweet-btn" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener">𝕏 Tweet this flip</a>
         </div>
       `;
     }).join('');
