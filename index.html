@@ -443,7 +443,7 @@
 
   /* Change 7: price is the dominant element */
   .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 27px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; color: rgba(245,245,250,0.8); }
+  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; color: rgba(245,245,250,0.8); }
 
   .btn-pulsex { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.45); color: #f9a8d4; }
   .btn-pulsex:hover { background: rgba(236,72,153,0.25); border-color: rgba(236,72,153,0.7); box-shadow: 0 8px 30px rgba(236,72,153,0.3); }
@@ -1154,14 +1154,12 @@
       const next = rungLabelForToken(nextRung, timeMode);
       const prev = rungLabelForToken(prevRung, timeMode);
 
+      // Subtitle: only for time-mode coins (their only place this info lives)
+      // and top-of-ladder. Normal coins show no subtitle — the bar carries it.
       let tokenSubtitle = '';
       if (timeMode) {
         tokenSubtitle = timePhrase(t.price);
-      } else if (nextRung) {
-        const pct = ((nextRung.price - t.price) / t.price) * 100;
-        const pctStr = pct >= 100 ? pct.toFixed(0) : pct.toFixed(1);
-        tokenSubtitle = `${pctStr}% to next flip`;
-      } else {
+      } else if (!nextRung) {
         tokenSubtitle = 'at the top of the ladder';
       }
 
@@ -1185,12 +1183,16 @@
           <div class="cprice">${prev.price}</div>
         </div>` : '';
 
-      // Progress bar (only when we have a next rung and not time mode)
+      // Progress bar — measures gap closed between the rung just flipped
+      // and the rung being chased. 0% = just landed here, 100% = about to flip.
       let progressBar = '';
       if (!timeMode && nextRung) {
-        const pct = Math.min(100, Math.max(0,
-          (t.price / nextRung.price) * 100
-        ));
+        const span = nextRung.price - (prevRung ? prevRung.price : 0);
+        const pct = span > 0
+          ? Math.min(100, Math.max(0,
+              ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100
+            ))
+          : 0;
         progressBar = `
           <div class="flip-progress-wrap">
             <div class="flip-progress-track">
@@ -1208,7 +1210,7 @@
             <div class="tbadge"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></div>
             <div class="tinfo">
               <div class="tsym">${t.sym}</div>
-              <div class="tsub">${tokenSubtitle}</div>
+              ${tokenSubtitle ? `<div class="tsub">${tokenSubtitle}</div>` : ''}
             </div>
             <div class="tright">
               <div class="tprice">${fmtPrice(t.price)}</div>
