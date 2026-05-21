@@ -86,7 +86,7 @@
   a { color: inherit; text-decoration: none; }
   .container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
 
-  .hero { padding: 80px 0 40px; text-align: center; position: relative; }
+  .hero { padding: 48px 0 28px; text-align: center; position: relative; }
   .logo {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
@@ -143,7 +143,7 @@
 
   /* CLS fix: ticker height reserved before content loads */
   .ticker-wrap {
-    margin: 40px 0;
+    margin: 26px 0;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
     background: rgba(255,255,255,0.02);
     overflow: hidden;
@@ -182,7 +182,7 @@
   .api-debug span { display: inline-block; margin: 0 8px; }
   .api-debug .api-label { font-weight: 800; opacity: 0.8; margin-right: 4px; }
 
-  .main-grid { max-width: 860px; margin: 40px auto 0; }
+  .main-grid { max-width: 860px; margin: 26px auto 0; }
 
   .section-eyebrow { color: var(--muted); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
   .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
@@ -201,8 +201,8 @@
   .tier-dust    { background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(139,92,246,0.02)); color: #ddd6fe; border-color: rgba(139,92,246,0.3); }
 
   .cta {
-    margin-top: 60px; text-align: center;
-    padding: 60px 20px; border-radius: 24px;
+    margin-top: 36px; text-align: center;
+    padding: 40px 20px; border-radius: 24px;
     background:
       radial-gradient(600px 300px at 50% 0%, rgba(236,72,153,0.18), transparent 70%),
       var(--bg-2);
@@ -218,7 +218,7 @@
   .btn-telegram:hover { background: rgba(34,158,217,0.25); border-color: rgba(34,158,217,0.7); }
 
   .ladder-head { margin-top: 8px; }
-  .ladder-head-cta { display: flex; flex-direction: column; align-items: center; margin-top: 22px; gap: 12px; }
+  .ladder-head-cta { display: flex; flex-direction: column; align-items: center; margin-top: 14px; gap: 10px; }
   .view-full-btn {
     display: inline-flex; align-items: center; gap: 10px;
     padding: 16px 32px; border-radius: 999px;
@@ -236,12 +236,12 @@
 
   /* CLS fix: reserve clusters area so price load doesn't push everything down ~1600px */
   .clusters {
-    margin-top: 24px;
-    display: flex; flex-direction: column; gap: 28px;
-    min-height: 1700px;
+    margin-top: 16px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 680px;
   }
   @media (max-width: 760px) {
-    .clusters { min-height: 1900px; } /* mobile clusters stack taller */
+    .clusters { min-height: 840px; } /* mobile clusters stack taller */
   }
   .clusters-loading {
     display: flex; align-items: center; justify-content: center;
@@ -274,7 +274,7 @@
     text-transform: uppercase;
     user-select: none;
   }
-  .tier-tag-row { display: flex; justify-content: flex-end; padding: 0 16px 12px; }
+  .cflipped-right { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
   .tier-tag.heavyweight { background: rgba(251,191,36,0.18); border: 1px solid rgba(251,191,36,0.45); color: #fde68a; }
   .tier-tag.snack       { background: rgba(34,197,94,0.18);  border: 1px solid rgba(34,197,94,0.45);  color: #bbf7d0; }
   .tier-tag.absurd_floor{ background: rgba(236,72,153,0.18); border: 1px solid rgba(236,72,153,0.45); color: #fbcfe8; }
@@ -291,20 +291,20 @@
   }
 
   .crow {
-    display: grid; grid-template-columns: 48px 1fr 140px;
-    align-items: center; gap: 14px; padding: 16px 20px;
+    display: grid; grid-template-columns: 40px 1fr auto;
+    align-items: center; gap: 10px; padding: 7px 18px;
   }
   .crow.next  { border-bottom: 1px dashed var(--line); opacity: 0.92; }
   .crow.prev  { border-top: 1px dashed var(--line); opacity: 0.78; }
   .crow.featured { background: linear-gradient(90deg, rgba(251,191,36,0.07), rgba(251,191,36,0.01)); }
-  .crow .arrow { font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 800; text-align:center; }
-  .crow .cname { font-weight: 600; font-size: 15px; line-height: 1.4; }
-  .crow .cprice { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 14px; text-align: right; }
+  .crow .arrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 800; text-align:center; }
+  .crow .cname { font-weight: 600; font-size: 13px; line-height: 1.3; }
+  .crow .cprice { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
 
   .token-row {
-    display: grid; grid-template-columns: 48px 1fr auto;
-    align-items: center; gap: 14px;
-    padding: 22px 20px;
+    display: grid; grid-template-columns: 40px 1fr auto 44px;
+    align-items: center; gap: 12px;
+    padding: 12px 18px;
     background: linear-gradient(90deg, rgba(139,92,246,0.22), rgba(236,72,153,0.18));
     border-top: 1px solid rgba(236,72,153,0.35);
     border-bottom: 1px solid rgba(139,92,246,0.35);
@@ -332,7 +332,7 @@
   }
   .token-row:hover::after { opacity: 1; }
   .token-row .tbadge {
-    width: 44px; height: 44px; border-radius: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
     overflow: hidden;
     background: var(--grad);
     box-shadow: 0 0 22px rgba(236,72,153,0.55);
@@ -343,20 +343,21 @@
     0%,100% { box-shadow: 0 0 12px rgba(139,92,246,0.4); }
     50%     { box-shadow: 0 0 22px rgba(236,72,153,0.7); }
   }
-  .token-row .tinfo { display: flex; flex-direction: column; gap: 4px; }
+  .token-row .tinfo { display: flex; flex-direction: column; gap: 2px; }
   .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
   .token-row .tsub { color: rgba(245,245,250,0.85); font-size: 13px; font-weight: 600; }
   .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .token-row .tchg { font-size: 13px; font-weight: 800; margin-top: 4px; }
+  .token-row .tchg { font-size: 12px; font-weight: 800; margin-top: 2px; }
   .tchg.pos { color: #86efac; }
   .tchg.neg { color: #fca5a5; }
   .tright { text-align: right; }
 
   @media (max-width: 600px) {
-    .crow { grid-template-columns: 36px 1fr auto; padding: 12px 14px; gap: 10px; }
+    .crow { grid-template-columns: 34px 1fr auto; padding: 6px 13px; gap: 8px; }
     .crow .cprice { font-size: 12px; }
-    .token-row { grid-template-columns: 44px 1fr auto; padding: 16px 14px; }
-    .token-row .tsym, .token-row .tprice { font-size: 18px; }
+    .token-row { grid-template-columns: 38px 1fr auto 44px; padding: 9px 13px; gap: 9px; }
+    .token-row .tsym { font-size: 16px; }
+    .token-row .tprice { font-size: 19px; }
     .token-row::after { display: none; }
     .view-full-btn { padding: 12px 18px; font-size: 14px; }
   }
@@ -440,28 +441,44 @@
   }
 
   .tweet-btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+    display: inline-flex; align-items: center; justify-content: center;
     align-self: center;
-    margin: 14px 20px 20px;
-    padding: 15px 28px; border-radius: 999px;
+    width: 44px; height: 44px; border-radius: 12px;
     background: rgba(29,161,242,0.22); border: 1px solid rgba(29,161,242,0.7);
-    color: #bfe2fb; font-size: 15px; font-weight: 800;
-    letter-spacing: 0.03em; cursor: pointer; text-decoration: none;
-    box-shadow: 0 4px 20px rgba(29,161,242,0.22);
+    color: #bfe2fb; font-size: 17px; font-weight: 800;
+    cursor: pointer; text-decoration: none; flex-shrink: 0;
+    box-shadow: 0 3px 14px rgba(29,161,242,0.22);
     transition: background .15s ease, border-color .15s ease, box-shadow .2s ease, transform .15s ease;
   }
   .tweet-btn:hover {
-    background: rgba(29,161,242,0.35); border-color: rgba(29,161,242,0.95);
-    box-shadow: 0 8px 30px rgba(29,161,242,0.4);
+    background: rgba(29,161,242,0.38); border-color: rgba(29,161,242,0.95);
+    box-shadow: 0 6px 22px rgba(29,161,242,0.4);
     transform: translateY(-1px);
+  }
+  /* Fix 3: collapsed-coins expander */
+  .extra-clusters { display: flex; flex-direction: column; gap: 14px; }
+  .show-all-wrap { display: flex; justify-content: center; margin-top: 4px; }
+  .show-all-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 26px; border-radius: 999px;
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.5);
+    color: var(--text); font-weight: 800; font-size: 15px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .show-all-btn:hover {
+    background: var(--grad); border-color: transparent;
+    box-shadow: 0 10px 40px rgba(139,92,246,0.4);
+    transform: translateY(-2px);
   }
 
   /* Change 6: dim FLIPPED row */
   .crow.prev { border-top: 1px dashed var(--line); opacity: 0.42; }
 
   /* Change 7: price is the dominant element */
-  .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 27px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 21px; font-weight: 700; letter-spacing: -0.01em; color: rgba(245,245,250,0.8); }
+  .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; color: rgba(245,245,250,0.8); }
 
   .btn-pulsex { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.45); color: #f9a8d4; }
   .btn-pulsex:hover { background: rgba(236,72,153,0.25); border-color: rgba(236,72,153,0.7); box-shadow: 0 8px 30px rgba(236,72,153,0.3); }
@@ -491,7 +508,7 @@
 
   /* Change 3: Progress bar */
   .flip-progress-wrap {
-    padding: 10px 20px 16px;
+    padding: 6px 18px 10px;
   }
   .flip-progress-track {
     height: 8px; border-radius: 999px;
@@ -506,7 +523,7 @@
     min-width: 2px;
   }
 
-  footer { margin-top: 80px; padding: 40px 0 60px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
+  footer { margin-top: 48px; padding: 28px 0 40px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
   footer .flinks a:hover { color: var(--text); }
@@ -1197,7 +1214,7 @@
         <div class="crow prev ${prev.featured ? 'featured' : ''}">
           <div class="arrow">↓ flipped</div>
           <div class="cname">${prev.name}${starHtml(prev.featured)}</div>
-          <div class="cprice">${prev.price}</div>
+          <div class="cflipped-right">${tierBadge}<div class="cprice">${prev.price}</div></div>
         </div>` : '';
 
       // Progress bar — measures gap closed between the rung just flipped
@@ -1218,10 +1235,6 @@
           </div>`;
       }
 
-      const flippedBand = (prevRow || tierBadge)
-        ? `<div class="cband-flipped">${prevRow}${tierBadge ? `<div class="tier-tag-row">${tierBadge}</div>` : ''}</div>`
-        : '';
-
       return `
         ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
         <div class="cluster" data-sym="${t.sym}">
@@ -1237,11 +1250,11 @@
                 <div class="tprice">${fmtPrice(t.price)}</div>
                 <div class="tchg ${chgCls}">${chgStr} (24h)</div>
               </div>
+              <a class="tweet-btn" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener" aria-label="Tweet this ${t.sym} flip">𝕏</a>
             </div>
             ${progressBar}
           </div>
-          ${flippedBand}
-          <a class="tweet-btn" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener">𝕏 Tweet this flip</a>
+          ${prevRow}
         </div>
       `;
     }).join('');
