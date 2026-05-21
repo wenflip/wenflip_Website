@@ -21,15 +21,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <!-- Primary meta tags -->
-<title>wenflip.com — Wen flip? Now flip.</title>
-<meta name="description" content="Your coin flips everyday objects. From a grain of sand to a gold-plated toilet. Real prices. Real flips. Real dumb." />
+<title>WenFlip — Your daily scoreboard for crypto vs. the cost of living.</title>
+<meta name="description" content="Your daily scoreboard for crypto vs. the cost of living." />
 <link rel="canonical" href="https://wenflip.com/" />
 
 <!-- Open Graph (Telegram, Discord, Slack, iMessage, LinkedIn, Facebook) -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wenflip.com/" />
-<meta property="og:title" content="wenflip.com — Wen flip? Now flip." />
-<meta property="og:description" content="Your coin flips everyday objects. From a grain of sand to a gold-plated toilet. Real prices. Real flips. Real dumb." />
+<meta property="og:title" content="WenFlip — Your daily scoreboard for crypto vs. the cost of living." />
+<meta property="og:description" content="Your daily scoreboard for crypto vs. the cost of living." />
 <meta property="og:site_name" content="wenflip.com" />
 
 <meta property="og:image" content="https://wenflip.com/og-image.jpg" />
@@ -39,8 +39,8 @@
 <!-- Twitter Card -->
 <meta name="twitter:image" content="https://wenflip.com/og-image.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="wenflip.com — Wen flip? Now flip." />
-<meta name="twitter:description" content="Your coin flips everyday objects. From a grain of sand to a gold-plated toilet. Real prices. Real flips. Real dumb." />
+<meta name="twitter:title" content="WenFlip — Your daily scoreboard for crypto vs. the cost of living." />
+<meta name="twitter:description" content="Your daily scoreboard for crypto vs. the cost of living." />
 
 <!-- Favicons & app icons -->
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
@@ -100,6 +100,20 @@
     filter: drop-shadow(0 0 30px rgba(236,72,153,0.25));
   }
   .tagline { margin-top: 18px; font-size: clamp(22px, 3.6vw, 38px); font-weight: 800; letter-spacing: -0.01em; }
+  /* Primary descriptor: dominant line under the logo */
+  .hero-descriptor {
+    margin: 18px auto 0;
+    max-width: 820px;
+    font-size: clamp(22px, 3.6vw, 38px);
+    font-weight: 800; letter-spacing: -0.01em; line-height: 1.2;
+  }
+  /* Demoted wink line: smaller, subordinate to the descriptor */
+  .wink-line {
+    margin-top: 10px;
+    font-size: clamp(15px, 2vw, 22px);
+    font-weight: 700; letter-spacing: -0.01em;
+    color: rgba(245,245,250,0.7);
+  }
   .subhead { margin: 16px auto 0; color: var(--muted); max-width: 680px; font-size: clamp(14px, 1.7vw, 17px); line-height: 1.6; }
   .subhead-mini {
     margin: 14px auto 0; color: rgba(245,245,250,0.55);
@@ -622,11 +636,10 @@
 
 <header class="hero container">
   <span class="live-pill"><span class="pulse-dot"></span>Live · Multi-chain</span>
-  <h1 class="logo">wenflip.com</h1>
-  <p class="tagline">Wen flip? <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">Now flip.</span></p>
+  <h1 class="logo">WenFlip</h1>
+  <p class="hero-descriptor">Your daily scoreboard for crypto vs. the cost of living.</p>
   <p class="subhead">Modern America priced you out of healthcare, college, and homeownership. Crypto is the receipt for what they took. We just show the math, one Dorito at a time.</p>
   <p class="bridge-line"><span class="bridge-arrow">→</span> <span class="bridge-pulse">PulseChain</span> runs the same math for pennies.</p>
-  <p class="subhead-mini">Real prices. Real flips. Real receipts.</p>
   <p class="updated" id="updated">Fetching live prices…</p>
 </header>
 
