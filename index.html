@@ -1171,6 +1171,8 @@
     return `https://twitter.com/intent/tweet?text=${text}`;
   }
 
+  let showAllCoins = false; // Fix 3: collapsed by default — first 4 cards shown
+
   function renderLadder() {
     const el = document.getElementById('clusters');
     const ready = state.filter(t => t.price != null);
@@ -1180,7 +1182,7 @@
     }
     const ordered = [...ready].sort((a,b) => b.price - a.price);
 
-    const html = ordered.map((t, idx) => {
+    const cards = ordered.map((t, idx) => {
       const i = findRungIndex(t.price);
       const nextRung = LADDER[i - 1];
       const prevRung = LADDER[i];
@@ -1257,13 +1259,32 @@
           ${prevRow}
         </div>
       `;
-    }).join('');
-    el.innerHTML = html;
+    });
+
+    // Fix 3: show first 4 cards; collapse the rest behind an expander.
+    const firstFour = cards.slice(0, 4).join('');
+    const rest = cards.slice(4).join('');
+    el.innerHTML = firstFour + (rest
+      ? `<div id="extraClusters" class="extra-clusters" style="${showAllCoins ? '' : 'display:none'}">${rest}</div>`
+        + `<div class="show-all-wrap"><button id="showAllBtn" class="show-all-btn">${showAllCoins ? 'Show fewer ↑' : 'Show all coins ↓'}</button></div>`
+      : '');
+
+    const showAllBtn = document.getElementById('showAllBtn');
+    if (showAllBtn) {
+      showAllBtn.addEventListener('click', () => {
+        showAllCoins = !showAllCoins;
+        renderLadder();
+      });
+    }
 
     el.querySelectorAll('.token-row[data-zoom]').forEach(row => {
       const sym = row.getAttribute('data-zoom');
-      row.addEventListener('click', () => openModalZoomedTo(sym));
+      row.addEventListener('click', e => {
+        if (e.target.closest('.tweet-btn')) return; // let the tweet link act alone
+        openModalZoomedTo(sym);
+      });
       row.addEventListener('keydown', e => {
+        if (e.target.closest('.tweet-btn')) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openModalZoomedTo(sym);
