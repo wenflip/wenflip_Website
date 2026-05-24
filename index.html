@@ -605,47 +605,50 @@
   .calc-result-section { padding: 20px 24px; border-top: 1px solid var(--line); }
   .calc-result-placeholder { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; }
   .calc-result-card {
-    padding: 24px 20px 32px; border-radius: 16px;
-    background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(236,72,153,0.10));
+    width: min(440px, 100%);
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    padding: 30px 28px 46px;
+    border-radius: 18px;
+    background: linear-gradient(160deg, rgba(139,92,246,0.14), rgba(236,72,153,0.10));
     border: 1px solid rgba(139,92,246,0.3);
-    text-align: center; position: relative;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between;
+    text-align: center;
   }
-  .calc-line-mult {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(52px, 13vw, 84px);
-    font-weight: 700; line-height: 1;
-    background: var(--grad);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    filter: drop-shadow(0 0 20px rgba(236,72,153,0.35));
-    margin-bottom: 10px;
-  }
-  .calc-line-mult.flipped {
-    background: none; -webkit-background-clip: initial; background-clip: initial;
-    color: var(--green); filter: drop-shadow(0 0 16px rgba(34,197,94,0.4));
-  }
-  .calc-line-3 { font-size: 15px; color: var(--text); font-weight: 600; }
-  .calc-wm {
-    position: absolute; bottom: 8px; right: 12px;
-    font-size: 10px; color: rgba(139,92,246,0.45); font-weight: 700; letter-spacing: 0.08em;
-  }
-  .calc-date {
-    position: absolute; bottom: 8px; left: 12px;
-    font-size: 10px; color: rgba(139,92,246,0.45); font-weight: 700; letter-spacing: 0.06em;
-  }
-  /* Scoreboard proof row — smallest tier, sits above the headline */
-  .calc-scoreboard {
-    display: flex; align-items: flex-start; justify-content: center;
-    gap: 14px; margin-bottom: 16px;
+  /* ZONE 1 — the matchup */
+  .calc-zone-top {
+    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
   }
   .calc-sb-side { flex: 1; min-width: 0; text-align: left; }
   .calc-sb-right { text-align: right; }
-  .calc-sb-coin { display: flex; align-items: center; gap: 7px; font-weight: 800; font-size: 14px; }
-  .calc-sb-right .calc-sb-item { font-weight: 800; font-size: 14px; line-height: 1.3; }
-  .calc-sb-logo { width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0; object-fit: cover; }
-  .calc-sb-price { color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; margin-top: 4px; }
+  .calc-sb-coin { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; }
+  .calc-sb-right .calc-sb-item { font-weight: 800; font-size: 16px; line-height: 1.25; }
+  .calc-sb-logo { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; object-fit: cover; }
+  .calc-sb-price { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; margin-top: 6px; }
   .calc-sb-vs {
-    color: var(--muted); font-size: 11px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.1em; flex-shrink: 0; padding-top: 2px;
+    color: rgba(245,245,250,0.4); font-size: 13px; font-weight: 800;
+    text-transform: uppercase; letter-spacing: 0.12em; flex-shrink: 0; align-self: center;
+  }
+  /* ZONE 2 — the verdict */
+  .calc-zone-mid { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .calc-verdict {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
+  }
+  .calc-line-mult {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 64px; font-weight: 700; line-height: 1;
+  }
+  /* ZONE 3 — the explainer */
+  .calc-line-3 { font-size: 15px; color: var(--text); font-weight: 600; line-height: 1.4; }
+  .calc-wm {
+    position: absolute; bottom: 16px; right: 18px;
+    font-size: 11px; color: rgba(139,92,246,0.5); font-weight: 700; letter-spacing: 0.08em;
+  }
+  .calc-date {
+    position: absolute; bottom: 16px; left: 18px;
+    font-size: 11px; color: rgba(139,92,246,0.5); font-weight: 700; letter-spacing: 0.06em;
   }
   .calc-share-row { margin-top: 14px; display: flex; justify-content: center; }
   .calc-share-btn {
@@ -1616,26 +1619,30 @@
     // State + color from the single source of truth
     const stateKey = mult <= 1 ? 'flipped' : 'approaching';
     const col = CALC_STATE_COLORS[stateKey];
-    lineMult.style.background = 'none';
-    lineMult.style.webkitBackgroundClip = 'initial';
-    lineMult.style.backgroundClip = 'initial';
-    lineMult.style.color = col.main;
-    lineMult.style.filter = `drop-shadow(0 0 16px ${col.glow})`;
+    const verdictEl = document.getElementById('calcVerdict');
 
+    let multText;
     if (stateKey === 'flipped') {
       const n = coinPrice / targetPrice;
-      const nFmt = n >= 10000 ? Math.round(n).toLocaleString() : n >= 10 ? Math.round(n) : parseFloat(n.toFixed(1));
-      lineMult.textContent = 'FLIPPED ✓';
-      // Flipped = buying power. "buys" disambiguates from the "needs" wording below.
-      line3.textContent = `1 ${calcCoin} buys ${nFmt}× ${calcTarget.name}`;
+      verdictEl.textContent = 'FLIPPED ✓';
+      multText = fmtMult(n) + '×';
+      // Flipped = buying power. "buys" disambiguates from the "needs" wording.
+      line3.textContent = `1 ${calcCoin} buys ${multText} ${calcTarget.name}`;
       line3.removeAttribute('title');
     } else {
-      lineMult.textContent = fmtMult(mult) + 'x';
+      verdictEl.textContent = 'NOT YET';
+      multText = fmtMult(mult) + '×';
       // Approaching = price gap. "needs … to reach" can never read like the flipped line.
-      line3.textContent = `${calcCoin} needs ${fmtMult(mult)}× to reach ${calcTarget.name}`;
+      line3.textContent = `${calcCoin} needs ${multText} to reach ${calcTarget.name}`;
       if (mult >= 1e9) line3.setAttribute('title', `Exact: ${Math.round(mult).toLocaleString()}x`);
       else line3.removeAttribute('title');
     }
+    lineMult.textContent = multText;
+    // shrink the big number for long values so it never overflows the square
+    lineMult.style.fontSize = multText.length > 7 ? '42px' : multText.length > 5 ? '52px' : '64px';
+    verdictEl.style.color = col.main;
+    lineMult.style.color = col.main;
+    lineMult.style.filter = `drop-shadow(0 0 16px ${col.glow})`;
   }
 
   // ==== SHARE: Copy/Save as image ====
@@ -1676,27 +1683,23 @@
       const card   = document.getElementById('calcResultCard');
 
       const srcCanvas = await window.html2canvas(card, {
-        backgroundColor: '#11111f', scale: 2, useCORS: true, logging: false,
+        backgroundColor: null, scale: 3, useCORS: true, logging: false,
       });
 
-      // Composite onto a 1080×1080 square card
+      // The card is already a square — draw it to fill a 1080×1080 frame
       const out = document.createElement('canvas');
       out.width = 1080; out.height = 1080;
       const ctx = out.getContext('2d');
-      // bg gradient
       const bg = ctx.createLinearGradient(0,0,0,1080);
       bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14');
       ctx.fillStyle = bg; ctx.fillRect(0,0,1080,1080);
-      // pink glow at top
-      const glow = ctx.createRadialGradient(540,0,0,540,0,620);
-      glow.addColorStop(0,'rgba(236,72,153,0.14)'); glow.addColorStop(1,'transparent');
+      const glow = ctx.createRadialGradient(540,150,0,540,150,640);
+      glow.addColorStop(0,'rgba(236,72,153,0.12)'); glow.addColorStop(1,'transparent');
       ctx.fillStyle = glow; ctx.fillRect(0,0,1080,1080);
-      // scale & center the card
-      const scale  = Math.min((1080-140)/srcCanvas.width, (1080-140)/srcCanvas.height);
-      const dw = srcCanvas.width * scale, dh = srcCanvas.height * scale;
-      const dx = (1080-dw)/2, dy = (1080-dh)/2;
-      ctx.drawImage(srcCanvas, dx, dy, dw, dh);
-      // (no canvas watermark — the in-card .calc-wm is the single watermark)
+      // square card → square frame, small even margin, no distortion
+      const M = 30;
+      ctx.drawImage(srcCanvas, M, M, 1080 - 2*M, 1080 - 2*M);
+      // (single watermark lives in the card itself)
 
       if (_isIOS) {
         // iOS Safari can't write PNG to clipboard — download instead
@@ -1789,7 +1792,7 @@
       <div class="calc-result-section">
         <div id="calcPlaceholder" class="calc-result-placeholder">Pick a coin and a target to see the math.</div>
         <div id="calcResultCard" class="calc-result-card" style="display:none">
-          <div class="calc-scoreboard">
+          <div class="calc-zone-top">
             <div class="calc-sb-side">
               <div class="calc-sb-coin"><img id="calcSbLogo" class="calc-sb-logo" alt="" /><span id="calcSbCoinName"></span></div>
               <div class="calc-sb-price" id="calcSbCoinPrice"></div>
@@ -1800,8 +1803,13 @@
               <div class="calc-sb-price" id="calcSbItemPrice"></div>
             </div>
           </div>
-          <div class="calc-line-mult" id="calcLineMult"></div>
-          <div class="calc-line-3" id="calcLine3"></div>
+          <div class="calc-zone-mid">
+            <div class="calc-verdict" id="calcVerdict"></div>
+            <div class="calc-line-mult" id="calcLineMult"></div>
+          </div>
+          <div class="calc-zone-bot">
+            <div class="calc-line-3" id="calcLine3"></div>
+          </div>
           <div class="calc-date" id="calcDate"></div>
           <div class="calc-wm">wenflip.com</div>
         </div>
