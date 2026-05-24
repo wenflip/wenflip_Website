@@ -219,14 +219,17 @@
 
   .ladder-head { margin-top: 8px; }
   .ladder-head-cta { display: flex; flex-direction: column; align-items: center; margin-top: 14px; gap: 10px; }
-  .view-full-btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 16px 32px; border-radius: 999px;
-    background: rgba(236,72,153,0.08);
-    border: 1px solid rgba(236,72,153,0.5);
+  .view-full-btn, .calc-open-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; max-width: 420px;
+    padding: 16px 24px; border-radius: 999px;
     color: var(--text); font-weight: 800; font-size: 16px; cursor: pointer;
     letter-spacing: 0.01em;
     transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .view-full-btn {
+    background: rgba(236,72,153,0.08);
+    border: 1px solid rgba(236,72,153,0.5);
   }
   .view-full-btn:hover {
     background: var(--grad); border-color: transparent;
@@ -457,14 +460,15 @@
   }
   /* Fix 3: collapsed-coins expander */
   .extra-clusters { display: flex; flex-direction: column; gap: 14px; }
-  .show-all-wrap { display: flex; justify-content: center; margin-top: 4px; }
+  .show-all-wrap { display: flex; justify-content: center; margin-top: 6px; }
   .show-all-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 13px 26px; border-radius: 999px;
-    background: rgba(139,92,246,0.08);
-    border: 1px solid rgba(139,92,246,0.5);
-    color: var(--text); font-weight: 800; font-size: 15px; cursor: pointer;
-    font-family: 'Inter', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; max-width: 460px;
+    padding: 18px 28px; border-radius: 16px;
+    background: rgba(139,92,246,0.10);
+    border: 1px solid rgba(139,92,246,0.55);
+    color: var(--text); font-weight: 800; font-size: 17px; cursor: pointer;
+    font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
     transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   }
   .show-all-btn:hover {
@@ -531,13 +535,8 @@
 
   /* ===== FLIP CALCULATOR ===== */
   .calc-open-btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 16px 32px; border-radius: 999px;
     background: rgba(139,92,246,0.08);
     border: 1px solid rgba(139,92,246,0.5);
-    color: var(--text); font-weight: 800; font-size: 16px; cursor: pointer;
-    letter-spacing: 0.01em;
-    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   }
   .calc-open-btn:hover {
     background: var(--grad); border-color: transparent;
@@ -696,11 +695,11 @@
         <h2 class="section-title">What's your coin about to <span class="grad">flip?</span></h2>
       </div>
       <div class="ladder-head-cta">
-        <button class="view-full-btn" id="openFull">
-          Click To View The Full Ladder ↗
-        </button>
         <button class="calc-open-btn" id="openCalc">
           🧮 How far is your coin from flipping?
+        </button>
+        <button class="view-full-btn" id="openFull">
+          Click To View The Full Ladder ↗
         </button>
       </div>
       <div class="clusters" id="clusters">
@@ -715,7 +714,7 @@
 
   <section class="cta">
     <h2>Ready to actually flip?</h2>
-    <p class="cta-sub">PulseChain is the fastest, cheapest crypto network. Start there.</p>
+    <p class="cta-sub">PulseChain was built for fast, cheap access to high-upside onchain plays.</p>
     <div class="cta-buttons">
       <a class="btn btn-pulsex btn-pulsex-large" href="https://app.pulsex.com" target="_blank" rel="noopener">Buy PLS on PulseX →</a>
     </div>
