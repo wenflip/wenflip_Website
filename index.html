@@ -1,56 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-<!--
-  wenflip.com — drop this folder on Cloudflare Pages:
-  /
-  ├── index.html       (this file)
-  ├── sitemap.xml
-  ├── robots.txt
-  └── logos/
-      ├── BTC_logo.png
-      ├── ETH_logo.png
-      ├── HEX_Logo.png
-      ├── INC_logo.png
-      ├── PLS_Logo.png
-      ├── PulseX_logo.png
-      ├── pDAI_logo.png
-      └── pwBTC_Logo.png
--->
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<!-- Primary meta tags -->
 <title>WenFlip — Your daily scoreboard for crypto vs. the cost of living.</title>
 <meta name="description" content="Your daily scoreboard for crypto vs. the cost of living." />
 <link rel="canonical" href="https://wenflip.com/" />
-
-<!-- Open Graph (Telegram, Discord, Slack, iMessage, LinkedIn, Facebook) -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wenflip.com/" />
 <meta property="og:title" content="WenFlip — Your daily scoreboard for crypto vs. the cost of living." />
 <meta property="og:description" content="Your daily scoreboard for crypto vs. the cost of living." />
 <meta property="og:site_name" content="wenflip.com" />
-
 <meta property="og:image" content="https://wenflip.com/og-image.jpg" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-
-<!-- Twitter Card -->
 <meta name="twitter:image" content="https://wenflip.com/og-image.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="WenFlip — Your daily scoreboard for crypto vs. the cost of living." />
 <meta name="twitter:description" content="Your daily scoreboard for crypto vs. the cost of living." />
-
-<!-- Favicons & app icons -->
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="manifest" href="/site.webmanifest" />
 <meta name="theme-color" content="#a855f7">
-
-<!-- Performance: preconnect to fonts + DexScreener API for faster first paint -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.dexscreener.com">
@@ -85,7 +58,6 @@
   }
   a { color: inherit; text-decoration: none; }
   .container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
-
   .hero { padding: 48px 0 28px; text-align: center; position: relative; }
   .logo {
     font-family: 'Space Grotesk', sans-serif;
@@ -99,8 +71,6 @@
     letter-spacing: -0.04em;
     filter: drop-shadow(0 0 30px rgba(236,72,153,0.25));
   }
-  .tagline { margin-top: 18px; font-size: clamp(22px, 3.6vw, 38px); font-weight: 800; letter-spacing: -0.01em; }
-  /* Primary descriptor: dominant line under the logo */
   .hero-descriptor {
     margin: 18px auto 0;
     max-width: 680px;
@@ -109,18 +79,7 @@
     font-weight: 800; letter-spacing: -0.01em; line-height: 1.25;
     text-wrap: balance;
   }
-  /* Demoted wink line: smaller, subordinate to the descriptor */
-  .wink-line {
-    margin-top: 10px;
-    font-size: clamp(15px, 2vw, 22px);
-    font-weight: 700; letter-spacing: -0.01em;
-    color: rgba(245,245,250,0.7);
-  }
   .subhead { margin: 16px auto 0; color: var(--muted); max-width: 680px; font-size: clamp(14px, 1.7vw, 17px); line-height: 1.6; }
-  .subhead-mini {
-    margin: 14px auto 0; color: rgba(245,245,250,0.55);
-    font-size: 12px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-  }
   .pulse-dot {
     display: inline-block; width: 8px; height: 8px; border-radius: 50%;
     background: var(--green); box-shadow: 0 0 12px var(--green);
@@ -137,19 +96,17 @@
   }
   .updated {
     margin-top: 14px; color: var(--muted); font-size: 12px; letter-spacing: 0.06em;
-    min-height: 18px; /* CLS: reserve line height so text appearance doesn't shift hero */
+    min-height: 18px;
   }
   .updated b { color: var(--text); font-weight: 700; }
-
-  /* CLS fix: ticker height reserved before content loads */
   .ticker-wrap {
     margin: 26px 0;
     border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
     background: rgba(255,255,255,0.02);
     overflow: hidden;
-    min-height: 44px; /* matches rendered ticker row height */
+    min-height: 44px;
   }
-  .ticker { display: flex; gap: 0; align-items: stretch; animation: scroll 50s linear infinite; width: max-content; }
+  .ticker { display: flex; gap: 0; align-items: stretch; animation: scroll 80s linear infinite; width: max-content; }
   @keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
   .tick { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-right: 1px solid var(--line); white-space: nowrap; }
   .tick-sym { font-weight: 800; font-size: 13px; letter-spacing: 0.02em; }
@@ -158,36 +115,20 @@
   .tick-chg.neg { color: var(--red); }
   .tick-badge {
     width: 22px; height: 22px; border-radius: 50%;
-    overflow: hidden;
-    background: var(--grad);
-    box-shadow: 0 0 16px rgba(236,72,153,0.4);
-    flex-shrink: 0;
+    overflow: hidden; background: var(--grad);
+    box-shadow: 0 0 16px rgba(236,72,153,0.4); flex-shrink: 0;
   }
-
-  .logo-img {
-    width: 100%; height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
-  }
-
-  /* CLS fix: lock height of the API debug strip so it doesn't grow as statuses arrive */
+  .logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
   .api-debug {
     text-align: center; padding: 14px 12px 4px;
     font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); opacity: 0.45;
-    background: transparent;
-    min-height: 28px;
+    color: var(--muted); opacity: 0.45; background: transparent; min-height: 28px;
   }
   .api-debug span { display: inline-block; margin: 0 8px; }
   .api-debug .api-label { font-weight: 800; opacity: 0.8; margin-right: 4px; }
-
   .main-grid { max-width: 860px; margin: 26px auto 0; }
-
-  .section-eyebrow { color: var(--muted); font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; }
   .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
   .section-title .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-
   .tier-band {
     display: flex; align-items: center; gap: 12px;
     padding: 14px 18px; margin: 14px 0 0;
@@ -199,24 +140,16 @@
   .tier-snack   { background: linear-gradient(90deg, rgba(34,197,94,0.18), rgba(34,197,94,0.02)); color: #bbf7d0; border-color: rgba(34,197,94,0.3); }
   .tier-absurd  { background: linear-gradient(90deg, rgba(236,72,153,0.18), rgba(236,72,153,0.02)); color: #fbcfe8; border-color: rgba(236,72,153,0.3); }
   .tier-dust    { background: linear-gradient(90deg, rgba(139,92,246,0.18), rgba(139,92,246,0.02)); color: #ddd6fe; border-color: rgba(139,92,246,0.3); }
-
   .cta {
     margin-top: 36px; text-align: center;
     padding: 40px 20px; border-radius: 24px;
-    background:
-      radial-gradient(600px 300px at 50% 0%, rgba(236,72,153,0.18), transparent 70%),
-      var(--bg-2);
+    background: radial-gradient(600px 300px at 50% 0%, rgba(236,72,153,0.18), transparent 70%), var(--bg-2);
     border: 1px solid var(--line);
   }
   .cta h2 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(28px, 4.5vw, 44px); font-weight: 700; letter-spacing: -0.02em; }
   .cta-buttons { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
   .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 22px; border-radius: 12px; font-weight: 800; font-size: 15px; border: 1px solid var(--line); transition: transform .15s ease, box-shadow .2s ease; }
   .btn:hover { transform: translateY(-2px); }
-  .btn-primary { background: var(--grad); border-color: transparent; color: white; box-shadow: 0 8px 30px rgba(236,72,153,0.35); }
-  .btn-secondary { background: rgba(255,255,255,0.04); }
-  .btn-telegram { background: rgba(34,158,217,0.12); border-color: rgba(34,158,217,0.45); color: #93d3f0; }
-  .btn-telegram:hover { background: rgba(34,158,217,0.25); border-color: rgba(34,158,217,0.7); }
-
   .ladder-head { margin-top: 8px; }
   .ladder-head-cta { display: flex; flex-direction: column; align-items: center; margin-top: 14px; gap: 10px; }
   .view-full-btn, .calc-open-btn {
@@ -243,69 +176,32 @@
   .chain-filter-btn {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 8px 18px; border-radius: 999px;
-    background: rgba(236,72,153,0.08);
-    border: 1px solid rgba(236,72,153,0.5);
-    color: var(--text); font-weight: 700; font-size: 14px; cursor: pointer;
-    letter-spacing: 0.01em;
-    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--line);
+    color: var(--muted); font-weight: 700; font-size: 14px; cursor: pointer;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .15s ease;
   }
   .chain-filter-btn:hover {
-    background: var(--grad); border-color: transparent;
-    box-shadow: 0 6px 24px rgba(236,72,153,0.35);
-    transform: translateY(-1px);
+    background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.5); color: var(--text);
   }
   .chain-filter-btn.active {
-    background: var(--grad); border-color: transparent;
-    box-shadow: 0 6px 24px rgba(236,72,153,0.35);
+    background: var(--grad); border-color: transparent; color: white;
+    box-shadow: 0 4px 18px rgba(139,92,246,0.35);
   }
-
-  /* CLS fix: reserve clusters area so price load doesn't push everything down */
   .clusters {
     margin-top: 16px;
     display: flex; flex-direction: column; gap: 10px;
     min-height: 440px;
   }
-  @media (max-width: 760px) {
-    .clusters { min-height: 520px; }
-  }
+  @media (max-width: 760px) { .clusters { min-height: 520px; } }
   .clusters-loading {
     display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 14px;
-    padding: 80px 20px;
-    color: var(--muted);
-    font-size: 14px; letter-spacing: 0.04em;
+    flex-direction: column; gap: 14px; padding: 80px 20px;
+    color: var(--muted); font-size: 14px; letter-spacing: 0.04em;
   }
   .clusters-loading .skel-dot {
     width: 10px; height: 10px; border-radius: 50%;
-    background: var(--grad);
-    animation: pulse 1.6s ease-in-out infinite;
-  }
-  .cluster {
-    border: 1px solid var(--line); border-radius: 18px; overflow: hidden;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0));
-    position: relative;
-    display: flex; flex-direction: column;
-  }
-  .cluster-divider {
-    height: 1px; margin: 0 auto;
-    background: linear-gradient(90deg, transparent, rgba(236,72,153,0.5), rgba(139,92,246,0.5), transparent);
-    width: 70%;
-  }
-
-  .tier-tag {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 999px;
-    font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
-    text-transform: uppercase;
-    user-select: none;
-  }
-  .cflipped-right { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
-  .tier-tag.heavyweight { background: rgba(251,191,36,0.18); border: 1px solid rgba(251,191,36,0.45); color: #fde68a; }
-  .tier-tag.snack       { background: rgba(34,197,94,0.18);  border: 1px solid rgba(34,197,94,0.45);  color: #bbf7d0; }
-  .tier-tag.absurd_floor{ background: rgba(236,72,153,0.18); border: 1px solid rgba(236,72,153,0.45); color: #fbcfe8; }
-  .tier-tag.time        { background: rgba(139,92,246,0.18); border: 1px solid rgba(139,92,246,0.45); color: #ddd6fe; }
-  @media (max-width: 600px) {
-    .tier-tag { padding: 3px 8px; font-size: 9px; }
+    background: var(--grad); animation: pulse 1.6s ease-in-out infinite;
   }
 
   /* ===== CHAIN PILLS ===== */
@@ -315,135 +211,61 @@
     font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
     text-transform: uppercase; user-select: none; flex-shrink: 0;
   }
-  .chain-pill.pulsechain {
-    background: rgba(139,92,246,0.15);
-    border: 1px solid rgba(139,92,246,0.38);
-    color: #c4b5fd;
-  }
-  .chain-pill.major {
-    background: rgba(148,163,184,0.08);
-    border: 1px solid rgba(148,163,184,0.22);
-    color: #7a8a9a;
-  }
-  .chain-pill-dot {
-    width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0;
-  }
+  .chain-pill.pulsechain { background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.38); color: #c4b5fd; }
+  .chain-pill.major { background: rgba(148,163,184,0.08); border: 1px solid rgba(148,163,184,0.22); color: #7a8a9a; }
+  .chain-pill-dot { width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0; }
   .chain-pill.pulsechain .chain-pill-dot { background: #a78bfa; }
-  .chain-pill.major      .chain-pill-dot { background: #64748b; }
+  .chain-pill.major .chain-pill-dot { background: #64748b; }
 
-  .star {
-    display: inline-block; margin-left: 4px;
-    font-size: 0.85em;
-    filter: drop-shadow(0 0 5px rgba(251,191,36,0.55));
-    cursor: help;
-  }
+  .star { display: inline-block; margin-left: 4px; font-size: 0.85em; filter: drop-shadow(0 0 5px rgba(251,191,36,0.55)); cursor: help; }
 
   /* ===== COMPACT COIN CARD ===== */
-  /* cluster: flat dark surface + 3px left border per chain */
   .cluster {
     border-radius: 12px; overflow: hidden;
     background: var(--bg-2);
     border: 1px solid var(--line);
-    position: relative;
-    display: flex; flex-direction: column;
+    position: relative; display: flex; flex-direction: column;
   }
   .cluster.chain-pulsechain { border-left: 3px solid rgba(139,92,246,0.7); }
   .cluster.chain-major      { border-left: 3px solid rgba(100,116,139,0.55); }
-
-  .cluster-divider {
-    height: 1px; margin: 0;
-    background: var(--line);
-  }
-
-  /* Top row: logo · ticker · pill ··· price · % · share */
+  .cluster-divider { height: 1px; margin: 0; background: var(--line); }
   .card-top {
     display: flex; align-items: center; gap: 10px;
-    padding: 12px 14px 8px;
-    cursor: pointer;
-    min-width: 0;
+    padding: 12px 14px 8px; cursor: pointer; min-width: 0;
   }
   .card-top:hover { background: rgba(255,255,255,0.025); }
-  .card-logo {
-    width: 32px; height: 32px; border-radius: 50%;
-    overflow: hidden; flex-shrink: 0;
-    background: rgba(255,255,255,0.06);
-  }
+  .card-logo { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(255,255,255,0.06); }
   .card-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
-  .card-id {
-    display: flex; align-items: center; gap: 6px;
-    min-width: 0; flex-shrink: 1; overflow: hidden;
-  }
-  .card-sym {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
-    white-space: nowrap;
-  }
-  /* spacer pushes price group to right */
+  .card-id { display: flex; align-items: center; gap: 6px; min-width: 0; flex-shrink: 1; overflow: hidden; }
+  .card-sym { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
   .card-spacer { flex: 1; min-width: 4px; }
-  .card-right {
-    display: flex; align-items: center; gap: 8px;
-    flex-shrink: 0;
-  }
-  .card-price {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px; font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap; line-height: 1;
-  }
-  .card-chg {
-    font-size: 11px; font-weight: 700;
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
+  .card-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .card-price { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1; }
+  .card-chg { font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
   .card-chg.pos { color: #86efac; }
   .card-chg.neg { color: #fca5a5; }
-
-  /* Share-to-X button: SVG bird, never clips */
   .card-share {
     display: inline-flex; align-items: center; justify-content: center;
     width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
-    background: rgba(29,161,242,0.15);
-    border: 1px solid rgba(29,161,242,0.45);
-    color: #7ec8ef;
-    text-decoration: none;
+    background: rgba(29,161,242,0.15); border: 1px solid rgba(29,161,242,0.45);
+    color: #7ec8ef; text-decoration: none;
     transition: background .15s, border-color .15s, transform .1s;
   }
-  .card-share:hover {
-    background: rgba(29,161,242,0.30); border-color: rgba(29,161,242,0.80);
-    transform: translateY(-1px);
-  }
+  .card-share:hover { background: rgba(29,161,242,0.30); border-color: rgba(29,161,242,0.80); transform: translateY(-1px); }
   .card-share svg { width: 14px; height: 14px; fill: currentColor; display: block; }
-
-  /* Progress bar */
   .card-bar-wrap { padding: 0 14px 0; }
-  .card-bar-track {
-    height: 3px; border-radius: 999px;
-    background: rgba(255,255,255,0.10);
-    overflow: hidden;
-  }
-  .card-bar-fill {
-    height: 100%; border-radius: 999px;
-    transition: width 600ms ease-out;
-    min-width: 2px;
-  }
-  /* PulseChain: gradient; majors: grey */
+  .card-bar-track { height: 3px; border-radius: 999px; background: rgba(255,255,255,0.10); overflow: hidden; }
+  .card-bar-fill { height: 100%; border-radius: 999px; transition: width 600ms ease-out; min-width: 2px; }
   .chain-pulsechain .card-bar-fill { background: var(--grad); }
-  .chain-major      .card-bar-fill { background: rgba(148,163,184,0.6); }
-
-  /* Caption line */
+  .chain-major .card-bar-fill { background: rgba(148,163,184,0.6); }
   .card-caption {
-    padding: 5px 14px 11px;
-    font-size: 11px; color: var(--muted); line-height: 1.45;
+    padding: 5px 14px 11px; font-size: 11px; color: var(--muted); line-height: 1.45;
     display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px;
   }
   .card-caption .cap-pct  { color: var(--text); font-weight: 700; }
   .card-caption .cap-sep  { opacity: 0.35; }
   .card-caption .cap-next { color: rgba(245,245,250,0.65); }
   .card-caption .cap-prev { color: rgba(245,245,250,0.32); font-size: 10px; }
-
-  /* sub-zero price notation: the subscript zero count */
-  .price-sub { font-size: 0.72em; vertical-align: sub; line-height: 1; }
-
   @media (max-width: 600px) {
     .card-top { padding: 10px 12px 7px; gap: 8px; }
     .card-sym { font-size: 15px; }
@@ -459,6 +281,7 @@
     .card-share { width: 28px; height: 28px; }
   }
 
+  /* ===== MODALS ===== */
   .modal-backdrop {
     position: fixed; inset: 0; z-index: 100;
     background: rgba(10,10,20,0.78); backdrop-filter: blur(6px);
@@ -468,8 +291,7 @@
   @keyframes fadeIn { from {opacity:0} to {opacity:1} }
   .modal {
     width: min(820px, 100%); max-height: 90vh; display: flex; flex-direction: column;
-    background: var(--bg-2);
-    border: 1px solid rgba(236,72,153,0.3);
+    background: var(--bg-2); border: 1px solid rgba(236,72,153,0.3);
     border-radius: 20px; overflow: hidden;
     box-shadow: 0 20px 80px rgba(236,72,153,0.25), 0 0 0 1px rgba(139,92,246,0.2) inset;
     position: relative;
@@ -492,28 +314,19 @@
     cursor: pointer; font-size: 18px; line-height: 1;
   }
   .modal-close:hover { background: var(--grad); border-color: transparent; }
-  .modal-body { overflow-y: auto; padding: 8px 0 80px; position: relative; z-index: 1; scroll-behavior: smooth;}
+  .modal-body { overflow-y: auto; padding: 8px 0 80px; position: relative; z-index: 1; scroll-behavior: smooth; }
   .modal-body .tier-band { margin: 14px 18px 6px; }
   .modal-body .frung {
     display: grid; grid-template-columns: 36px 1fr 130px auto;
     align-items: center; gap: 12px; padding: 10px 24px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
-    font-size: 14px;
-    transition: background .3s ease;
+    font-size: 14px; transition: background .3s ease;
   }
   .modal-body .frung:hover { background: rgba(255,255,255,0.03); }
   .modal-body .frung.has { background: linear-gradient(90deg, rgba(139,92,246,0.12), rgba(236,72,153,0.06)); }
-  .modal-body .frung.featured {
-    background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02));
-  }
-  .modal-body .frung.featured.has {
-    background: linear-gradient(90deg, rgba(139,92,246,0.16), rgba(236,72,153,0.08));
-    border-left: 3px solid rgba(251,191,36,0.6);
-  }
-  /* ZOOM target pulse — applied via JS when modal scrolls to a specific rung */
-  .modal-body .frung.zoom-target {
-    animation: zoomPulse 1.6s ease-in-out 2;
-  }
+  .modal-body .frung.featured { background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02)); }
+  .modal-body .frung.featured.has { background: linear-gradient(90deg, rgba(139,92,246,0.16), rgba(236,72,153,0.08)); border-left: 3px solid rgba(251,191,36,0.6); }
+  .modal-body .frung.zoom-target { animation: zoomPulse 1.6s ease-in-out 2; }
   @keyframes zoomPulse {
     0%   { box-shadow: inset 0 0 0 0 rgba(236,72,153,0.0), 0 0 0 0 rgba(236,72,153,0.0); }
     30%  { box-shadow: inset 0 0 60px 0 rgba(236,72,153,0.35), 0 0 30px 4px rgba(236,72,153,0.45); }
@@ -525,19 +338,12 @@
   .modal-body .ftokens { display: flex; gap: 4px; justify-content: flex-end; }
   .ftok {
     width: 26px; height: 26px; border-radius: 50%;
-    overflow: hidden;
-    background: var(--grad);
-    box-shadow: 0 0 12px rgba(236,72,153,0.5);
-    flex-shrink: 0;
+    overflow: hidden; background: var(--grad);
+    box-shadow: 0 0 12px rgba(236,72,153,0.5); flex-shrink: 0;
   }
-  /* Safety: lock logo image sizing so malformed content can't blow up layout */
-  .ftok img,
-  .ftok .logo-img {
-    width: 100%; height: 100%;
-    max-width: 100%; max-height: 100%;
-    object-fit: cover;
-    display: block;
-    flex-shrink: 0;
+  .ftok img, .ftok .logo-img {
+    width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+    object-fit: cover; display: block; flex-shrink: 0;
   }
   .back-top {
     position: absolute; bottom: 18px; right: 18px; z-index: 2;
@@ -545,54 +351,25 @@
     background: var(--grad); color: white; font-weight: 800; font-size: 12px;
     border: none; cursor: pointer; box-shadow: 0 8px 30px rgba(236,72,153,0.4);
   }
-
-  /* collapsed-coins expander */
   .extra-clusters { display: flex; flex-direction: column; gap: 10px; }
   .show-all-wrap { display: flex; justify-content: center; margin-top: 6px; }
   .show-all-btn {
     display: flex; align-items: center; justify-content: center; gap: 10px;
-    width: 100%; max-width: 460px;
-    padding: 14px 24px; border-radius: 12px;
-    background: rgba(139,92,246,0.08);
-    border: 1px solid rgba(139,92,246,0.45);
+    width: 100%; max-width: 460px; padding: 14px 24px; border-radius: 12px;
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.45);
     color: var(--text); font-weight: 700; font-size: 15px; cursor: pointer;
     font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
     transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   }
-  .show-all-btn:hover {
-    background: var(--grad); border-color: transparent;
-    box-shadow: 0 8px 30px rgba(139,92,246,0.35);
-    transform: translateY(-2px);
-  }
-
+  .show-all-btn:hover { background: var(--grad); border-color: transparent; box-shadow: 0 8px 30px rgba(139,92,246,0.35); transform: translateY(-2px); }
   .btn-pulsex { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.45); color: #f9a8d4; }
   .btn-pulsex:hover { background: rgba(236,72,153,0.25); border-color: rgba(236,72,153,0.7); box-shadow: 0 8px 30px rgba(236,72,153,0.3); }
-  .btn-pulsex-large {
-    padding: 18px 40px; font-size: 18px; font-weight: 800;
-    box-shadow: 0 8px 40px rgba(236,72,153,0.35);
-  }
+  .btn-pulsex-large { padding: 18px 40px; font-size: 18px; font-weight: 800; box-shadow: 0 8px 40px rgba(236,72,153,0.35); }
   .btn-pulsex-large:hover { box-shadow: 0 12px 50px rgba(236,72,153,0.55); transform: translateY(-2px); }
-
-  /* Bridge sentence */
-  .bridge-line {
-    margin: 22px auto 0; max-width: 520px;
-    font-size: clamp(14px, 1.55vw, 17px); font-weight: 700;
-    color: rgba(255,255,255,0.75); text-align: center; line-height: 1.5;
-  }
+  .bridge-line { margin: 22px auto 0; max-width: 520px; font-size: clamp(14px, 1.55vw, 17px); font-weight: 700; color: rgba(255,255,255,0.75); text-align: center; line-height: 1.5; }
   .bridge-arrow { color: rgba(139,92,246,0.5); margin-right: 4px; }
-  .bridge-pulse {
-    background: var(--grad);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-  }
-
-  /* CTA subhead */
-  .cta-sub {
-    margin: 10px auto 0; max-width: 420px;
-    color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5;
-  }
-
-  /* bridge sentence */
-
+  .bridge-pulse { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .cta-sub { margin: 10px auto 0; max-width: 420px; color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5; }
   footer { margin-top: 48px; padding: 28px 0 40px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
@@ -600,40 +377,22 @@
   footer .disc { margin-top: 16px; font-size: 12px; opacity: 0.7; }
 
   /* ===== FLIP CALCULATOR ===== */
-  .calc-open-btn {
-    background: rgba(139,92,246,0.08);
-    border: 1px solid rgba(139,92,246,0.5);
-  }
-  .calc-open-btn:hover {
-    background: var(--grad); border-color: transparent;
-    box-shadow: 0 10px 40px rgba(139,92,246,0.45), 0 0 60px rgba(236,72,153,0.25);
-    transform: translateY(-2px);
-  }
-  @media (max-width: 600px) {
-    .calc-open-btn { padding: 12px 18px; font-size: 14px; }
-  }
+  .calc-open-btn { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.5); }
+  .calc-open-btn:hover { background: var(--grad); border-color: transparent; box-shadow: 0 10px 40px rgba(139,92,246,0.45), 0 0 60px rgba(236,72,153,0.25); transform: translateY(-2px); }
+  @media (max-width: 600px) { .calc-open-btn { padding: 12px 18px; font-size: 14px; } }
   .calc-section { padding: 16px 24px; }
   .calc-section + .calc-section { border-top: 1px solid var(--line); }
-  .calc-lbl {
-    font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 12px;
-  }
+  .calc-lbl { font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
   .coin-badges { display: flex; flex-wrap: wrap; gap: 8px; }
   .coin-badge {
-    display: flex; align-items: center; gap: 7px;
-    padding: 8px 14px; border-radius: 999px;
+    display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
     border: 1px solid var(--line); background: rgba(255,255,255,0.04);
     font-weight: 800; font-size: 13px; cursor: pointer;
-    transition: border-color .15s, background .15s, box-shadow .15s;
-    user-select: none;
+    transition: border-color .15s, background .15s, box-shadow .15s; user-select: none;
   }
   .coin-badge img { width: 20px; height: 20px; border-radius: 50%; }
   .coin-badge:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.1); }
-  .coin-badge.selected {
-    border-color: var(--purple);
-    background: rgba(139,92,246,0.18);
-    box-shadow: 0 0 14px rgba(139,92,246,0.4);
-  }
+  .coin-badge.selected { border-color: var(--purple); background: rgba(139,92,246,0.18); box-shadow: 0 0 14px rgba(139,92,246,0.4); }
   .coin-badge.loading { opacity: 0.45; pointer-events: none; }
   .calc-search-wrap { position: relative; margin-bottom: 10px; }
   .calc-search {
@@ -644,23 +403,10 @@
   }
   .calc-search:focus { border-color: rgba(139,92,246,0.5); }
   .calc-search::placeholder { color: var(--muted); }
-  .calc-search-icon {
-    position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
-    color: var(--muted); font-size: 14px; pointer-events: none;
-  }
-  .target-list {
-    max-height: 190px; overflow-y: auto;
-    border: 1px solid var(--line); border-radius: 12px;
-    background: rgba(255,255,255,0.02);
-    scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.4) transparent;
-  }
+  .calc-search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  .target-list { max-height: 190px; overflow-y: auto; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,0.02); scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.4) transparent; }
   @media (max-width: 600px) { .target-list { max-height: 130px; } }
-  .target-item {
-    padding: 9px 16px; font-size: 14px; cursor: pointer;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    display: flex; justify-content: space-between; align-items: center; gap: 8px;
-    transition: background .1s;
-  }
+  .target-item { padding: 9px 16px; font-size: 14px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center; gap: 8px; transition: background .1s; }
   .target-item:last-child { border-bottom: none; }
   .target-item:hover { background: rgba(255,255,255,0.05); }
   .target-item.selected { background: rgba(139,92,246,0.15); }
@@ -670,72 +416,30 @@
   .calc-result-section { padding: 20px 24px; border-top: 1px solid var(--line); }
   .calc-result-placeholder { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; }
   .calc-result-card {
-    width: min(440px, 100%);
-    aspect-ratio: 1 / 1;
-    margin: 0 auto;
-    padding: 30px 28px 46px;
-    border-radius: 18px;
-    background: linear-gradient(160deg, rgba(139,92,246,0.14), rgba(236,72,153,0.10));
-    border: 1px solid rgba(139,92,246,0.3);
-    position: relative; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: space-between;
-    text-align: center;
+    width: min(440px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; padding: 30px 28px 46px;
+    border-radius: 18px; background: linear-gradient(160deg, rgba(139,92,246,0.14), rgba(236,72,153,0.10));
+    border: 1px solid rgba(139,92,246,0.3); position: relative; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: space-between; text-align: center;
   }
-  /* ZONE 1 — the matchup */
-  .calc-zone-top {
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
-  }
+  .calc-zone-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
   .calc-sb-side { flex: 1; min-width: 0; text-align: left; }
   .calc-sb-right { text-align: right; }
   .calc-sb-coin { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 18px; }
   .calc-sb-right .calc-sb-item { font-weight: 800; font-size: 16px; line-height: 1.25; }
   .calc-sb-logo { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; object-fit: cover; }
   .calc-sb-price { color: var(--muted); font-size: 15px; font-variant-numeric: tabular-nums; margin-top: 6px; }
-  .calc-sb-vs {
-    color: rgba(245,245,250,0.4); font-size: 13px; font-weight: 800;
-    text-transform: uppercase; letter-spacing: 0.12em; flex-shrink: 0; align-self: center;
-  }
-  /* ZONE 2 — the verdict */
+  .calc-sb-vs { color: rgba(245,245,250,0.4); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; flex-shrink: 0; align-self: center; }
   .calc-zone-mid { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-  .calc-verdict {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 24px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase;
-  }
-  .calc-line-mult {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 64px; font-weight: 700; line-height: 1;
-  }
-  /* ZONE 3 — the explainer */
+  .calc-verdict { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; }
+  .calc-line-mult { font-family: 'Space Grotesk', sans-serif; font-size: 64px; font-weight: 700; line-height: 1; }
   .calc-line-3 { font-size: 15px; color: var(--text); font-weight: 600; line-height: 1.4; }
-  .calc-wm {
-    position: absolute; bottom: 16px; right: 18px;
-    font-size: 11px; color: rgba(139,92,246,0.5); font-weight: 700; letter-spacing: 0.08em;
-  }
-  .calc-date {
-    position: absolute; bottom: 16px; left: 18px;
-    font-size: 11px; color: rgba(139,92,246,0.5); font-weight: 700; letter-spacing: 0.06em;
-  }
+  .calc-wm { position: absolute; bottom: 16px; right: 18px; font-size: 11px; color: rgba(139,92,246,0.5); font-weight: 700; letter-spacing: 0.08em; }
+  .calc-date { position: absolute; bottom: 16px; left: 18px; font-size: 11px; color: rgba(139,92,246,0.5); font-weight: 700; letter-spacing: 0.06em; }
   .calc-share-row { margin-top: 14px; display: flex; justify-content: center; }
-  .calc-share-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 12px 24px; border-radius: 999px;
-    background: var(--grad); border: none; color: white;
-    font-weight: 800; font-size: 14px; cursor: pointer; font-family: 'Inter', sans-serif;
-    box-shadow: 0 8px 30px rgba(236,72,153,0.35);
-    transition: transform .15s, box-shadow .2s;
-  }
+  .calc-share-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 999px; background: var(--grad); border: none; color: white; font-weight: 800; font-size: 14px; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 8px 30px rgba(236,72,153,0.35); transition: transform .15s, box-shadow .2s; }
   .calc-share-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(236,72,153,0.5); }
   .calc-share-btn:disabled { opacity: 0.5; pointer-events: none; }
-  .calc-toast {
-    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: rgba(34,197,94,0.92); color: #fff;
-    padding: 12px 26px; border-radius: 999px;
-    font-weight: 800; font-size: 14px;
-    box-shadow: 0 8px 30px rgba(34,197,94,0.4);
-    opacity: 0; pointer-events: none; z-index: 9999;
-    transition: opacity .3s ease, transform .3s ease;
-    white-space: nowrap;
-  }
+  .calc-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(34,197,94,0.92); color: #fff; padding: 12px 26px; border-radius: 999px; font-weight: 800; font-size: 14px; box-shadow: 0 8px 30px rgba(34,197,94,0.4); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity .3s ease, transform .3s ease; white-space: nowrap; }
   .calc-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
@@ -761,9 +465,7 @@
         <h2 class="section-title">What's your coin about to <span class="grad">flip?</span></h2>
       </div>
       <div class="ladder-head-cta">
-        <button class="calc-open-btn" id="openCalc">
-          🧮 How far is your coin from flipping?
-        </button>
+        <button class="calc-open-btn" id="openCalc">🧮 How far is your coin from flipping?</button>
       </div>
       <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
         <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
@@ -777,7 +479,6 @@
         </div>
       </div>
     </section>
-
   </div>
 
   <section class="cta">
@@ -810,20 +511,24 @@
 
 <script>
   // ==== TOKEN CONFIG ====
-  // CHANGE 1: added `chain` field — "pulsechain" or "major"
   const TOKENS = [
-    { sym: 'BTC',   name: 'Bitcoin',   chain: 'major',      chainLabel: 'major',      pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', dexChain: 'ethereum',   target: 1000000, logo: './logos/BTC_logo.png',     chartUrl: 'https://dexscreener.com/ethereum/0x4585fe77225b41b697c938b018e2ac67ac5a20c0' },
-    { sym: 'ETH',   name: 'Ethereum',  chain: 'major',      chainLabel: 'major',      pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', dexChain: 'bsc',        target: 1000000, logo: './logos/ETH_logo.png',     chartUrl: 'https://dexscreener.com/bsc/0x531febfeb9a61d948c384acfbe6dcc51057aea7e' },
-    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', target: 80000,   logo: './logos/pwBTC_Logo.png',   chartUrl: 'https://dexscreener.com/pulsechain/0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c' },
-    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', target: 1.00,    logo: './logos/INC_logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa' },
-    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', dexChain: 'pulsechain', target: 1.00,    logo: './logos/pDAI_logo.png',    chartUrl: 'https://dexscreener.com/pulsechain/0xfc64556faa683e6087f425819c7ca3c558e13ac1' },
-    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', dexChain: 'pulsechain', target: 10.00,   logo: './logos/HEX_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65' },
-    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', dexChain: 'pulsechain', target: 1.00,    logo: './logos/PulseX_logo.png',  chartUrl: 'https://dexscreener.com/pulsechain/0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9' },
-    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', dexChain: 'pulsechain', target: 1.00,    logo: './logos/PLS_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xe56043671df55de5cdf8459710433c10324de0ae' },
+    { sym: 'BTC',   name: 'Bitcoin',   chain: 'major',      pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', dexChain: 'ethereum',   logo: './logos/BTC_logo.png'    },
+    { sym: 'ETH',   name: 'Ethereum',  chain: 'major',      pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', dexChain: 'bsc',        logo: './logos/ETH_logo.png'    },
+    { sym: 'SOL',   name: 'Solana',    chain: 'major',      pairAddress: '0xbffec96e8f3b5058b1817c14e4380758fada01ef', dexChain: 'bsc',        logo: './logos/SOL_logo.png'    },
+    { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
+    { sym: 'XRP',   name: 'XRP',       chain: 'major',      pairAddress: '0xb90fe999be6869af0afc557dccfbe169ea3403d6', dexChain: 'base',       logo: './logos/XRP_logo.png'    },
+    { sym: 'DOGE',  name: 'Dogecoin',  chain: 'major',      pairAddress: '0x353d328efbef48b79a570cbc2fde20f40e9f2063', dexChain: 'bsc',        logo: './logos/DOGE_logo.png'   },
+    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', logo: './logos/pwBTC_Logo.png'  },
+    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', logo: './logos/INC_logo.png'    },
+    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', dexChain: 'pulsechain', logo: './logos/pDAI_logo.png'   },
+    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', dexChain: 'pulsechain', logo: './logos/HEX_Logo.png'    },
+    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', dexChain: 'pulsechain', logo: './logos/PulseX_logo.png' },
+    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', dexChain: 'pulsechain', logo: './logos/PLS_Logo.png'    },
+    { sym: 'PRVX',  name: 'PRVX',      chain: 'pulsechain', pairAddress: '0x7f681a5ad615238357ba148c281e2eaefd2de55a', dexChain: 'pulsechain', logo: './logos/PRVX_logo.png'   },
   ];
   const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null }));
 
-  // ==== LADDER (with $51 Magic Wand, time rungs deduped) ====
+  // ==== LADDER ====
   const LADDER = [
     { price: 390000, name: "Rolls Royce Ghost (fully optioned)", tier: "heavyweight", category: "status" },
     { price: 380000, name: "Thoroughbred racehorse (Keeneland average yearling)", tier: "heavyweight", category: "status" },
@@ -1148,42 +853,25 @@
   ];
 
   const TIER_META = {
-    heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',       emoji: '💎' },
+    heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',        emoji: '💎' },
     snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $0.001 to $1,000', emoji: '🏠' },
     absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',  emoji: '🏖️' },
     time:         { cls: 'tier-dust',   text: '⏱ Sub-Dust Tier — time, not things',  emoji: '⏱️' },
   };
 
-  const DISPLAY_TIERS = {
-    heavyweight:  { emoji: '🍔', label: 'Heavyweight'  },
-    snack:        { emoji: '🏠', label: 'Real Life'    },
-    absurd_floor: { emoji: '🤡', label: 'Absurd Floor' },
-    time:         { emoji: '⏱',  label: 'Sub-Dust'     },
-  };
-  function getDisplayTier(price) {
-    if (price == null) return null;
-    if (price >= 1000)    return 'heavyweight';
-    if (price >= 0.001)   return 'snack';
-    if (price >= 0.0001)  return 'absurd_floor';
-    return 'time';
-  }
-
   const MIN_WAGE_PER_SEC = 7.25 / 3600;
 
-  // Price formatter — plain decimal, 2 significant digits below $0.01.
-  // No subscript/base notation. e.g. 0.0002564 → "$0.00026", 0.00000713 → "$0.0000071".
   function fmtPriceText(p) {
     if (p == null) return '—';
     if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
     if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (p >= 0.01) return '$' + p.toFixed(3);
     if (p > 0) {
-      // 2 significant digits, then expand any scientific notation to plain decimal.
       let s = p.toPrecision(2);
       if (s.indexOf('e') !== -1 || s.indexOf('E') !== -1) {
         const [mantissa, expStr] = s.toLowerCase().split('e');
         const exp = parseInt(expStr, 10);
-        const [intPart, fracPart = ''] = mantissa.replace('-', '').split('.');
+        const [intPart, fracPart = ''] = mantissa.replace('-','').split('.');
         const digits = intPart + fracPart;
         if (exp < 0) {
           const zeros = -exp - intPart.length;
@@ -1196,7 +884,6 @@
     }
     return '$0';
   }
-  // HTML-safe variant (identical output now — no markup needed).
   function fmtPrice(p) { return fmtPriceText(p); }
 
   function findRungIndex(price) {
@@ -1212,24 +899,15 @@
     const ms = seconds * 1000;
     if (ms < 1) return parseFloat(ms.toPrecision(2)) + 'ms';
     if (seconds < 1) {
-      let v;
-      if (ms >= 100) v = Math.round(ms);
-      else if (ms >= 10) v = Math.round(ms);
-      else v = parseFloat(ms.toFixed(1));
+      let v = ms >= 10 ? Math.round(ms) : parseFloat(ms.toFixed(1));
       return v + (v === 1 ? ' millisecond' : ' milliseconds');
     }
     if (seconds < 60) {
-      let v;
-      if (seconds >= 10) v = Math.round(seconds);
-      else v = parseFloat(seconds.toFixed(1));
+      let v = seconds >= 10 ? Math.round(seconds) : parseFloat(seconds.toFixed(1));
       return v + (v === 1 ? ' second' : ' seconds');
     }
-    if (seconds < 3600) {
-      const v = Math.round(seconds / 60);
-      return v + (v === 1 ? ' minute' : ' minutes');
-    }
-    const v = Math.round(seconds / 3600);
-    return v + (v === 1 ? ' hour' : ' hours');
+    if (seconds < 3600) { const v = Math.round(seconds/60); return v + (v===1?' minute':' minutes'); }
+    const v = Math.round(seconds/3600); return v + (v===1?' hour':' hours');
   }
   function secsOfWork(price) { return price / MIN_WAGE_PER_SEC; }
   function timePhrase(price) { return fmtTime(secsOfWork(price)) + ' of minimum-wage work'; }
@@ -1237,9 +915,7 @@
 
   function rungLabelForToken(rung, timeMode) {
     if (!rung) return null;
-    if (timeMode) {
-      return { name: timePhrase(rung.price), price: fmtPrice(rung.price), featured: !!rung.featured };
-    }
+    if (timeMode) return { name: timePhrase(rung.price), price: fmtPrice(rung.price), featured: !!rung.featured };
     return { name: rung.name, price: fmtPrice(rung.price), featured: !!rung.featured };
   }
 
@@ -1248,22 +924,15 @@
     return '<span class="star" title="Featured flip — these are the bangers">⭐</span>';
   }
 
-  // CHANGE 2: compute flip-readiness score for sorting
-  // Returns 0–1 (progress bar fill). Higher = closer to flipping next rung.
-  // Coins above all ladder rungs get 1.0 (top of list).
-  // Coins in time-mode (sub-dust) use raw price as tiebreaker — they share tiny gaps.
   function flipReadiness(t) {
     if (t.price == null) return -1;
     const i = findRungIndex(t.price);
     const nextRung = LADDER[i - 1];
     const prevRung = LADDER[i];
-    // Above the entire ladder — winning, sort to top
     if (!nextRung) return 1.0;
-    const nextPrice = nextRung.price;
-    const prevPrice = prevRung ? prevRung.price : 0;
-    const span = nextPrice - prevPrice;
+    const span = nextRung.price - (prevRung ? prevRung.price : 0);
     if (span <= 0) return 0;
-    return Math.min(1, Math.max(0, (t.price - prevPrice) / span));
+    return Math.min(1, Math.max(0, (t.price - (prevRung ? prevRung.price : 0)) / span));
   }
 
   function renderTicker() {
@@ -1282,11 +951,8 @@
     const el = document.getElementById('apiDebug');
     if (!el) return;
     const html = state.map(t => {
-      if (t.status === 'ok' && t.price != null) {
-        return `<span>✅ ${t.sym}: ${fmtPrice(t.price)}</span>`;
-      }
-      const why = t.error || 'no data';
-      return `<span>❌ ${t.sym}: ${why}</span>`;
+      if (t.status === 'ok' && t.price != null) return `<span>✅ ${t.sym}: ${fmtPrice(t.price)}</span>`;
+      return `<span>❌ ${t.sym}: ${t.error||'no data'}</span>`;
     }).join('');
     el.innerHTML = `<span class="api-label">API Status:</span>` + html;
   }
@@ -1304,7 +970,6 @@
     return `<span class="chain-pill ${cls}"><span class="chain-pill-dot"></span>${label}</span>`;
   }
 
-  // X (Twitter) SVG icon for share button
   const X_ICON = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.402 6.231H2.746l7.73-8.835L2.42 2.25h6.58l4.26 5.638 5.984-5.638Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>`;
 
   let showAllCoins = false;
@@ -1313,11 +978,8 @@
   function renderLadder() {
     const el = document.getElementById('clusters');
     const ready = state.filter(t => t.price != null && (chainFilter === 'all' || t.chain === chainFilter));
-    if (!ready.length) {
-      return;
-    }
+    if (!ready.length) return;
 
-    // Sort by flip-readiness descending (fullest bar first)
     const ordered = [...ready].sort((a, b) => flipReadiness(b) - flipReadiness(a));
 
     const cards = ordered.map((t, idx) => {
@@ -1327,47 +989,27 @@
       const timeMode = isTimeMode(t);
       const next = rungLabelForToken(nextRung, timeMode);
       const prev = rungLabelForToken(prevRung, timeMode);
-
       const chgCls = t.chg >= 0 ? 'pos' : 'neg';
       const chgStr = (t.chg >= 0 ? '+' : '') + (t.chg||0).toFixed(2) + '%';
-
-      // chain class for left border + bar color
       const chainCls = t.chain === 'pulsechain' ? 'chain-pulsechain' : 'chain-major';
-
-      // chain pill: logo → ticker → pill
       const chainPill = chainPillHtml(t);
 
-      // Progress bar percentage (same formula as before)
       let pct = 0;
       if (!timeMode && nextRung) {
         const span = nextRung.price - (prevRung ? prevRung.price : 0);
-        pct = span > 0
-          ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100))
-          : 0;
+        pct = span > 0 ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100)) : 0;
       }
 
-      // Caption line
       let caption = '';
       if (!nextRung) {
-        // above the whole ladder
         caption = `<span class="cap-pct">Top of the ladder 🏆</span>`;
       } else if (timeMode) {
         caption = `<span class="cap-next">${timePhrase(t.price)}</span>`;
       } else {
         const pctRounded = pct < 1 ? pct.toFixed(1) : Math.round(pct);
-        caption =
-          `<span class="cap-pct">${pctRounded}% to</span>` +
-          `<span class="cap-sep">·</span>` +
-          `<span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span>` +
-          `<span class="cap-sep">·</span>` +
-          `<span class="cap-next">${next ? next.price : ''}</span>`;
-        if (prev) {
-          caption += `<span class="cap-sep">·</span><span class="cap-prev">flipped ${prev.name}</span>`;
-        }
+        caption = `<span class="cap-pct">${pctRounded}% to</span><span class="cap-sep">·</span><span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span><span class="cap-sep">·</span><span class="cap-next">${next ? next.price : ''}</span>`;
+        if (prev) caption += `<span class="cap-sep">·</span><span class="cap-prev">flipped ${prev.name}</span>`;
       }
-
-      // Share tweet URL
-      const shareHref = tweetUrl(t, prev);
 
       return `
         ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
@@ -1382,48 +1024,27 @@
             <div class="card-right">
               <span class="card-price">${fmtPrice(t.price)}</span>
               <span class="card-chg ${chgCls}">${chgStr}</span>
-              <a class="card-share" href="${shareHref}" target="_blank" rel="noopener" aria-label="Share ${t.sym} on X">${X_ICON}</a>
+              <a class="card-share" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener" aria-label="Share ${t.sym} on X">${X_ICON}</a>
             </div>
           </div>
-          ${!timeMode && nextRung ? `
-          <div class="card-bar-wrap">
-            <div class="card-bar-track">
-              <div class="card-bar-fill" style="width:${pct.toFixed(2)}%"></div>
-            </div>
-          </div>` : ''}
+          ${!timeMode && nextRung ? `<div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pct.toFixed(2)}%"></div></div></div>` : ''}
           <div class="card-caption">${caption}</div>
-        </div>
-      `;
+        </div>`;
     });
 
     const firstFour = cards.slice(0, 4).join('');
     const rest = cards.slice(4).join('');
     el.innerHTML = firstFour + (rest
-      ? `<div id="extraClusters" class="extra-clusters" style="${showAllCoins ? '' : 'display:none'}">${rest}</div>`
-        + `<div class="show-all-wrap"><button id="showAllBtn" class="show-all-btn">${showAllCoins ? 'Show fewer ↑' : 'Show all coins ↓'}</button></div>`
+      ? `<div id="extraClusters" class="extra-clusters" style="${showAllCoins ? '' : 'display:none'}">${rest}</div><div class="show-all-wrap"><button id="showAllBtn" class="show-all-btn">${showAllCoins ? 'Show fewer ↑' : 'Show all coins ↓'}</button></div>`
       : '');
 
     const showAllBtn = document.getElementById('showAllBtn');
-    if (showAllBtn) {
-      showAllBtn.addEventListener('click', () => {
-        showAllCoins = !showAllCoins;
-        renderLadder();
-      });
-    }
+    if (showAllBtn) showAllBtn.addEventListener('click', () => { showAllCoins = !showAllCoins; renderLadder(); });
 
     el.querySelectorAll('.card-top[data-zoom]').forEach(row => {
       const sym = row.getAttribute('data-zoom');
-      row.addEventListener('click', e => {
-        if (e.target.closest('.card-share')) return;
-        openModalZoomedTo(sym);
-      });
-      row.addEventListener('keydown', e => {
-        if (e.target.closest('.card-share')) return;
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openModalZoomedTo(sym);
-        }
-      });
+      row.addEventListener('click', e => { if (e.target.closest('.card-share')) return; openModalZoomedTo(sym); });
+      row.addEventListener('keydown', e => { if (e.target.closest('.card-share')) return; if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openModalZoomedTo(sym); } });
     });
   }
 
@@ -1445,57 +1066,32 @@
       }
       const placed = byRung[i] || [];
       const meta = TIER_META[rung.tier] || {};
-      const emoji = meta.emoji || '•';
       const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPriceText(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
-      const featuredCls = rung.featured ? 'featured' : '';
       html.push(`
-        <div class="frung ${placed.length ? 'has' : ''} ${featuredCls}" data-rung-index="${i}">
-          <div class="fe">${emoji}</div>
+        <div class="frung ${placed.length ? 'has' : ''} ${rung.featured ? 'featured' : ''}" data-rung-index="${i}">
+          <div class="fe">${meta.emoji||'•'}</div>
           <div>${rung.name}${starHtml(rung.featured)}</div>
           <div class="fp">${fmtPrice(rung.price)}</div>
           <div class="ftokens">${tokens}</div>
-        </div>
-      `);
+        </div>`);
     });
     body.innerHTML = html.join('');
   }
 
-  function openModal() {
-    renderFullLadder();
-    document.getElementById('modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-
+  function openModal() { renderFullLadder(); document.getElementById('modal').classList.add('open'); document.body.style.overflow='hidden'; }
   function openModalZoomedTo(sym) {
     const t = state.find(s => s.sym === sym);
-    if (!t || t.price == null) {
-      openModal();
-      return;
-    }
+    if (!t || t.price == null) { openModal(); return; }
     renderFullLadder();
     document.getElementById('modal').classList.add('open');
     document.body.style.overflow = 'hidden';
-
     const idx = findRungIndex(t.price);
     const body = document.getElementById('modalBody');
     const target = body.querySelector(`.frung[data-rung-index="${idx}"]`);
-    if (target) {
-      requestAnimationFrame(() => {
-        target.scrollIntoView({ behavior: 'instant', block: 'center' });
-        target.classList.remove('zoom-target');
-        void target.offsetWidth;
-        target.classList.add('zoom-target');
-      });
-    }
+    if (target) requestAnimationFrame(() => { target.scrollIntoView({behavior:'instant',block:'center'}); target.classList.remove('zoom-target'); void target.offsetWidth; target.classList.add('zoom-target'); });
   }
+  function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
 
-  function closeModal() {
-    document.getElementById('modal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  // Chain filter pills
   document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const next = btn.getAttribute('data-chain');
@@ -1522,52 +1118,39 @@
   async function fetchOne(t) {
     const pairAddr = (t.pairAddress || '').trim();
     const stateIdx = state.findIndex(s => s.sym === t.sym);
-    if (!pairAddr) {
-      if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'no pair address'; }
-      return;
-    }
+    if (!pairAddr) { if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error='no pair address';} return; }
     try {
       const url = `https://api.dexscreener.com/latest/dex/pairs/${t.dexChain}/${pairAddr}`;
       const res = await fetch(url);
-      if (!res.ok) {
-        if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = `HTTP ${res.status}`; }
-        return;
-      }
+      if (!res.ok) { if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error=`HTTP ${res.status}`;} return; }
       const json = await res.json();
       const pair = json.pair || (Array.isArray(json.pairs) ? json.pairs[0] : null);
-      if (!pair || !pair.priceUsd) {
-        if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'no pair data'; }
-        return;
-      }
+      if (!pair || !pair.priceUsd) { if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error='no pair data';} return; }
       if (stateIdx >= 0) {
         state[stateIdx].price = parseFloat(pair.priceUsd);
         state[stateIdx].chg = pair.priceChange?.h24 ?? 0;
         state[stateIdx].status = 'ok';
         state[stateIdx].error = null;
       }
-    } catch (e) {
+    } catch(e) {
       console.warn('fetch failed for', t.sym, e);
-      if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = String(e).slice(0,40); }
+      if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error=String(e).slice(0,40);}
     }
   }
+
   async function refreshAll() {
     await Promise.all(TOKENS.map(fetchOne));
     lastFetch = Date.now();
-    renderTicker();
-    renderLadder();
-    renderDebug();
-    renderUpdated();
+    renderTicker(); renderLadder(); renderDebug(); renderUpdated();
   }
 
-  renderTicker();
-  renderDebug();
+  renderTicker(); renderDebug();
 
-  // ==== DEEP LINK ROUTING ====
   function handleDeepLink() {
-    const raw = window.location.hash.replace(/^#/, '').trim();
+    const raw = window.location.hash.replace(/^#/,'').trim();
     if (!raw) return;
-    if (raw.toLowerCase() === 'notacoin') { openTokenModal(); return; }
-    const match = TOKENS.find(t => t.sym.toLowerCase() === raw.toLowerCase());
+    if (raw.toLowerCase()==='notacoin') { openTokenModal(); return; }
+    const match = TOKENS.find(t => t.sym.toLowerCase()===raw.toLowerCase());
     if (match) openModalZoomedTo(match.sym);
   }
 
@@ -1575,60 +1158,33 @@
   setInterval(refreshAll, 60_000);
 
   // ==== FLIP CALCULATOR ====
-  let calcCoin = null;
-  let calcTarget = null;
-
+  let calcCoin = null, calcTarget = null;
   function openCalcModal() {
-    renderCalcCoinBadges();
-    renderCalcTargetList('');
-    updateCalcResult();
-    document.getElementById('calcModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    const s = document.getElementById('calcSearch');
-    s.value = '';
-    setTimeout(() => s.focus(), 120);
+    renderCalcCoinBadges(); renderCalcTargetList(''); updateCalcResult();
+    document.getElementById('calcModal').classList.add('open'); document.body.style.overflow='hidden';
+    const s = document.getElementById('calcSearch'); s.value=''; setTimeout(()=>s.focus(),120);
   }
-  function closeCalcModal() {
-    document.getElementById('calcModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+  function closeCalcModal() { document.getElementById('calcModal').classList.remove('open'); document.body.style.overflow=''; }
   document.getElementById('openCalc').addEventListener('click', openCalcModal);
 
-  // ==== NO-TOKEN DISCLAIMER MODAL ====
   function openTokenModal() {
-    document.getElementById('tokenModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    if (window.location.hash.replace(/^#/, '') !== 'notacoin') {
-      history.replaceState(null, '', '#notacoin');
-    }
+    document.getElementById('tokenModal').classList.add('open'); document.body.style.overflow='hidden';
+    if (window.location.hash.replace(/^#/,'')!=='notacoin') history.replaceState(null,'','#notacoin');
   }
   function closeTokenModal() {
-    document.getElementById('tokenModal').classList.remove('open');
-    document.body.style.overflow = '';
-    if (window.location.hash.replace(/^#/, '').toLowerCase() === 'notacoin') {
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
+    document.getElementById('tokenModal').classList.remove('open'); document.body.style.overflow='';
+    if (window.location.hash.replace(/^#/,'').toLowerCase()==='notacoin') history.replaceState(null,'',window.location.pathname+window.location.search);
   }
+  document.addEventListener('keydown', e => { if (e.key==='Escape'){closeModal();closeCalcModal();closeTokenModal();} });
 
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') { closeModal(); closeCalcModal(); closeTokenModal(); }
-  });
-
-  function htmlAttr(str) {
-    return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-  }
+  function htmlAttr(str) { return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
 
   function renderCalcCoinBadges() {
     const wrap = document.getElementById('calcCoinBadges');
     wrap.innerHTML = TOKENS.map(t => {
-      const s = state.find(x => x.sym === t.sym);
-      const loading = !s || s.price == null;
-      const selected = calcCoin === t.sym ? 'selected' : '';
-      const loadingCls = loading ? 'loading' : '';
-      return `<button class="coin-badge ${selected} ${loadingCls}" data-sym="${t.sym}" title="${t.name}${loading ? ' (loading…)' : ''}">
-        <img src="${t.logo}" alt="${t.sym}" loading="lazy" />
-        <span>${t.sym}</span>
-      </button>`;
+      const s = state.find(x => x.sym===t.sym);
+      const loading = !s || s.price==null;
+      return `<button class="coin-badge ${calcCoin===t.sym?'selected':''} ${loading?'loading':''}" data-sym="${t.sym}" title="${t.name}${loading?' (loading…)':''}"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span></button>`;
     }).join('');
   }
 
@@ -1636,227 +1192,101 @@
     document.getElementById('calcCoinBadges').addEventListener('click', function(e) {
       const badge = e.target.closest('.coin-badge');
       if (!badge || badge.classList.contains('loading')) return;
-      calcCoin = badge.dataset.sym;
-      renderCalcCoinBadges();
-      updateCalcResult();
+      calcCoin = badge.dataset.sym; renderCalcCoinBadges(); updateCalcResult();
     });
-
     document.getElementById('calcTargetList').addEventListener('click', function(e) {
       const item = e.target.closest('.target-item');
       if (!item) return;
       calcTarget = { name: item.dataset.name, price: parseFloat(item.dataset.price) };
-      const q = document.getElementById('calcSearch').value;
-      renderCalcTargetList(q);
-      updateCalcResult();
+      renderCalcTargetList(document.getElementById('calcSearch').value); updateCalcResult();
     });
-
-    document.getElementById('calcSearch').addEventListener('input', function() {
-      renderCalcTargetList(this.value);
-    });
+    document.getElementById('calcSearch').addEventListener('input', function() { renderCalcTargetList(this.value); });
   });
 
   function renderCalcTargetList(filter) {
     const list = document.getElementById('calcTargetList');
     const q = filter.toLowerCase().trim();
-    const items = LADDER.filter(r => r.price != null && (!q || r.name.toLowerCase().includes(q)));
-    if (items.length === 0) {
-      list.innerHTML = `<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`;
-      return;
-    }
-    list.innerHTML = items.map(r => {
-      const selected = calcTarget && calcTarget.name === r.name ? 'selected' : '';
-      return `<div class="target-item ${selected}" data-name="${htmlAttr(r.name)}" data-price="${r.price}">
-        <span class="ti-name">${r.name}</span>
-        <span class="ti-price">${fmtPrice(r.price)}</span>
-      </div>`;
-    }).join('');
+    const items = LADDER.filter(r => r.price!=null && (!q || r.name.toLowerCase().includes(q)));
+    if (!items.length) { list.innerHTML=`<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`; return; }
+    list.innerHTML = items.map(r => `<div class="target-item ${calcTarget&&calcTarget.name===r.name?'selected':''}" data-name="${htmlAttr(r.name)}" data-price="${r.price}"><span class="ti-name">${r.name}</span><span class="ti-price">${fmtPrice(r.price)}</span></div>`).join('');
   }
 
   function fmtMult(mult) {
-    if (mult >= 1e9) return '1B+';
-    if (mult >= 1e6) {
-      const v = mult / 1e6;
-      return (v >= 10 ? Math.round(v) : parseFloat(v.toFixed(1))) + 'M';
-    }
-    if (mult >= 1000) return Math.round(mult).toLocaleString();
-    if (mult >= 10)   return Math.round(mult).toString();
-    if (mult >= 2)    return parseFloat(mult.toFixed(1)).toString();
+    if (mult>=1e9) return '1B+';
+    if (mult>=1e6) { const v=mult/1e6; return (v>=10?Math.round(v):parseFloat(v.toFixed(1)))+'M'; }
+    if (mult>=1000) return Math.round(mult).toLocaleString();
+    if (mult>=10) return Math.round(mult).toString();
+    if (mult>=2) return parseFloat(mult.toFixed(1)).toString();
     return parseFloat(mult.toFixed(2)).toString();
   }
 
   const CALC_STATE_COLORS = {
     flipped:     { main: '#22c55e', glow: 'rgba(34,197,94,0.45)' },
     approaching: { main: '#ec4899', glow: 'rgba(236,72,153,0.40)' },
-    mogged:      { main: '#ef4444', glow: 'rgba(239,68,68,0.45)' },
   };
 
   function updateCalcResult() {
-    const placeholder = document.getElementById('calcPlaceholder');
-    const card        = document.getElementById('calcResultCard');
-    const shareRow    = document.getElementById('calcShareRow');
-    const lineMult    = document.getElementById('calcLineMult');
-    const line3       = document.getElementById('calcLine3');
-
-    if (!calcCoin || !calcTarget) {
-      placeholder.style.display = '';
-      card.style.display = 'none';
-      shareRow.style.display = 'none';
-      if (!calcCoin && !calcTarget) placeholder.textContent = 'Pick a coin and a target to see the math.';
-      else if (!calcCoin)           placeholder.textContent = 'Now pick your coin.';
-      else                          placeholder.textContent = 'Now pick a target item.';
+    const placeholder=document.getElementById('calcPlaceholder'), card=document.getElementById('calcResultCard'), shareRow=document.getElementById('calcShareRow'), lineMult=document.getElementById('calcLineMult'), line3=document.getElementById('calcLine3');
+    if (!calcCoin||!calcTarget) {
+      placeholder.style.display=''; card.style.display='none'; shareRow.style.display='none';
+      placeholder.textContent = !calcCoin&&!calcTarget ? 'Pick a coin and a target to see the math.' : !calcCoin ? 'Now pick your coin.' : 'Now pick a target item.';
       return;
     }
-
-    const s = state.find(x => x.sym === calcCoin);
-    if (!s || !s.price) {
-      placeholder.style.display = '';
-      placeholder.textContent = `Price unavailable for ${calcCoin}. Try again shortly.`;
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      return;
-    }
-
-    placeholder.style.display = 'none';
-    card.style.display = ''; shareRow.style.display = '';
-
-    const coinPrice   = s.price;
-    const targetPrice = calcTarget.price;
-    const mult        = targetPrice / coinPrice;
-
-    const tk = TOKENS.find(t => t.sym === calcCoin);
-    const logoEl = document.getElementById('calcSbLogo');
-    if (tk) { logoEl.src = tk.logo; logoEl.alt = calcCoin; }
-    document.getElementById('calcSbCoinName').textContent  = `1 ${calcCoin}`;
-    document.getElementById('calcSbCoinPrice').textContent = fmtPrice(coinPrice);
-    document.getElementById('calcSbItemName').textContent  = calcTarget.name;
-    document.getElementById('calcSbItemPrice').textContent = fmtPrice(targetPrice);
-
-    document.getElementById('calcDate').textContent =
-      new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-
-    const stateKey = mult <= 1 ? 'flipped' : 'approaching';
-    const col = CALC_STATE_COLORS[stateKey];
-    const verdictEl = document.getElementById('calcVerdict');
-
+    const s = state.find(x=>x.sym===calcCoin);
+    if (!s||!s.price) { placeholder.style.display=''; placeholder.textContent=`Price unavailable for ${calcCoin}. Try again shortly.`; card.style.display='none'; shareRow.style.display='none'; return; }
+    placeholder.style.display='none'; card.style.display=''; shareRow.style.display='';
+    const coinPrice=s.price, targetPrice=calcTarget.price, mult=targetPrice/coinPrice;
+    const tk=TOKENS.find(t=>t.sym===calcCoin);
+    const logoEl=document.getElementById('calcSbLogo');
+    if (tk){logoEl.src=tk.logo;logoEl.alt=calcCoin;}
+    document.getElementById('calcSbCoinName').textContent=`1 ${calcCoin}`;
+    document.getElementById('calcSbCoinPrice').textContent=fmtPrice(coinPrice);
+    document.getElementById('calcSbItemName').textContent=calcTarget.name;
+    document.getElementById('calcSbItemPrice').textContent=fmtPrice(targetPrice);
+    document.getElementById('calcDate').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const stateKey=mult<=1?'flipped':'approaching', col=CALC_STATE_COLORS[stateKey];
+    const verdictEl=document.getElementById('calcVerdict');
     let multText;
-    if (stateKey === 'flipped') {
-      const n = coinPrice / targetPrice;
-      verdictEl.textContent = 'FLIPPED ✓';
-      multText = fmtMult(n) + '×';
-      line3.textContent = `1 ${calcCoin} buys ${multText} ${calcTarget.name}`;
-      line3.removeAttribute('title');
-    } else {
-      verdictEl.textContent = 'NOT YET';
-      multText = fmtMult(mult) + '×';
-      line3.textContent = `${calcCoin} needs ${multText} to reach ${calcTarget.name}`;
-      if (mult >= 1e9) line3.setAttribute('title', `Exact: ${Math.round(mult).toLocaleString()}x`);
-      else line3.removeAttribute('title');
-    }
-    lineMult.textContent = multText;
-    lineMult.style.fontSize = multText.length > 7 ? '42px' : multText.length > 5 ? '52px' : '64px';
-    verdictEl.style.color = col.main;
-    lineMult.style.color = col.main;
-    lineMult.style.filter = `drop-shadow(0 0 16px ${col.glow})`;
+    if (stateKey==='flipped') { const n=coinPrice/targetPrice; verdictEl.textContent='FLIPPED ✓'; multText=fmtMult(n)+'×'; line3.textContent=`1 ${calcCoin} buys ${multText} ${calcTarget.name}`; line3.removeAttribute('title'); }
+    else { verdictEl.textContent='NOT YET'; multText=fmtMult(mult)+'×'; line3.textContent=`${calcCoin} needs ${multText} to reach ${calcTarget.name}`; if (mult>=1e9) line3.setAttribute('title',`Exact: ${Math.round(mult).toLocaleString()}x`); else line3.removeAttribute('title'); }
+    lineMult.textContent=multText;
+    lineMult.style.fontSize=multText.length>7?'42px':multText.length>5?'52px':'64px';
+    verdictEl.style.color=col.main; lineMult.style.color=col.main; lineMult.style.filter=`drop-shadow(0 0 16px ${col.glow})`;
   }
 
-  // ==== SHARE: Copy/Save as image ====
-  const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-
+  const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
   async function loadHtml2Canvas() {
     if (window.html2canvas) return;
-    await new Promise((resolve, reject) => {
-      const s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-      s.integrity = 'sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
-      s.crossOrigin = 'anonymous';
-      s.onload = resolve;
-      s.onerror = () => reject(new Error('html2canvas failed to load'));
-      document.head.appendChild(s);
-    });
+    await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';s.crossOrigin='anonymous';s.onload=resolve;s.onerror=()=>reject(new Error('html2canvas failed'));document.head.appendChild(s);});
   }
-
-  (function() {
-    if (_isIOS) {
-      const icon = document.getElementById('calcShareIcon');
-      const txt  = document.getElementById('calcShareText');
-      if (icon) icon.textContent = '💾';
-      if (txt)  txt.textContent  = 'Save image';
-    }
-  })();
-
+  (function(){if(_isIOS){const icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');if(icon)icon.textContent='💾';if(txt)txt.textContent='Save image';}})();
   async function calcCopyImage() {
-    const btn  = document.getElementById('calcShareBtn');
-    const icon = document.getElementById('calcShareIcon');
-    const txt  = document.getElementById('calcShareText');
-    btn.disabled = true;
-    icon.textContent = '⏳'; txt.textContent = 'Generating…';
-
+    const btn=document.getElementById('calcShareBtn'),icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');
+    btn.disabled=true; icon.textContent='⏳'; txt.textContent='Generating…';
     try {
       await loadHtml2Canvas();
-      const card   = document.getElementById('calcResultCard');
-
-      const srcCanvas = await window.html2canvas(card, {
-        backgroundColor: null, scale: 3, useCORS: true, logging: false,
-      });
-
-      const out = document.createElement('canvas');
-      out.width = 1080; out.height = 1080;
-      const ctx = out.getContext('2d');
-      const bg = ctx.createLinearGradient(0,0,0,1080);
-      bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14');
-      ctx.fillStyle = bg; ctx.fillRect(0,0,1080,1080);
-      const glow = ctx.createRadialGradient(540,150,0,540,150,640);
-      glow.addColorStop(0,'rgba(236,72,153,0.12)'); glow.addColorStop(1,'transparent');
-      ctx.fillStyle = glow; ctx.fillRect(0,0,1080,1080);
-      const M = 30;
-      ctx.drawImage(srcCanvas, M, M, 1080 - 2*M, 1080 - 2*M);
-
-      if (_isIOS) {
-        const link = document.createElement('a');
-        link.download = 'wenflip.png';
-        link.href = out.toDataURL('image/png');
-        document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        showCalcToast('Saved! Share it on X. 🔥');
-      } else {
-        out.toBlob(async (blob) => {
-          try {
-            await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
-            showCalcToast('Copied! Paste it into X. 🔥');
-          } catch {
-            const link = document.createElement('a');
-            link.download = 'wenflip.png';
-            link.href = URL.createObjectURL(blob);
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
-            URL.revokeObjectURL(link.href);
-            showCalcToast('Saved! Share it on X. 🔥');
-          }
-        }, 'image/png');
-      }
-    } catch(err) {
-      console.error('Flip calc screenshot error:', err);
-      const multElErr = document.querySelector('#calcResultCard .calc-line-mult');
-      if (multElErr) multElErr.removeAttribute('style');
-      showCalcToast('Screenshot failed — try again 😬');
-    } finally {
-      btn.disabled = false;
-      icon.textContent = _isIOS ? '💾' : '📋';
-      txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
-    }
+      const card=document.getElementById('calcResultCard');
+      const srcCanvas=await window.html2canvas(card,{backgroundColor:null,scale:3,useCORS:true,logging:false});
+      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
+      const ctx=out.getContext('2d');
+      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
+      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(236,72,153,0.12)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
+      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
+      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
+    } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
+    finally { btn.disabled=false; icon.textContent=_isIOS?'💾':'📋'; txt.textContent=_isIOS?'Save image':'Copy as image'; }
   }
-
-  function showCalcToast(msg) {
-    const t = document.getElementById('calcToast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3200);
-  }
+  function showCalcToast(msg) { const t=document.getElementById('calcToast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 </script>
 
+<!-- FULL LADDER MODAL -->
 <div class="modal-backdrop" id="modal" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow='';}">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Full ladder">
     <div class="modal-head">
       <div>
         <h3>Full ladder <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">— grain to gold toilet</span></h3>
-        <div class="sub" id="modalSub">All rungs · token positions highlighted · ⭐ = featured flip</div>
+        <div class="sub">All rungs · token positions highlighted · ⭐ = featured flip</div>
       </div>
       <button class="modal-close" aria-label="Close" onclick="document.getElementById('modal').classList.remove('open');document.body.style.overflow='';">✕</button>
     </div>
@@ -1875,32 +1305,25 @@
       </div>
       <button class="modal-close" aria-label="Close" onclick="closeCalcModal()">✕</button>
     </div>
-    <div class="modal-body" style="padding:0 0 24px; overflow-y:auto;">
-      <!-- Section 1: Coin picker -->
+    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
       <div class="calc-section">
         <div class="calc-lbl">Pick your coin</div>
-        <div class="coin-badges" id="calcCoinBadges">
-          <span style="color:var(--muted);font-size:13px;">Loading prices…</span>
-        </div>
+        <div class="coin-badges" id="calcCoinBadges"><span style="color:var(--muted);font-size:13px;">Loading prices…</span></div>
       </div>
-      <!-- Section 2: Target item picker -->
       <div class="calc-section">
         <div class="calc-lbl">Pick your target</div>
         <div class="calc-search-wrap">
           <span class="calc-search-icon">🔍</span>
-          <input class="calc-search" id="calcSearch" type="text"
-            placeholder="Search items… e.g. Harvard, Big Mac, Cheerio"
-            autocomplete="off" spellcheck="false" />
+          <input class="calc-search" id="calcSearch" type="text" placeholder="Search items… e.g. Harvard, Big Mac, Cheerio" autocomplete="off" spellcheck="false"/>
         </div>
         <div class="target-list" id="calcTargetList"></div>
       </div>
-      <!-- Section 3: Result -->
       <div class="calc-result-section">
         <div id="calcPlaceholder" class="calc-result-placeholder">Pick a coin and a target to see the math.</div>
         <div id="calcResultCard" class="calc-result-card" style="display:none">
           <div class="calc-zone-top">
             <div class="calc-sb-side">
-              <div class="calc-sb-coin"><img id="calcSbLogo" class="calc-sb-logo" alt="" /><span id="calcSbCoinName"></span></div>
+              <div class="calc-sb-coin"><img id="calcSbLogo" class="calc-sb-logo" alt=""/><span id="calcSbCoinName"></span></div>
               <div class="calc-sb-price" id="calcSbCoinPrice"></div>
             </div>
             <div class="calc-sb-vs">vs</div>
@@ -1913,16 +1336,13 @@
             <div class="calc-verdict" id="calcVerdict"></div>
             <div class="calc-line-mult" id="calcLineMult"></div>
           </div>
-          <div class="calc-zone-bot">
-            <div class="calc-line-3" id="calcLine3"></div>
-          </div>
+          <div class="calc-zone-bot"><div class="calc-line-3" id="calcLine3"></div></div>
           <div class="calc-date" id="calcDate"></div>
           <div class="calc-wm">wenflip.com</div>
         </div>
         <div class="calc-share-row" id="calcShareRow" style="display:none">
           <button class="calc-share-btn" id="calcShareBtn" onclick="calcCopyImage()">
-            <span id="calcShareIcon">📋</span>
-            <span id="calcShareText">Copy as image</span>
+            <span id="calcShareIcon">📋</span><span id="calcShareText">Copy as image</span>
           </button>
         </div>
       </div>
@@ -1936,9 +1356,7 @@
 <div class="modal-backdrop" id="tokenModal" onclick="if(event.target===this)closeTokenModal()">
   <div class="modal" role="dialog" aria-modal="true" aria-label="No token disclaimer">
     <div class="modal-head">
-      <div>
-        <h3>There is no wenflip token.</h3>
-      </div>
+      <div><h3>There is no wenflip token.</h3></div>
       <button class="modal-close" aria-label="Close" onclick="closeTokenModal()">✕</button>
     </div>
     <div class="modal-body" style="padding:20px 24px 32px;">
