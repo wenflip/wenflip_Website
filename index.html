@@ -508,6 +508,15 @@
     box-shadow: 0 0 12px rgba(236,72,153,0.5);
     flex-shrink: 0;
   }
+  /* Safety: lock logo image sizing so malformed content can't blow up layout */
+  .ftok img,
+  .ftok .logo-img {
+    width: 100%; height: 100%;
+    max-width: 100%; max-height: 100%;
+    object-fit: cover;
+    display: block;
+    flex-shrink: 0;
+  }
   .back-top {
     position: absolute; bottom: 18px; right: 18px; z-index: 2;
     padding: 10px 16px; border-radius: 999px;
@@ -1167,6 +1176,28 @@
     }
     return '$0';
   }
+  // Plain-text variant for use in HTML attributes (title, alt, aria-*, data-*).
+  // Never returns HTML — avoids attribute parsing corruption.
+  function fmtPriceText(p) {
+    if (p == null) return '—';
+    if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
+    if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    if (p >= 0.01) return '$' + p.toFixed(3);
+    if (p > 0) {
+      const str = p.toFixed(20);
+      const afterDot = str.split('.')[1] || '';
+      let zeros = 0;
+      for (let i = 0; i < afterDot.length; i++) {
+        if (afterDot[i] === '0') zeros++; else break;
+      }
+      if (zeros >= 2) {
+        const sigStr = afterDot.slice(zeros, zeros + 4).replace(/0+$/, '') || '0';
+        return `$0.0${subNum(zeros - 1)}${sigStr}`;
+      }
+      return '$' + p.toFixed(4);
+    }
+    return '$0';
+  }
 
   function findRungIndex(price) {
     if (price == null) return -1;
@@ -1414,7 +1445,7 @@
       const placed = byRung[i] || [];
       const meta = TIER_META[rung.tier] || {};
       const emoji = meta.emoji || '•';
-      const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPrice(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
+      const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPriceText(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
       const featuredCls = rung.featured ? 'featured' : '';
       html.push(`
         <div class="frung ${placed.length ? 'has' : ''} ${featuredCls}" data-rung-index="${i}">
