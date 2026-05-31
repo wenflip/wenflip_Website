@@ -236,6 +236,28 @@
     box-shadow: 0 10px 40px rgba(236,72,153,0.45), 0 0 60px rgba(139,92,246,0.25);
     transform: translateY(-2px);
   }
+  .chain-filter {
+    display: flex; justify-content: center; gap: 8px;
+    margin: 14px 0 6px; flex-wrap: wrap;
+  }
+  .chain-filter-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px 18px; border-radius: 999px;
+    background: rgba(236,72,153,0.08);
+    border: 1px solid rgba(236,72,153,0.5);
+    color: var(--text); font-weight: 700; font-size: 14px; cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .chain-filter-btn:hover {
+    background: var(--grad); border-color: transparent;
+    box-shadow: 0 6px 24px rgba(236,72,153,0.35);
+    transform: translateY(-1px);
+  }
+  .chain-filter-btn.active {
+    background: var(--grad); border-color: transparent;
+    box-shadow: 0 6px 24px rgba(236,72,153,0.35);
+  }
 
   /* CLS fix: reserve clusters area so price load doesn't push everything down */
   .clusters {
@@ -742,9 +764,11 @@
         <button class="calc-open-btn" id="openCalc">
           🧮 How far is your coin from flipping?
         </button>
-        <button class="view-full-btn" id="openFull">
-          Click To View The Full Ladder ↗
-        </button>
+      </div>
+      <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
+        <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
+        <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
+        <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">Majors</button>
       </div>
       <div class="clusters" id="clusters">
         <div class="clusters-loading">
@@ -1308,10 +1332,11 @@
   const X_ICON = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.402 6.231H2.746l7.73-8.835L2.42 2.25h6.58l4.26 5.638 5.984-5.638Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>`;
 
   let showAllCoins = false;
+  let chainFilter = 'all';
 
   function renderLadder() {
     const el = document.getElementById('clusters');
-    const ready = state.filter(t => t.price != null);
+    const ready = state.filter(t => t.price != null && (chainFilter === 'all' || t.chain === chainFilter));
     if (!ready.length) {
       return;
     }
@@ -1492,8 +1517,22 @@
     document.getElementById('modal').classList.remove('open');
     document.body.style.overflow = '';
   }
-  document.getElementById('openFull').addEventListener('click', openModal);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // Chain filter pills
+  document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = btn.getAttribute('data-chain');
+      if (next === chainFilter) return;
+      chainFilter = next;
+      document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(b => {
+        const active = b.getAttribute('data-chain') === chainFilter;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      renderLadder();
+    });
+  });
 
   let lastFetch = null;
   function renderUpdated() {
