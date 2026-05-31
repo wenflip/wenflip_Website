@@ -286,6 +286,29 @@
     .tier-tag { padding: 3px 8px; font-size: 9px; }
   }
 
+  /* ===== CHAIN PILLS ===== */
+  .chain-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 9px; border-radius: 999px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.10em;
+    text-transform: uppercase; user-select: none; flex-shrink: 0;
+  }
+  .chain-pill.pulsechain {
+    background: rgba(139,92,246,0.18);
+    border: 1px solid rgba(139,92,246,0.50);
+    color: #c4b5fd;
+  }
+  .chain-pill.major {
+    background: rgba(148,163,184,0.10);
+    border: 1px solid rgba(148,163,184,0.28);
+    color: #94a3b8;
+  }
+  .chain-pill-dot {
+    width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+  }
+  .chain-pill.pulsechain .chain-pill-dot { background: #a78bfa; }
+  .chain-pill.major      .chain-pill-dot { background: #64748b; }
+
   .star {
     display: inline-block; margin-left: 6px;
     font-size: 0.95em;
@@ -742,15 +765,16 @@
 
 <script>
   // ==== TOKEN CONFIG ====
+  // CHANGE 1: added `chain` field — "pulsechain" or "major"
   const TOKENS = [
-    { sym: 'BTC',   name: 'Bitcoin',   chain: 'ethereum',   pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', target: 1000000, logo: './logos/BTC_logo.png',     chartUrl: 'https://dexscreener.com/ethereum/0x4585fe77225b41b697c938b018e2ac67ac5a20c0' },
-    { sym: 'ETH',   name: 'Ethereum',  chain: 'bsc',        pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', target: 1000000, logo: './logos/ETH_logo.png',     chartUrl: 'https://dexscreener.com/bsc/0x531febfeb9a61d948c384acfbe6dcc51057aea7e' },
-    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', target: 80000,   logo: './logos/pwBTC_Logo.png',   chartUrl: 'https://dexscreener.com/pulsechain/0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c' },
-    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', target: 1.00,    logo: './logos/INC_logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa' },
-    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', target: 1.00,    logo: './logos/pDAI_logo.png',    chartUrl: 'https://dexscreener.com/pulsechain/0xfc64556faa683e6087f425819c7ca3c558e13ac1' },
-    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', target: 10.00,   logo: './logos/HEX_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65' },
-    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', target: 1.00,    logo: './logos/PulseX_logo.png',  chartUrl: 'https://dexscreener.com/pulsechain/0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9' },
-    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', target: 1.00,    logo: './logos/PLS_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xe56043671df55de5cdf8459710433c10324de0ae' },
+    { sym: 'BTC',   name: 'Bitcoin',   chain: 'major',      chainLabel: 'major',      pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', dexChain: 'ethereum',   target: 1000000, logo: './logos/BTC_logo.png',     chartUrl: 'https://dexscreener.com/ethereum/0x4585fe77225b41b697c938b018e2ac67ac5a20c0' },
+    { sym: 'ETH',   name: 'Ethereum',  chain: 'major',      chainLabel: 'major',      pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', dexChain: 'bsc',        target: 1000000, logo: './logos/ETH_logo.png',     chartUrl: 'https://dexscreener.com/bsc/0x531febfeb9a61d948c384acfbe6dcc51057aea7e' },
+    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', target: 80000,   logo: './logos/pwBTC_Logo.png',   chartUrl: 'https://dexscreener.com/pulsechain/0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c' },
+    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', target: 1.00,    logo: './logos/INC_logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa' },
+    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', dexChain: 'pulsechain', target: 1.00,    logo: './logos/pDAI_logo.png',    chartUrl: 'https://dexscreener.com/pulsechain/0xfc64556faa683e6087f425819c7ca3c558e13ac1' },
+    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', dexChain: 'pulsechain', target: 10.00,   logo: './logos/HEX_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65' },
+    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', dexChain: 'pulsechain', target: 1.00,    logo: './logos/PulseX_logo.png',  chartUrl: 'https://dexscreener.com/pulsechain/0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9' },
+    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', chainLabel: 'PulseChain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', dexChain: 'pulsechain', target: 1.00,    logo: './logos/PLS_Logo.png',     chartUrl: 'https://dexscreener.com/pulsechain/0xe56043671df55de5cdf8459710433c10324de0ae' },
   ];
   const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null }));
 
@@ -1160,6 +1184,24 @@
     return '<span class="star" title="Featured flip — these are the bangers">⭐</span>';
   }
 
+  // CHANGE 2: compute flip-readiness score for sorting
+  // Returns 0–1 (progress bar fill). Higher = closer to flipping next rung.
+  // Coins above all ladder rungs get 1.0 (top of list).
+  // Coins in time-mode (sub-dust) use raw price as tiebreaker — they share tiny gaps.
+  function flipReadiness(t) {
+    if (t.price == null) return -1;
+    const i = findRungIndex(t.price);
+    const nextRung = LADDER[i - 1];
+    const prevRung = LADDER[i];
+    // Above the entire ladder — winning, sort to top
+    if (!nextRung) return 1.0;
+    const nextPrice = nextRung.price;
+    const prevPrice = prevRung ? prevRung.price : 0;
+    const span = nextPrice - prevPrice;
+    if (span <= 0) return 0;
+    return Math.min(1, Math.max(0, (t.price - prevPrice) / span));
+  }
+
   function renderTicker() {
     const html = state.map(t => `
       <div class="tick">
@@ -1191,16 +1233,25 @@
     return `https://twitter.com/intent/tweet?text=${text}`;
   }
 
-  let showAllCoins = false; // Fix 3: collapsed by default — first 4 cards shown
+  // CHANGE 3: chain pill HTML helper
+  function chainPillHtml(t) {
+    const isPulse = t.chain === 'pulsechain';
+    const cls = isPulse ? 'pulsechain' : 'major';
+    const label = isPulse ? 'PulseChain' : 'Major';
+    return `<span class="chain-pill ${cls}"><span class="chain-pill-dot"></span>${label}</span>`;
+  }
+
+  let showAllCoins = false;
 
   function renderLadder() {
     const el = document.getElementById('clusters');
     const ready = state.filter(t => t.price != null);
     if (!ready.length) {
-      // Keep the loading skeleton in place; do not blank it.
       return;
     }
-    const ordered = [...ready].sort((a,b) => b.price - a.price);
+
+    // CHANGE 2: sort by flip-readiness descending (fullest bar first)
+    const ordered = [...ready].sort((a, b) => flipReadiness(b) - flipReadiness(a));
 
     const cards = ordered.map((t, idx) => {
       const i = findRungIndex(t.price);
@@ -1210,8 +1261,6 @@
       const next = rungLabelForToken(nextRung, timeMode);
       const prev = rungLabelForToken(prevRung, timeMode);
 
-      // Subtitle: only for time-mode coins (their only place this info lives)
-      // and top-of-ladder. Normal coins show no subtitle — the bar carries it.
       let tokenSubtitle = '';
       if (timeMode) {
         tokenSubtitle = timePhrase(t.price);
@@ -1226,6 +1275,9 @@
       const dtMeta = DISPLAY_TIERS[dt] || { emoji: '•', label: '' };
       const tierBadge = dt ? `<span class="tier-tag ${dt}">${dtMeta.emoji} ${dtMeta.label}</span>` : '';
 
+      // CHANGE 3: chain pill injected into the token row
+      const chainPill = chainPillHtml(t);
+
       const nextRow = next ? `
         <div class="crow next ${next.featured ? 'featured' : ''}">
           <div class="arrow">↑ next</div>
@@ -1239,8 +1291,6 @@
           <div class="cflipped-right">${tierBadge}<div class="cprice">${prev.price}</div></div>
         </div>` : '';
 
-      // Progress bar — measures gap closed between the rung just flipped
-      // and the rung being chased. 0% = just landed here, 100% = about to flip.
       let progressBar = '';
       if (!timeMode && nextRung) {
         const span = nextRung.price - (prevRung ? prevRung.price : 0);
@@ -1265,7 +1315,7 @@
             <div class="token-row" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="View ${t.sym} on the full ladder">
               <div class="tbadge"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></div>
               <div class="tinfo">
-                <div class="tsym">${t.sym}</div>
+                <div style="display:flex;align-items:center;gap:8px;">${chainPill}<div class="tsym">${t.sym}</div></div>
                 ${tokenSubtitle ? `<div class="tsub">${tokenSubtitle}</div>` : ''}
               </div>
               <div class="tright">
@@ -1281,7 +1331,6 @@
       `;
     });
 
-    // Fix 3: show first 4 cards; collapse the rest behind an expander.
     const firstFour = cards.slice(0, 4).join('');
     const rest = cards.slice(4).join('');
     el.innerHTML = firstFour + (rest
@@ -1300,7 +1349,7 @@
     el.querySelectorAll('.token-row[data-zoom]').forEach(row => {
       const sym = row.getAttribute('data-zoom');
       row.addEventListener('click', e => {
-        if (e.target.closest('.tweet-btn')) return; // let the tweet link act alone
+        if (e.target.closest('.tweet-btn')) return;
         openModalZoomedTo(sym);
       });
       row.addEventListener('keydown', e => {
@@ -1332,7 +1381,6 @@
       const placed = byRung[i] || [];
       const meta = TIER_META[rung.tier] || {};
       const emoji = meta.emoji || '•';
-      // Modal logos: lazy-loaded since modal is hidden until user opens it
       const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPrice(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
       const featuredCls = rung.featured ? 'featured' : '';
       html.push(`
@@ -1394,7 +1442,8 @@
 
   async function fetchOne(t) {
     const pairAddr = (t.pairAddress || '').trim();
-    const chain = (t.chain || 'pulsechain').trim();
+    // CHANGE 1: use dexChain (the DexScreener chain slug) for the API call
+    const chain = (t.dexChain || t.chain || 'pulsechain').trim();
     const stateIdx = state.findIndex(s => s.sym === t.sym);
     if (!pairAddr) {
       if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'no pair address'; }
@@ -1437,8 +1486,6 @@
   renderDebug();
 
   // ==== DEEP LINK ROUTING ====
-  // Supports wenflip.com/pDAI, wenflip.com/BTC, wenflip.com/hex (case-insensitive)
-  // and wenflip.com/#notacoin (opens the no-token disclaimer modal).
   function handleDeepLink() {
     const raw = window.location.hash.replace(/^#/, '').trim();
     if (!raw) return;
@@ -1460,7 +1507,6 @@
     updateCalcResult();
     document.getElementById('calcModal').classList.add('open');
     document.body.style.overflow = 'hidden';
-    // reset search
     const s = document.getElementById('calcSearch');
     s.value = '';
     setTimeout(() => s.focus(), 120);
@@ -1561,9 +1607,6 @@
     return parseFloat(mult.toFixed(2)).toString();
   }
 
-  // Single source of truth for card state colors (EDIT 7).
-  // 'mogged' is defined and ready, but the calculator only computes
-  // flipped vs approaching today — no fake mogged detection.
   const CALC_STATE_COLORS = {
     flipped:     { main: '#22c55e', glow: 'rgba(34,197,94,0.45)' },
     approaching: { main: '#ec4899', glow: 'rgba(236,72,153,0.40)' },
@@ -1602,7 +1645,6 @@
     const targetPrice = calcTarget.price;
     const mult        = targetPrice / coinPrice;
 
-    // Scoreboard proof row — both prices facing off, no division shown
     const tk = TOKENS.find(t => t.sym === calcCoin);
     const logoEl = document.getElementById('calcSbLogo');
     if (tk) { logoEl.src = tk.logo; logoEl.alt = calcCoin; }
@@ -1611,11 +1653,9 @@
     document.getElementById('calcSbItemName').textContent  = calcTarget.name;
     document.getElementById('calcSbItemPrice').textContent = fmtPrice(targetPrice);
 
-    // Date stamp (render-time)
     document.getElementById('calcDate').textContent =
       new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
-    // State + color from the single source of truth
     const stateKey = mult <= 1 ? 'flipped' : 'approaching';
     const col = CALC_STATE_COLORS[stateKey];
     const verdictEl = document.getElementById('calcVerdict');
@@ -1625,19 +1665,16 @@
       const n = coinPrice / targetPrice;
       verdictEl.textContent = 'FLIPPED ✓';
       multText = fmtMult(n) + '×';
-      // Flipped = buying power. "buys" disambiguates from the "needs" wording.
       line3.textContent = `1 ${calcCoin} buys ${multText} ${calcTarget.name}`;
       line3.removeAttribute('title');
     } else {
       verdictEl.textContent = 'NOT YET';
       multText = fmtMult(mult) + '×';
-      // Approaching = price gap. "needs … to reach" can never read like the flipped line.
       line3.textContent = `${calcCoin} needs ${multText} to reach ${calcTarget.name}`;
       if (mult >= 1e9) line3.setAttribute('title', `Exact: ${Math.round(mult).toLocaleString()}x`);
       else line3.removeAttribute('title');
     }
     lineMult.textContent = multText;
-    // shrink the big number for long values so it never overflows the square
     lineMult.style.fontSize = multText.length > 7 ? '42px' : multText.length > 5 ? '52px' : '64px';
     verdictEl.style.color = col.main;
     lineMult.style.color = col.main;
@@ -1660,7 +1697,6 @@
     });
   }
 
-  // Update share button label for iOS on load
   (function() {
     if (_isIOS) {
       const icon = document.getElementById('calcShareIcon');
@@ -1685,7 +1721,6 @@
         backgroundColor: null, scale: 3, useCORS: true, logging: false,
       });
 
-      // The card is already a square — draw it to fill a 1080×1080 frame
       const out = document.createElement('canvas');
       out.width = 1080; out.height = 1080;
       const ctx = out.getContext('2d');
@@ -1695,13 +1730,10 @@
       const glow = ctx.createRadialGradient(540,150,0,540,150,640);
       glow.addColorStop(0,'rgba(236,72,153,0.12)'); glow.addColorStop(1,'transparent');
       ctx.fillStyle = glow; ctx.fillRect(0,0,1080,1080);
-      // square card → square frame, small even margin, no distortion
       const M = 30;
       ctx.drawImage(srcCanvas, M, M, 1080 - 2*M, 1080 - 2*M);
-      // (single watermark lives in the card itself)
 
       if (_isIOS) {
-        // iOS Safari can't write PNG to clipboard — download instead
         const link = document.createElement('a');
         link.download = 'wenflip.png';
         link.href = out.toDataURL('image/png');
@@ -1713,7 +1745,6 @@
             await navigator.clipboard.write([new ClipboardItem({'image/png': blob})]);
             showCalcToast('Copied! Paste it into X. 🔥');
           } catch {
-            // Clipboard API blocked (e.g. non-secure context) — fallback to download
             const link = document.createElement('a');
             link.download = 'wenflip.png';
             link.href = URL.createObjectURL(blob);
@@ -1725,7 +1756,6 @@
       }
     } catch(err) {
       console.error('Flip calc screenshot error:', err);
-      // Restore multiplier style if capture failed mid-way
       const multElErr = document.querySelector('#calcResultCard .calc-line-mult');
       if (multElErr) multElErr.removeAttribute('style');
       showCalcToast('Screenshot failed — try again 😬');
@@ -1844,7 +1874,6 @@
   </div>
 </div>
 
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e1aed0de5e18434c8019e1b9cb82b31c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e1aed0de5e18434c8019e1b9cb82b31c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
