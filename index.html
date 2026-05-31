@@ -119,13 +119,6 @@
     box-shadow: 0 0 16px rgba(236,72,153,0.4); flex-shrink: 0;
   }
   .logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
-  .api-debug {
-    text-align: center; padding: 14px 12px 4px;
-    font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--muted); opacity: 0.45; background: transparent; min-height: 28px;
-  }
-  .api-debug span { display: inline-block; margin: 0 8px; }
-  .api-debug .api-label { font-weight: 800; opacity: 0.8; margin-right: 4px; }
   .main-grid { max-width: 860px; margin: 26px auto 0; }
   .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
   .section-title .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -257,7 +250,7 @@
   .card-bar-track { height: 3px; border-radius: 999px; background: rgba(255,255,255,0.10); overflow: hidden; }
   .card-bar-fill { height: 100%; border-radius: 999px; transition: width 600ms ease-out; min-width: 2px; }
   .chain-pulsechain .card-bar-fill { background: var(--grad); }
-  .chain-major .card-bar-fill { background: rgba(148,163,184,0.6); }
+  .chain-major      .card-bar-fill { background: #3A8DDE; }
   .card-caption {
     padding: 5px 14px 11px; font-size: 11px; color: var(--muted); line-height: 1.45;
     display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px;
@@ -488,8 +481,6 @@
       <a class="btn btn-pulsex btn-pulsex-large" href="https://app.pulsex.com" target="_blank" rel="noopener">Buy PLS on PulseX →</a>
     </div>
   </section>
-
-  <div class="api-debug" id="apiDebug"><span class="api-label">API Status:</span>initializing…</div>
 
   <footer>
     <div class="ftag">Real prices. Real flips. Real receipts.</div>
@@ -861,30 +852,87 @@
 
   const MIN_WAGE_PER_SEC = 7.25 / 3600;
 
-  function fmtPriceText(p) {
+  // ── Coin price formatter ─────────────────────────────────────────────────
+  // Used ONLY for live coin prices (ticker, cards, share cards, calc).
+  // Real-world item/ladder prices are passed through fmtItemPrice (identity).
+  // All truncation chops toward zero — never rounds up.
+  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function fmtCoinPrice(p) {
     if (p == null) return '—';
-    if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
-    if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    if (p >= 0.01) return '$' + p.toFixed(3);
-    if (p > 0) {
-      let s = p.toPrecision(2);
-      if (s.indexOf('e') !== -1 || s.indexOf('E') !== -1) {
-        const [mantissa, expStr] = s.toLowerCase().split('e');
-        const exp = parseInt(expStr, 10);
-        const [intPart, fracPart = ''] = mantissa.replace('-','').split('.');
-        const digits = intPart + fracPart;
-        if (exp < 0) {
-          const zeros = -exp - intPart.length;
-          s = '0.' + '0'.repeat(Math.max(0, zeros)) + digits;
-        } else {
-          s = digits + '0'.repeat(Math.max(0, exp - fracPart.length));
-        }
-      }
+    if (p <= 0)    return '$0';
+
+    // p ≥ 1000 → integer, thousands sep, no decimals
+    if (p >= 1000) {
+      return '$' + Math.floor(p).toLocaleString('en-US');
+    }
+
+    // 1 ≤ p < 1000 → up to 2 decimals, truncated, strip trailing zeros
+    if (p >= 1) {
+      const trunc = Math.floor(p * 100) / 100;
+      let s = trunc.toFixed(2);            // "152.84"
+      s = s.replace(/\.?0+$/, '');         // strip trailing zeros → "152.84" or "2.5"
+      // add thousands sep for values ≥ 1000 (can't happen here but safe)
+      const [int, dec] = s.split('.');
+      const intFmt = parseInt(int,10).toLocaleString('en-US');
+      return '$' + (dec ? intFmt + '.' + dec : intFmt);
+    }
+
+    // 0.0001 ≤ p < 1 → 4 sig figs, truncated, no trailing zeros
+    if (p >= 0.0001) {
+      // Find position of first significant digit
+      // e.g. 0.001176 → we want first 4 non-zero-leading digits
+      // Strategy: multiply up so first sig digit is in units place, floor to 4 sig figs
+      const mag = Math.floor(Math.log10(p));  // e.g. -3 for 0.001176
+      const factor = Math.pow(10, 3 - mag);    // 10^(3-(-3)) = 10^6
+      const truncated = Math.floor(p * factor) / factor;
+      // Now format: need enough decimal places
+      const decPlaces = -mag + 3;              // e.g. 6 for mag=-3
+      let s = truncated.toFixed(decPlaces);
+      s = s.replace(/0+$/, '').replace(/\.$/, '');
       return '$' + s;
     }
-    return '$0';
+
+    // p < 0.0001 → subscript-zero DEX notation, 4 sig figs, truncated
+    // Count leading zeros after decimal point (before first non-zero digit)
+    // e.g. 0.00000713 → 5 leading zeros, sig digits "713x"
+    const mag2 = Math.floor(Math.log10(p));   // e.g. -6 for 0.00000713
+    const leadingZeros = -mag2 - 1;            // e.g. 5
+    const factor2 = Math.pow(10, 3 - mag2);   // shift 4 sig digits to units+
+    const truncSig = Math.floor(p * factor2) / factor2;
+    const decPlaces2 = leadingZeros + 4;
+    let raw = truncSig.toFixed(decPlaces2);
+    // Extract just the significant digits (after the leading zeros)
+    const afterDot = raw.split('.')[1] || '';
+    let zCount = 0;
+    for (let i = 0; i < afterDot.length; i++) {
+      if (afterDot[i] === '0') zCount++; else break;
+    }
+    const sigPart = afterDot.slice(zCount).replace(/0+$/, '');
+    const subDigit = SUB_DIGITS[zCount] || String(zCount);
+    return '$0.0' + subDigit + sigPart;
   }
-  function fmtPrice(p) { return fmtPriceText(p); }
+
+  // For coin prices — HTML-safe (subscript digit is Unicode, no tags needed)
+  function fmtPrice(p) { return fmtCoinPrice(p); }
+  // Alias used in modal token tooltips (plain text context)
+  function fmtPriceText(p) { return fmtCoinPrice(p); }
+
+  // Real-world item prices: stored values rendered character-for-character.
+  // fmtItemPrice is used wherever a ladder/item price is displayed.
+  function fmtItemPrice(p) {
+    if (p == null) return '—';
+    if (p >= 1000) return '$' + p.toLocaleString('en-US', {maximumFractionDigits: 0});
+    if (p >= 1)    return '$' + p.toFixed(2).replace(/\.?0+$/, '');
+    // Sub-$1: render with enough decimals to show the stored value exactly
+    // Use toPrecision(4) but strip trailing zeros, no subscript, no rounding
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const dec = Math.max(0, -mag + 3);
+      return '$' + p.toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
+    }
+    // Very small item prices (absurd floor / time tier)
+    return '$' + p.toPrecision(2);
+  }
 
   function findRungIndex(price) {
     if (price == null) return -1;
@@ -915,8 +963,8 @@
 
   function rungLabelForToken(rung, timeMode) {
     if (!rung) return null;
-    if (timeMode) return { name: timePhrase(rung.price), price: fmtPrice(rung.price), featured: !!rung.featured };
-    return { name: rung.name, price: fmtPrice(rung.price), featured: !!rung.featured };
+    if (timeMode) return { name: timePhrase(rung.price), price: fmtItemPrice(rung.price), featured: !!rung.featured };
+    return { name: rung.name, price: fmtItemPrice(rung.price), featured: !!rung.featured };
   }
 
   function starHtml(featured) {
@@ -945,16 +993,6 @@
       </div>
     `).join('');
     document.getElementById('ticker').innerHTML = html + html;
-  }
-
-  function renderDebug() {
-    const el = document.getElementById('apiDebug');
-    if (!el) return;
-    const html = state.map(t => {
-      if (t.status === 'ok' && t.price != null) return `<span>✅ ${t.sym}: ${fmtPrice(t.price)}</span>`;
-      return `<span>❌ ${t.sym}: ${t.error||'no data'}</span>`;
-    }).join('');
-    el.innerHTML = `<span class="api-label">API Status:</span>` + html;
   }
 
   function tweetUrl(t, prev) {
@@ -995,10 +1033,18 @@
       const chainPill = chainPillHtml(t);
 
       let pct = 0;
-      if (!timeMode && nextRung) {
+      if (nextRung) {
+        // Standard gap formula
         const span = nextRung.price - (prevRung ? prevRung.price : 0);
         pct = span > 0 ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100)) : 0;
+      } else {
+        // No next rung (sub-dust / time-mode): fall back to cheapest rung above coin price
+        const fallback = [...LADDER].reverse().find(r => r.price > t.price);
+        const targetP = fallback ? fallback.price : 0.0001;
+        pct = Math.min(100, Math.max(0, (t.price / targetP) * 100));
       }
+      // Minimum visible sliver for any non-zero progress
+      const pctDisplay = pct > 0 ? Math.max(3, pct) : 0;
 
       let caption = '';
       if (!nextRung) {
@@ -1027,7 +1073,7 @@
               <a class="card-share" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener" aria-label="Share ${t.sym} on X">${X_ICON}</a>
             </div>
           </div>
-          ${!timeMode && nextRung ? `<div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pct.toFixed(2)}%"></div></div></div>` : ''}
+          <div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pctDisplay.toFixed(2)}%"></div></div></div>
           <div class="card-caption">${caption}</div>
         </div>`;
     });
@@ -1071,7 +1117,7 @@
         <div class="frung ${placed.length ? 'has' : ''} ${rung.featured ? 'featured' : ''}" data-rung-index="${i}">
           <div class="fe">${meta.emoji||'•'}</div>
           <div>${rung.name}${starHtml(rung.featured)}</div>
-          <div class="fp">${fmtPrice(rung.price)}</div>
+          <div class="fp">${fmtItemPrice(rung.price)}</div>
           <div class="ftokens">${tokens}</div>
         </div>`);
     });
@@ -1141,10 +1187,10 @@
   async function refreshAll() {
     await Promise.all(TOKENS.map(fetchOne));
     lastFetch = Date.now();
-    renderTicker(); renderLadder(); renderDebug(); renderUpdated();
+    renderTicker(); renderLadder(); renderUpdated();
   }
 
-  renderTicker(); renderDebug();
+  renderTicker();
 
   function handleDeepLink() {
     const raw = window.location.hash.replace(/^#/,'').trim();
@@ -1208,7 +1254,7 @@
     const q = filter.toLowerCase().trim();
     const items = LADDER.filter(r => r.price!=null && (!q || r.name.toLowerCase().includes(q)));
     if (!items.length) { list.innerHTML=`<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`; return; }
-    list.innerHTML = items.map(r => `<div class="target-item ${calcTarget&&calcTarget.name===r.name?'selected':''}" data-name="${htmlAttr(r.name)}" data-price="${r.price}"><span class="ti-name">${r.name}</span><span class="ti-price">${fmtPrice(r.price)}</span></div>`).join('');
+    list.innerHTML = items.map(r => `<div class="target-item ${calcTarget&&calcTarget.name===r.name?'selected':''}" data-name="${htmlAttr(r.name)}" data-price="${r.price}"><span class="ti-name">${r.name}</span><span class="ti-price">${fmtItemPrice(r.price)}</span></div>`).join('');
   }
 
   function fmtMult(mult) {
@@ -1242,7 +1288,7 @@
     document.getElementById('calcSbCoinName').textContent=`1 ${calcCoin}`;
     document.getElementById('calcSbCoinPrice').textContent=fmtPrice(coinPrice);
     document.getElementById('calcSbItemName').textContent=calcTarget.name;
-    document.getElementById('calcSbItemPrice').textContent=fmtPrice(targetPrice);
+    document.getElementById('calcSbItemPrice').textContent=fmtItemPrice(targetPrice);
     document.getElementById('calcDate').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
     const stateKey=mult<=1?'flipped':'approaching', col=CALC_STATE_COLORS[stateKey];
     const verdictEl=document.getElementById('calcVerdict');
@@ -1285,8 +1331,8 @@
   <div class="modal" role="dialog" aria-modal="true" aria-label="Full ladder">
     <div class="modal-head">
       <div>
-        <h3>Full ladder <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">— grain to gold toilet</span></h3>
-        <div class="sub">All rungs · token positions highlighted · ⭐ = featured flip</div>
+        <h3>Full ladder <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">— Goldfish to gold toilet</span></h3>
+        <div class="sub">All rungs · your coins highlighted · ⭐ featured flip</div>
       </div>
       <button class="modal-close" aria-label="Close" onclick="document.getElementById('modal').classList.remove('open');document.body.style.overflow='';">✕</button>
     </div>
