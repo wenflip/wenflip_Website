@@ -1170,58 +1170,34 @@
 
   const MIN_WAGE_PER_SEC = 7.25 / 3600;
 
-  // Price formatter — uses subscript-zero notation for sub-cent values
-  // e.g. 0.00000713 → "$0.0₅713"  (₅ = count of leading zeros after decimal point)
-  const SUBSCRIPT_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
-  function subNum(n) {
-    return String(n).split('').map(c => SUBSCRIPT_DIGITS[+c] ?? c).join('');
-  }
-  function fmtPrice(p) {
-    if (p == null) return '—';
-    if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
-    if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-    if (p >= 0.01) return '$' + p.toFixed(3);
-    // sub-cent: count leading zeros after decimal
-    if (p > 0) {
-      // e.g. 0.00000713 → str "0.00000713", zeros after decimal = 5
-      const str = p.toFixed(20);
-      const afterDot = str.split('.')[1] || '';
-      let zeros = 0;
-      for (let i = 0; i < afterDot.length; i++) {
-        if (afterDot[i] === '0') zeros++; else break;
-      }
-      if (zeros >= 2) {
-        // grab up to 4 significant figures after the leading zeros
-        const sigStr = afterDot.slice(zeros, zeros + 4).replace(/0+$/, '') || '0';
-        return `$0.0<span class="price-sub">${subNum(zeros - 1)}</span>${sigStr}`;
-      }
-      // 1 leading zero: just show fixed
-      return '$' + p.toFixed(4);
-    }
-    return '$0';
-  }
-  // Plain-text variant for use in HTML attributes (title, alt, aria-*, data-*).
-  // Never returns HTML — avoids attribute parsing corruption.
+  // Price formatter — plain decimal, 2 significant digits below $0.01.
+  // No subscript/base notation. e.g. 0.0002564 → "$0.00026", 0.00000713 → "$0.0000071".
   function fmtPriceText(p) {
     if (p == null) return '—';
     if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
     if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (p >= 0.01) return '$' + p.toFixed(3);
     if (p > 0) {
-      const str = p.toFixed(20);
-      const afterDot = str.split('.')[1] || '';
-      let zeros = 0;
-      for (let i = 0; i < afterDot.length; i++) {
-        if (afterDot[i] === '0') zeros++; else break;
+      // 2 significant digits, then expand any scientific notation to plain decimal.
+      let s = p.toPrecision(2);
+      if (s.indexOf('e') !== -1 || s.indexOf('E') !== -1) {
+        const [mantissa, expStr] = s.toLowerCase().split('e');
+        const exp = parseInt(expStr, 10);
+        const [intPart, fracPart = ''] = mantissa.replace('-', '').split('.');
+        const digits = intPart + fracPart;
+        if (exp < 0) {
+          const zeros = -exp - intPart.length;
+          s = '0.' + '0'.repeat(Math.max(0, zeros)) + digits;
+        } else {
+          s = digits + '0'.repeat(Math.max(0, exp - fracPart.length));
+        }
       }
-      if (zeros >= 2) {
-        const sigStr = afterDot.slice(zeros, zeros + 4).replace(/0+$/, '') || '0';
-        return `$0.0${subNum(zeros - 1)}${sigStr}`;
-      }
-      return '$' + p.toFixed(4);
+      return '$' + s;
     }
     return '$0';
   }
+  // HTML-safe variant (identical output now — no markup needed).
+  function fmtPrice(p) { return fmtPriceText(p); }
 
   function findRungIndex(price) {
     if (price == null) return -1;
