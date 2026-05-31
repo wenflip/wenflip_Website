@@ -237,14 +237,14 @@
     transform: translateY(-2px);
   }
 
-  /* CLS fix: reserve clusters area so price load doesn't push everything down ~1600px */
+  /* CLS fix: reserve clusters area so price load doesn't push everything down */
   .clusters {
     margin-top: 16px;
-    display: flex; flex-direction: column; gap: 14px;
-    min-height: 680px;
+    display: flex; flex-direction: column; gap: 10px;
+    min-height: 440px;
   }
   @media (max-width: 760px) {
-    .clusters { min-height: 840px; } /* mobile clusters stack taller */
+    .clusters { min-height: 520px; }
   }
   .clusters-loading {
     display: flex; align-items: center; justify-content: center;
@@ -289,103 +289,152 @@
   /* ===== CHAIN PILLS ===== */
   .chain-pill {
     display: inline-flex; align-items: center; gap: 4px;
-    padding: 3px 9px; border-radius: 999px;
-    font-size: 10px; font-weight: 800; letter-spacing: 0.10em;
+    padding: 2px 7px; border-radius: 999px;
+    font-size: 9px; font-weight: 700; letter-spacing: 0.08em;
     text-transform: uppercase; user-select: none; flex-shrink: 0;
   }
   .chain-pill.pulsechain {
-    background: rgba(139,92,246,0.18);
-    border: 1px solid rgba(139,92,246,0.50);
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.38);
     color: #c4b5fd;
   }
   .chain-pill.major {
-    background: rgba(148,163,184,0.10);
-    border: 1px solid rgba(148,163,184,0.28);
-    color: #94a3b8;
+    background: rgba(148,163,184,0.08);
+    border: 1px solid rgba(148,163,184,0.22);
+    color: #7a8a9a;
   }
   .chain-pill-dot {
-    width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+    width: 4px; height: 4px; border-radius: 50%; flex-shrink: 0;
   }
   .chain-pill.pulsechain .chain-pill-dot { background: #a78bfa; }
   .chain-pill.major      .chain-pill-dot { background: #64748b; }
 
   .star {
-    display: inline-block; margin-left: 6px;
-    font-size: 0.95em;
-    filter: drop-shadow(0 0 6px rgba(251,191,36,0.6));
+    display: inline-block; margin-left: 4px;
+    font-size: 0.85em;
+    filter: drop-shadow(0 0 5px rgba(251,191,36,0.55));
     cursor: help;
   }
 
-  .crow {
-    display: grid; grid-template-columns: 40px 1fr auto;
-    align-items: center; gap: 10px; padding: 7px 18px;
-  }
-  .crow.next  { border-bottom: 1px dashed var(--line); opacity: 0.92; }
-  .crow.prev  { border-top: 1px dashed var(--line); opacity: 0.78; }
-  .crow.featured { background: linear-gradient(90deg, rgba(251,191,36,0.07), rgba(251,191,36,0.01)); }
-  .crow .arrow { font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); font-weight: 800; text-align:center; }
-  .crow .cname { font-weight: 600; font-size: 13px; line-height: 1.3; }
-  .crow .cprice { color: var(--muted); font-variant-numeric: tabular-nums; font-size: 13px; text-align: right; }
-
-  .token-row {
-    display: grid; grid-template-columns: 40px 1fr auto 44px;
-    align-items: center; gap: 12px;
-    padding: 12px 18px;
-    background: linear-gradient(90deg, rgba(139,92,246,0.22), rgba(236,72,153,0.18));
-    border-top: 1px solid rgba(236,72,153,0.35);
-    border-bottom: 1px solid rgba(139,92,246,0.35);
-    box-shadow: inset 0 0 30px rgba(236,72,153,0.12), 0 0 24px rgba(139,92,246,0.18);
+  /* ===== COMPACT COIN CARD ===== */
+  /* cluster: flat dark surface + 3px left border per chain */
+  .cluster {
+    border-radius: 12px; overflow: hidden;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
     position: relative;
+    display: flex; flex-direction: column;
+  }
+  .cluster.chain-pulsechain { border-left: 3px solid rgba(139,92,246,0.7); }
+  .cluster.chain-major      { border-left: 3px solid rgba(100,116,139,0.55); }
+
+  .cluster-divider {
+    height: 1px; margin: 0;
+    background: var(--line);
+  }
+
+  /* Top row: logo · ticker · pill ··· price · % · share */
+  .card-top {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 14px 8px;
     cursor: pointer;
-    transition: background .2s ease, box-shadow .2s ease, transform .15s ease;
+    min-width: 0;
   }
-  .token-row:hover {
-    background: linear-gradient(90deg, rgba(139,92,246,0.30), rgba(236,72,153,0.26));
-    box-shadow: inset 0 0 30px rgba(236,72,153,0.18), 0 0 40px rgba(139,92,246,0.32);
-    transform: translateY(-1px);
+  .card-top:hover { background: rgba(255,255,255,0.025); }
+  .card-logo {
+    width: 32px; height: 32px; border-radius: 50%;
+    overflow: hidden; flex-shrink: 0;
+    background: rgba(255,255,255,0.06);
   }
-  .token-row::before {
-    content:""; position:absolute; inset:0; pointer-events:none;
-    background: radial-gradient(400px 80px at 50% 50%, rgba(236,72,153,0.18), transparent 70%);
+  .card-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+  .card-id {
+    display: flex; align-items: center; gap: 6px;
+    min-width: 0; flex-shrink: 1; overflow: hidden;
   }
-  .token-row::after {
-    content: "↗ View on ladder";
-    position: absolute; top: 8px; left: 16px;
-    font-size: 9px; font-weight: 800; letter-spacing: 0.15em;
-    text-transform: uppercase; color: rgba(245,245,250,0.4);
-    pointer-events: none;
-    opacity: 0; transition: opacity .2s ease;
+  .card-sym {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 700; letter-spacing: -0.01em;
+    white-space: nowrap;
   }
-  .token-row:hover::after { opacity: 1; }
-  .token-row .tbadge {
-    width: 40px; height: 40px; border-radius: 50%;
-    overflow: hidden;
-    background: var(--grad);
-    box-shadow: 0 0 22px rgba(236,72,153,0.55);
-    animation: glow 2.5s ease-in-out infinite;
+  /* spacer pushes price group to right */
+  .card-spacer { flex: 1; min-width: 4px; }
+  .card-right {
+    display: flex; align-items: center; gap: 8px;
     flex-shrink: 0;
   }
-  @keyframes glow {
-    0%,100% { box-shadow: 0 0 12px rgba(139,92,246,0.4); }
-    50%     { box-shadow: 0 0 22px rgba(236,72,153,0.7); }
+  .card-price {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap; line-height: 1;
   }
-  .token-row .tinfo { display: flex; flex-direction: column; gap: 2px; }
-  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.01em; }
-  .token-row .tsub { color: rgba(245,245,250,0.85); font-size: 13px; font-weight: 600; }
-  .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .token-row .tchg { font-size: 12px; font-weight: 800; margin-top: 2px; }
-  .tchg.pos { color: #86efac; }
-  .tchg.neg { color: #fca5a5; }
-  .tright { text-align: right; }
+  .card-chg {
+    font-size: 11px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .card-chg.pos { color: #86efac; }
+  .card-chg.neg { color: #fca5a5; }
+
+  /* Share-to-X button: SVG bird, never clips */
+  .card-share {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+    background: rgba(29,161,242,0.15);
+    border: 1px solid rgba(29,161,242,0.45);
+    color: #7ec8ef;
+    text-decoration: none;
+    transition: background .15s, border-color .15s, transform .1s;
+  }
+  .card-share:hover {
+    background: rgba(29,161,242,0.30); border-color: rgba(29,161,242,0.80);
+    transform: translateY(-1px);
+  }
+  .card-share svg { width: 14px; height: 14px; fill: currentColor; display: block; }
+
+  /* Progress bar */
+  .card-bar-wrap { padding: 0 14px 0; }
+  .card-bar-track {
+    height: 3px; border-radius: 999px;
+    background: rgba(255,255,255,0.10);
+    overflow: hidden;
+  }
+  .card-bar-fill {
+    height: 100%; border-radius: 999px;
+    transition: width 600ms ease-out;
+    min-width: 2px;
+  }
+  /* PulseChain: gradient; majors: grey */
+  .chain-pulsechain .card-bar-fill { background: var(--grad); }
+  .chain-major      .card-bar-fill { background: rgba(148,163,184,0.6); }
+
+  /* Caption line */
+  .card-caption {
+    padding: 5px 14px 11px;
+    font-size: 11px; color: var(--muted); line-height: 1.45;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px;
+  }
+  .card-caption .cap-pct  { color: var(--text); font-weight: 700; }
+  .card-caption .cap-sep  { opacity: 0.35; }
+  .card-caption .cap-next { color: rgba(245,245,250,0.65); }
+  .card-caption .cap-prev { color: rgba(245,245,250,0.32); font-size: 10px; }
+
+  /* sub-zero price notation: the subscript zero count */
+  .price-sub { font-size: 0.72em; vertical-align: sub; line-height: 1; }
 
   @media (max-width: 600px) {
-    .crow { grid-template-columns: 34px 1fr auto; padding: 6px 13px; gap: 8px; }
-    .crow .cprice { font-size: 12px; }
-    .token-row { grid-template-columns: 38px 1fr auto 44px; padding: 9px 13px; gap: 9px; }
-    .token-row .tsym { font-size: 16px; }
-    .token-row .tprice { font-size: 19px; }
-    .token-row::after { display: none; }
+    .card-top { padding: 10px 12px 7px; gap: 8px; }
+    .card-sym { font-size: 15px; }
+    .card-price { font-size: 15px; }
+    .card-chg { font-size: 10px; }
+    .card-bar-wrap { padding: 0 12px 0; }
+    .card-caption { padding: 4px 12px 10px; font-size: 10.5px; }
     .view-full-btn { padding: 12px 18px; font-size: 14px; }
+  }
+  @media (max-width: 360px) {
+    .card-price { font-size: 13px; }
+    .card-sym { font-size: 13px; }
+    .card-share { width: 28px; height: 28px; }
   }
 
   .modal-backdrop {
@@ -466,46 +515,24 @@
     border: none; cursor: pointer; box-shadow: 0 8px 30px rgba(236,72,153,0.4);
   }
 
-  .tweet-btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    align-self: center;
-    width: 44px; height: 44px; border-radius: 12px;
-    background: rgba(29,161,242,0.22); border: 1px solid rgba(29,161,242,0.7);
-    color: #bfe2fb; font-size: 17px; font-weight: 800;
-    cursor: pointer; text-decoration: none; flex-shrink: 0;
-    box-shadow: 0 3px 14px rgba(29,161,242,0.22);
-    transition: background .15s ease, border-color .15s ease, box-shadow .2s ease, transform .15s ease;
-  }
-  .tweet-btn:hover {
-    background: rgba(29,161,242,0.38); border-color: rgba(29,161,242,0.95);
-    box-shadow: 0 6px 22px rgba(29,161,242,0.4);
-    transform: translateY(-1px);
-  }
-  /* Fix 3: collapsed-coins expander */
-  .extra-clusters { display: flex; flex-direction: column; gap: 14px; }
+  /* collapsed-coins expander */
+  .extra-clusters { display: flex; flex-direction: column; gap: 10px; }
   .show-all-wrap { display: flex; justify-content: center; margin-top: 6px; }
   .show-all-btn {
     display: flex; align-items: center; justify-content: center; gap: 10px;
     width: 100%; max-width: 460px;
-    padding: 18px 28px; border-radius: 16px;
-    background: rgba(139,92,246,0.10);
-    border: 1px solid rgba(139,92,246,0.55);
-    color: var(--text); font-weight: 800; font-size: 17px; cursor: pointer;
+    padding: 14px 24px; border-radius: 12px;
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.45);
+    color: var(--text); font-weight: 700; font-size: 15px; cursor: pointer;
     font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
     transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   }
   .show-all-btn:hover {
     background: var(--grad); border-color: transparent;
-    box-shadow: 0 10px 40px rgba(139,92,246,0.4);
+    box-shadow: 0 8px 30px rgba(139,92,246,0.35);
     transform: translateY(-2px);
   }
-
-  /* Change 6: dim FLIPPED row */
-  .crow.prev { border-top: 1px dashed var(--line); opacity: 0.42; }
-
-  /* Change 7: price is the dominant element */
-  .token-row .tprice { font-family: 'Space Grotesk', sans-serif; font-size: 24px; font-weight: 800; font-variant-numeric: tabular-nums; }
-  .token-row .tsym { font-family: 'Space Grotesk', sans-serif; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; color: rgba(245,245,250,0.8); }
 
   .btn-pulsex { background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.45); color: #f9a8d4; }
   .btn-pulsex:hover { background: rgba(236,72,153,0.25); border-color: rgba(236,72,153,0.7); box-shadow: 0 8px 30px rgba(236,72,153,0.3); }
@@ -533,22 +560,7 @@
     color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5;
   }
 
-  /* Change 3: Progress bar */
-  .flip-progress-wrap {
-    padding: 6px 18px 10px;
-  }
-  .flip-progress-track {
-    height: 8px; border-radius: 999px;
-    background: rgba(255,255,255,0.16);
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
-    overflow: hidden;
-  }
-  .flip-progress-fill {
-    height: 100%; border-radius: 999px;
-    background: var(--grad);
-    transition: width 600ms ease-out;
-    min-width: 2px;
-  }
+  /* bridge sentence */
 
   footer { margin-top: 48px; padding: 28px 0 40px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
@@ -1125,14 +1137,35 @@
 
   const MIN_WAGE_PER_SEC = 7.25 / 3600;
 
+  // Price formatter — uses subscript-zero notation for sub-cent values
+  // e.g. 0.00000713 → "$0.0₅713"  (₅ = count of leading zeros after decimal point)
+  const SUBSCRIPT_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function subNum(n) {
+    return String(n).split('').map(c => SUBSCRIPT_DIGITS[+c] ?? c).join('');
+  }
   function fmtPrice(p) {
     if (p == null) return '—';
     if (p >= 1000) return '$' + p.toLocaleString(undefined, {maximumFractionDigits: 0});
     if (p >= 1)    return '$' + p.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
     if (p >= 0.01) return '$' + p.toFixed(3);
-    if (p >= 0.0001) return '$' + p.toFixed(5);
-    if (p >= 0.00001) return '$' + p.toFixed(7);
-    return '$' + p.toFixed(8);
+    // sub-cent: count leading zeros after decimal
+    if (p > 0) {
+      // e.g. 0.00000713 → str "0.00000713", zeros after decimal = 5
+      const str = p.toFixed(20);
+      const afterDot = str.split('.')[1] || '';
+      let zeros = 0;
+      for (let i = 0; i < afterDot.length; i++) {
+        if (afterDot[i] === '0') zeros++; else break;
+      }
+      if (zeros >= 2) {
+        // grab up to 4 significant figures after the leading zeros
+        const sigStr = afterDot.slice(zeros, zeros + 4).replace(/0+$/, '') || '0';
+        return `$0.0<span class="price-sub">${subNum(zeros - 1)}</span>${sigStr}`;
+      }
+      // 1 leading zero: just show fixed
+      return '$' + p.toFixed(4);
+    }
+    return '$0';
   }
 
   function findRungIndex(price) {
@@ -1233,13 +1266,15 @@
     return `https://twitter.com/intent/tweet?text=${text}`;
   }
 
-  // CHANGE 3: chain pill HTML helper
   function chainPillHtml(t) {
     const isPulse = t.chain === 'pulsechain';
     const cls = isPulse ? 'pulsechain' : 'major';
     const label = isPulse ? 'PulseChain' : 'Major';
     return `<span class="chain-pill ${cls}"><span class="chain-pill-dot"></span>${label}</span>`;
   }
+
+  // X (Twitter) SVG icon for share button
+  const X_ICON = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.402 6.231H2.746l7.73-8.835L2.42 2.25h6.58l4.26 5.638 5.984-5.638Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>`;
 
   let showAllCoins = false;
 
@@ -1250,7 +1285,7 @@
       return;
     }
 
-    // CHANGE 2: sort by flip-readiness descending (fullest bar first)
+    // Sort by flip-readiness descending (fullest bar first)
     const ordered = [...ready].sort((a, b) => flipReadiness(b) - flipReadiness(a));
 
     const cards = ordered.map((t, idx) => {
@@ -1261,72 +1296,70 @@
       const next = rungLabelForToken(nextRung, timeMode);
       const prev = rungLabelForToken(prevRung, timeMode);
 
-      let tokenSubtitle = '';
-      if (timeMode) {
-        tokenSubtitle = timePhrase(t.price);
-      } else if (!nextRung) {
-        tokenSubtitle = 'at the top of the ladder';
-      }
-
       const chgCls = t.chg >= 0 ? 'pos' : 'neg';
       const chgStr = (t.chg >= 0 ? '+' : '') + (t.chg||0).toFixed(2) + '%';
 
-      const dt = getDisplayTier(t.price);
-      const dtMeta = DISPLAY_TIERS[dt] || { emoji: '•', label: '' };
-      const tierBadge = dt ? `<span class="tier-tag ${dt}">${dtMeta.emoji} ${dtMeta.label}</span>` : '';
+      // chain class for left border + bar color
+      const chainCls = t.chain === 'pulsechain' ? 'chain-pulsechain' : 'chain-major';
 
-      // CHANGE 3: chain pill injected into the token row
+      // chain pill: logo → ticker → pill
       const chainPill = chainPillHtml(t);
 
-      const nextRow = next ? `
-        <div class="crow next ${next.featured ? 'featured' : ''}">
-          <div class="arrow">↑ next</div>
-          <div class="cname">${next.name}${starHtml(next.featured)}</div>
-          <div class="cprice">${next.price}</div>
-        </div>` : '';
-      const prevRow = prev ? `
-        <div class="crow prev ${prev.featured ? 'featured' : ''}">
-          <div class="arrow">↓ flipped</div>
-          <div class="cname">${prev.name}${starHtml(prev.featured)}</div>
-          <div class="cflipped-right">${tierBadge}<div class="cprice">${prev.price}</div></div>
-        </div>` : '';
-
-      let progressBar = '';
+      // Progress bar percentage (same formula as before)
+      let pct = 0;
       if (!timeMode && nextRung) {
         const span = nextRung.price - (prevRung ? prevRung.price : 0);
-        const pct = span > 0
-          ? Math.min(100, Math.max(0,
-              ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100
-            ))
+        pct = span > 0
+          ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100))
           : 0;
-        progressBar = `
-          <div class="flip-progress-wrap">
-            <div class="flip-progress-track">
-              <div class="flip-progress-fill" style="width:${pct.toFixed(2)}%"></div>
-            </div>
-          </div>`;
       }
+
+      // Caption line
+      let caption = '';
+      if (!nextRung) {
+        // above the whole ladder
+        caption = `<span class="cap-pct">Top of the ladder 🏆</span>`;
+      } else if (timeMode) {
+        caption = `<span class="cap-next">${timePhrase(t.price)}</span>`;
+      } else {
+        const pctRounded = pct < 1 ? pct.toFixed(1) : Math.round(pct);
+        caption =
+          `<span class="cap-pct">${pctRounded}% to</span>` +
+          `<span class="cap-sep">·</span>` +
+          `<span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span>` +
+          `<span class="cap-sep">·</span>` +
+          `<span class="cap-next">${next ? next.price : ''}</span>`;
+        if (prev) {
+          caption += `<span class="cap-sep">·</span><span class="cap-prev">flipped ${prev.name}</span>`;
+        }
+      }
+
+      // Share tweet URL
+      const shareHref = tweetUrl(t, prev);
 
       return `
         ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
-        <div class="cluster" data-sym="${t.sym}">
-          ${nextRow}
-          <div class="cband-coin">
-            <div class="token-row" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="View ${t.sym} on the full ladder">
-              <div class="tbadge"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></div>
-              <div class="tinfo">
-                <div style="display:flex;align-items:center;gap:8px;">${chainPill}<div class="tsym">${t.sym}</div></div>
-                ${tokenSubtitle ? `<div class="tsub">${tokenSubtitle}</div>` : ''}
-              </div>
-              <div class="tright">
-                <div class="tprice">${fmtPrice(t.price)}</div>
-                <div class="tchg ${chgCls}">${chgStr} (24h)</div>
-              </div>
-              <a class="tweet-btn" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener" aria-label="Tweet this ${t.sym} flip">𝕏</a>
+        <div class="cluster ${chainCls}" data-sym="${t.sym}">
+          <div class="card-top" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="View ${t.sym} on the full ladder">
+            <div class="card-logo"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/></div>
+            <div class="card-id">
+              <div class="card-sym">${t.sym}</div>
+              ${chainPill}
             </div>
-            ${progressBar}
+            <div class="card-spacer"></div>
+            <div class="card-right">
+              <span class="card-price">${fmtPrice(t.price)}</span>
+              <span class="card-chg ${chgCls}">${chgStr}</span>
+              <a class="card-share" href="${shareHref}" target="_blank" rel="noopener" aria-label="Share ${t.sym} on X">${X_ICON}</a>
+            </div>
           </div>
-          ${prevRow}
+          ${!timeMode && nextRung ? `
+          <div class="card-bar-wrap">
+            <div class="card-bar-track">
+              <div class="card-bar-fill" style="width:${pct.toFixed(2)}%"></div>
+            </div>
+          </div>` : ''}
+          <div class="card-caption">${caption}</div>
         </div>
       `;
     });
@@ -1346,14 +1379,14 @@
       });
     }
 
-    el.querySelectorAll('.token-row[data-zoom]').forEach(row => {
+    el.querySelectorAll('.card-top[data-zoom]').forEach(row => {
       const sym = row.getAttribute('data-zoom');
       row.addEventListener('click', e => {
-        if (e.target.closest('.tweet-btn')) return;
+        if (e.target.closest('.card-share')) return;
         openModalZoomedTo(sym);
       });
       row.addEventListener('keydown', e => {
-        if (e.target.closest('.tweet-btn')) return;
+        if (e.target.closest('.card-share')) return;
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           openModalZoomedTo(sym);
@@ -1442,15 +1475,13 @@
 
   async function fetchOne(t) {
     const pairAddr = (t.pairAddress || '').trim();
-    // CHANGE 1: use dexChain (the DexScreener chain slug) for the API call
-    const chain = (t.dexChain || t.chain || 'pulsechain').trim();
     const stateIdx = state.findIndex(s => s.sym === t.sym);
     if (!pairAddr) {
       if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'no pair address'; }
       return;
     }
     try {
-      const url = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${pairAddr}`;
+      const url = `https://api.dexscreener.com/latest/dex/pairs/${t.dexChain}/${pairAddr}`;
       const res = await fetch(url);
       if (!res.ok) {
         if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = `HTTP ${res.status}`; }
@@ -1470,7 +1501,7 @@
       }
     } catch (e) {
       console.warn('fetch failed for', t.sym, e);
-      if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = 'API error'; }
+      if (stateIdx >= 0) { state[stateIdx].status = 'err'; state[stateIdx].error = String(e).slice(0,40); }
     }
   }
   async function refreshAll() {
