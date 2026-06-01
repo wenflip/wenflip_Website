@@ -6,13 +6,13 @@
     { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
     { sym: 'XRP',   name: 'XRP',       chain: 'major',      pairAddress: '0xb90fe999be6869af0afc557dccfbe169ea3403d6', dexChain: 'base',       logo: './logos/XRP_logo.png'    },
     { sym: 'DOGE',  name: 'Dogecoin',  chain: 'major',      pairAddress: '0x353d328efbef48b79a570cbc2fde20f40e9f2063', dexChain: 'bsc',        logo: './logos/DOGE_logo.png'   },
-    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', logo: './logos/pwBTC_Logo.png'  },
-    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', logo: './logos/INC_logo.png'    },
-    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', dexChain: 'pulsechain', logo: './logos/pDAI_logo.png'   },
-    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', dexChain: 'pulsechain', logo: './logos/HEX_Logo.png'    },
-    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', dexChain: 'pulsechain', logo: './logos/PulseX_logo.png' },
-    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', dexChain: 'pulsechain', logo: './logos/PLS_Logo.png'    },
-    { sym: 'PRVX',  name: 'PRVX',      chain: 'pulsechain', pairAddress: '0x7f681a5ad615238357ba148c281e2eaefd2de55a', dexChain: 'pulsechain', logo: './logos/PRVX_logo.png'   },
+    { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', logo: './logos/pwBTC_Logo.png',  identity: 'Bargain-bin Bitcoin copy. Way below the real thing.'         },
+    { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', logo: './logos/INC_logo.png',    identity: 'Earned for providing liquidity on PulseX.'                   },
+    { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', dexChain: 'pulsechain', logo: './logos/pDAI_logo.png',   identity: 'An unbacked copy of DAI. Betting it reaches $1.'             },
+    { sym: 'HEX',   name: 'HEX',       chain: 'pulsechain', pairAddress: '0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', dexChain: 'pulsechain', logo: './logos/HEX_Logo.png',    identity: 'Lock it up, earn back more HEX.'                            },
+    { sym: 'PLSX',  name: 'PulseX',    chain: 'pulsechain', pairAddress: '0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', dexChain: 'pulsechain', logo: './logos/PulseX_logo.png', identity: "PulseChain's main exchange. Its Uniswap."                    },
+    { sym: 'PLS',   name: 'Pulse',     chain: 'pulsechain', pairAddress: '0xe56043671df55de5cdf8459710433c10324de0ae', dexChain: 'pulsechain', logo: './logos/PLS_Logo.png',    identity: "PulseChain's native coin. Cheaper, faster Ethereum."         },
+    { sym: 'PRVX',  name: 'PRVX',      chain: 'pulsechain', pairAddress: '0x7f681a5ad615238357ba148c281e2eaefd2de55a', dexChain: 'pulsechain', logo: './logos/PRVX_logo.png',   identity: 'A long-shot bet on killing centralized exchanges.'           },
   ];
   const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null }));
 
@@ -571,6 +571,7 @@
             </div>
           </div>
           <div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pctDisplay.toFixed(2)}%"></div></div></div>
+          <div class="card-identity">${t.identity || ''}</div>
           <div class="card-caption">${caption}</div>
         </div>`;
     });
