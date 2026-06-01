@@ -271,14 +271,16 @@
     background: radial-gradient(600px 200px at 50% 0%, rgba(236,72,153,0.18), transparent 70%);
   }
   .modal-head {
-    display: flex; align-items: center; justify-content: space-between;
+    display: block;
     padding: 20px 24px; border-bottom: 1px solid var(--line);
     background: linear-gradient(90deg, rgba(139,92,246,0.12), rgba(236,72,153,0.12));
     position: relative; z-index: 1;
+    text-align: center;
   }
   .modal-head h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
   .modal-head .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.03em; margin-top: 4px; }
   .modal-close {
+    position: absolute; top: 50%; right: 20px; transform: translateY(-50%);
     width: 36px; height: 36px; border-radius: 50%;
     border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text);
     cursor: pointer; font-size: 18px; line-height: 1;
