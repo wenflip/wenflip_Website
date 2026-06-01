@@ -277,7 +277,7 @@
     position: relative; z-index: 1;
   }
   .modal-head h3 { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; }
-  .modal-head .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 4px; }
+  .modal-head .sub { color: var(--muted); font-size: 12px; letter-spacing: 0.03em; margin-top: 4px; }
   .modal-close {
     width: 36px; height: 36px; border-radius: 50%;
     border: 1px solid var(--line); background: rgba(255,255,255,0.04); color: var(--text);
