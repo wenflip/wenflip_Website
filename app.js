@@ -685,7 +685,11 @@
 
   async function refreshAll() {
     await Promise.all(TOKENS.map(fetchOne));
-    lastFetch = Date.now();
+    // Only advance lastFetch if at least one coin fetched successfully.
+    // If every fetch failed, leave lastFetch at its last good value so
+    // "last updated Ns ago" keeps counting up honestly.
+    const anyOk = state.some(s => s.status === 'ok');
+    if (anyOk) lastFetch = Date.now();
     renderTicker(); renderLadder(); renderUpdated();
   }
 
@@ -722,7 +726,7 @@
   }
   document.addEventListener('keydown', e => { if (e.key==='Escape'){closeModal();closeCalcModal();closeTokenModal();} });
 
-  function htmlAttr(str) { return str.replace(/&/g,'&amp;').replace(/"/g,'&quot;'); }
+  function htmlAttr(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
   function renderCalcCoinBadges() {
     const wrap = document.getElementById('calcCoinBadges');
