@@ -245,7 +245,9 @@
     text-align: center;
     letter-spacing: 0.04em;
     margin-bottom: 6px;
-  } Fixed slot on every card;
+  }
+  /* Identity descriptor — PulseChain coins only.
+     Fixed slot on every card;
      empty string for majors keeps height consistent across the mixed list. */
   .card-identity {
     padding: 2px 14px 0;
