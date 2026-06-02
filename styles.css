@@ -248,12 +248,12 @@
   } Fixed slot on every card;
      empty string for majors keeps height consistent across the mixed list. */
   .card-identity {
-    padding: 0 14px;
-    min-height: 1.4em;        /* reserves the line even when empty */
+    padding: 2px 14px 0;
+    min-height: 1.3em;
     font-size: 11px;
-    color: var(--muted);
+    color: rgba(245,245,250,0.55);
     line-height: 1.4;
-    font-style: italic;
+    font-style: normal;
   }
   @media (max-width: 600px) {
     .card-top { padding: 10px 12px 7px; gap: 8px; }
