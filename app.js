@@ -568,6 +568,7 @@
               <span class="card-price">${fmtPrice(t.price)}</span>
               <span class="card-chg ${chgCls}">${chgStr}</span>
               <a class="card-share" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener" aria-label="Share ${t.sym} on X">${X_ICON}</a>
+              <span class="card-chevron" aria-hidden="true">›</span>
             </div>
           </div>
           <div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pctDisplay.toFixed(2)}%"></div></div></div>
@@ -578,7 +579,7 @@
 
     const firstFour = cards.slice(0, 4).join('');
     const rest = cards.slice(4).join('');
-    el.innerHTML = firstFour + (rest
+    el.innerHTML = '<p class="cards-hint">Tap any coin to see its full ladder.</p>' + firstFour + (rest
       ? `<div id="extraClusters" class="extra-clusters" style="${showAllCoins ? '' : 'display:none'}">${rest}</div><div class="show-all-wrap"><button id="showAllBtn" class="show-all-btn">${showAllCoins ? 'Show fewer ↑' : 'Show all coins ↓'}</button></div>`
       : '');
 
