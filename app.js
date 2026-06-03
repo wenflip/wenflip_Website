@@ -771,7 +771,7 @@
 
   const CALC_STATE_COLORS = {
     flipped:     { main: '#22c55e', glow: 'rgba(34,197,94,0.45)' },
-    approaching: { main: '#ec4899', glow: 'rgba(236,72,153,0.40)' },
+    approaching: { main: '#f5f5fa', glow: 'rgba(245,245,250,0.20)' },
   };
 
   function updateCalcResult() {
@@ -800,7 +800,7 @@
     else { verdictEl.textContent='NOT YET'; multText=fmtMult(mult)+'×'; line3.textContent=`${calcCoin} needs ${multText} to reach ${calcTarget.name}`; if (mult>=1e9) line3.setAttribute('title',`Exact: ${Math.round(mult).toLocaleString()}x`); else line3.removeAttribute('title'); }
     lineMult.textContent=multText;
     lineMult.style.fontSize=multText.length>7?'42px':multText.length>5?'52px':'64px';
-    verdictEl.style.color=col.main; lineMult.style.color=col.main; lineMult.style.filter=`drop-shadow(0 0 16px ${col.glow})`;
+    verdictEl.style.color='#f5f5fa'; lineMult.style.color=col.main; lineMult.style.filter=`drop-shadow(0 0 16px ${col.glow})`;
   }
 
   const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
@@ -819,7 +819,7 @@
       const out=document.createElement('canvas'); out.width=1080; out.height=1080;
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(236,72,153,0.12)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
+      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
       ctx.drawImage(srcCanvas,30,30,1020,1020);
       if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
       else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
