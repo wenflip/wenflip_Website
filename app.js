@@ -827,3 +827,167 @@
     finally { btn.disabled=false; icon.textContent=_isIOS?'💾':'📋'; txt.textContent=_isIOS?'Save image':'Copy as image'; }
   }
   function showCalcToast(msg) { const t=document.getElementById('calcToast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
+
+  // ==== SHARED IMAGE EXPORT (refactored — both calc and status check use this) ====
+  // calcCopyImage now delegates to exportCardAsImage; no behavior change for the calculator.
+  const _origCalcCopy = calcCopyImage;
+  // Re-bind calcCopyImage to use the shared function
+  // (We define exportCardAsImage first, then shadow calcCopyImage below.)
+
+  async function exportCardAsImage(cardEl, shareBtn, iconEl, txtEl, isIOS) {
+    shareBtn.disabled=true; iconEl.textContent='⏳'; txtEl.textContent='Generating…';
+    try {
+      await loadHtml2Canvas();
+      const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
+      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
+      const ctx=out.getContext('2d');
+      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
+      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
+      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
+      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
+    } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
+    finally { shareBtn.disabled=false; iconEl.textContent=isIOS?'💾':'📋'; txtEl.textContent=isIOS?'Save image':'Copy as image'; }
+  }
+
+  // ==== STATUS CHECK MODAL ====
+  const GAP_BUCKETS = {
+    high:   ["Agonizing.", "This close.", "Right there."],
+    mid:    ["Getting there.", "Knocking on the door.", "Almost rude how close."],
+    low:    ["A journey, not a sprint.", "Work to do.", "We wait."],
+    bottom: ["A ways to go.", "Patience.", "Long road."],
+  };
+  function gapBucket(pct) {
+    if (pct >= 95) return GAP_BUCKETS.high;
+    if (pct >= 75) return GAP_BUCKETS.mid;
+    if (pct >= 40) return GAP_BUCKETS.low;
+    return GAP_BUCKETS.bottom;
+  }
+  function randPick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+  function getGapLine(pct, dollarGap) {
+    const tag = randPick(gapBucket(pct));
+    return fmtItemPrice(dollarGap) + ' to go.  ' + tag;
+  }
+
+  function openStatusCheckModal() {
+    renderScCoinList();
+    document.getElementById('scCardWrap').style.display = 'none';
+    document.getElementById('statusCheckModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeStatusCheckModal() {
+    document.getElementById('statusCheckModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function renderScCoinList() {
+    const wrap = document.getElementById('scCoinList');
+    wrap.innerHTML = TOKENS.map(t => {
+      const s = state.find(x => x.sym===t.sym);
+      const loading = !s || s.price==null;
+      return `<button class="sc-coin-row${loading?' loading':''}" data-sym="${t.sym}">
+        <span class="sc-coin-logo-wrap"><img src="${t.logo}" alt="${t.sym}"/></span>
+        <span class="sc-coin-name">${t.name}</span>
+        <span class="sc-coin-sym-tag">${t.sym}</span>
+      </button>`;
+    }).join('');
+    wrap.querySelectorAll('.sc-coin-row:not(.loading)').forEach(btn => {
+      btn.addEventListener('click', () => renderStatusCard(btn.dataset.sym));
+    });
+  }
+
+  function renderStatusCard(sym) {
+    const s = state.find(x => x.sym===sym);
+    const tk = TOKENS.find(t => t.sym===sym);
+    if (!s || !s.price || !tk) return;
+
+    const coinPrice = s.price;
+    const chg = s.chg || 0;
+    const chgSign = chg >= 0 ? '▲' : '▼';
+    const chgCls = chg >= 0 ? 'sc-up' : 'sc-down';
+    const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+    const clearedIdx = findRungIndex(coinPrice);
+    const clearedRung = LADDER[clearedIdx];
+    const nextRung = LADDER[clearedIdx - 1];
+
+    let zone3Html = '';
+    let zone4Html = '';
+    let hasDivider4 = false;
+
+    if (clearedIdx === 0 || !nextRung) {
+      // Top of ladder — no next rung
+      zone3Html = `<div class="sc-zone sc-zone-top-msg">
+        <div class="sc-top-msg-line">There is nothing left to flip.</div>
+        <div class="sc-top-msg-sub">It has cleared the entire ladder.</div>
+      </div>`;
+    } else if (clearedIdx === LADDER.length - 1 && coinPrice < LADDER[clearedIdx].price) {
+      // Below the ladder — no cleared rung
+      const firstRung = LADDER[LADDER.length - 1];
+      const pctRaw = Math.min(99, Math.round((coinPrice / firstRung.price) * 100));
+      const dollarGap = firstRung.price - coinPrice;
+      zone3Html = `<div class="sc-zone">
+        <div class="sc-label">STATUS: not on the board yet</div>
+      </div>`;
+      zone4Html = `<div class="sc-zone">
+        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${firstRung.name}</span> <span class="sc-item-price">${fmtItemPrice(firstRung.price)}</span></div>
+        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
+        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
+      </div>`;
+      hasDivider4 = true;
+    } else {
+      // Normal case
+      const pctRaw = Math.min(99, Math.round((coinPrice / nextRung.price) * 100));
+      const dollarGap = nextRung.price - coinPrice;
+      zone3Html = `<div class="sc-zone">
+        <div class="sc-label">STATUS: FLIPPED</div>
+        <div class="sc-cleared-name">${clearedRung.name}</div>
+        <div class="sc-cleared-price">${fmtItemPrice(clearedRung.price)}</div>
+      </div>`;
+      zone4Html = `<div class="sc-zone">
+        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${nextRung.name}</span> <span class="sc-item-price">${fmtItemPrice(nextRung.price)}</span></div>
+        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
+        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
+      </div>`;
+      hasDivider4 = true;
+    }
+
+    document.getElementById('scResultCard').innerHTML = `
+      <div class="sc-zone sc-zone-identity">
+        <div class="sc-id-row">
+          <img class="sc-logo" src="${tk.logo}" alt="${sym}"/>
+          <span class="sc-coin-fullname">${tk.name}</span>
+        </div>
+        <div class="sc-price-row">
+          <span class="sc-live-price">${fmtPrice(coinPrice)}</span>
+          <span class="sc-chg ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}% (24h)</span>
+        </div>
+      </div>
+      <div class="sc-divider"></div>
+      ${zone3Html}
+      <div class="sc-divider"></div>
+      ${zone4Html}
+      ${hasDivider4 ? '<div class="sc-divider"></div>' : ''}
+      <div class="sc-stamp">
+        <span class="sc-date">${dateStr}</span>
+        <span class="sc-wm">wenflip.com</span>
+      </div>
+    `;
+
+    const wrap = document.getElementById('scCardWrap');
+    wrap.style.display = '';
+    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth',block:'nearest'}));
+
+    const icon = document.getElementById('scShareIcon');
+    const txt = document.getElementById('scShareText');
+    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
+  }
+
+  async function scExport() {
+    const btn=document.getElementById('scShareBtn'),icon=document.getElementById('scShareIcon'),txt=document.getElementById('scShareText');
+    await exportCardAsImage(document.getElementById('scResultCard'),btn,icon,txt,_isIOS);
+  }
+
+  // Patch Escape key to also close status check modal
+  document.addEventListener('keydown', function(e) { if(e.key==='Escape') closeStatusCheckModal(); }, true);

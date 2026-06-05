@@ -92,11 +92,37 @@
       &nbsp;·&nbsp;
       <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy PLSX</a>
     </div>
-    <div class="disc" style="margin-top:10px;opacity:0.45;">WenFlip · Powered by PulseChain &nbsp;·&nbsp; <a href="#notacoin" onclick="event.preventDefault();openTokenModal();" style="color:inherit;">wen token?</a></div>
+    <div class="disc" style="margin-top:10px;opacity:0.45;">WenFlip · Powered by PulseChain &nbsp;·&nbsp; <a href="#notacoin" onclick="event.preventDefault();openTokenModal();" style="color:inherit;">wen token?</a> &nbsp;·&nbsp; <a href="#" onclick="event.preventDefault();openStatusCheckModal();" style="color:inherit;">status check</a></div>
   </footer>
 </div>
 
 <script src="app.js" defer></script>
+
+<!-- STATUS CHECK MODAL -->
+<div class="modal-backdrop" id="statusCheckModal" onclick="if(event.target===this)closeStatusCheckModal()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Status Check">
+    <div class="modal-head">
+      <div>
+        <h3>Status Check</h3>
+        <div class="sub">Pick a coin to generate a snapshot card.</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closeStatusCheckModal()">✕</button>
+    </div>
+    <div class="modal-body" id="statusCheckBody" style="padding:0 0 24px;overflow-y:auto;">
+      <div class="sc-coin-list" id="scCoinList"></div>
+      <div class="sc-card-wrap" id="scCardWrap" style="display:none">
+        <div id="scResultCard" class="sc-result-card">
+          <!-- rendered by JS -->
+        </div>
+        <div class="calc-share-row" style="margin-top:14px;">
+          <button class="calc-share-btn" id="scShareBtn" onclick="scExport()">
+            <span id="scShareIcon">📋</span><span id="scShareText">Copy as image</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- FULL LADDER MODAL -->
 <div class="modal-backdrop" id="modal" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow='';}">
