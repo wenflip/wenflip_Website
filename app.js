@@ -1126,7 +1126,10 @@
     document.getElementById('flippeningModal').classList.remove('open');
     document.body.style.overflow = '';
   }
-  document.getElementById('openFlippening').addEventListener('click', openFlippen);
+  // NOTE: Flippening is opened by the "Dunk on a coin" door button (#doorDunk),
+  // wired in the EMOTION DOORS block below. The old #openFlippening element no
+  // longer exists in the HTML; the stray listener that referenced it has been
+  // removed (it threw on null and halted all of app.js).
 
   function renderFlippenPickers() {
     ['A','B'].forEach(side => {
@@ -1363,7 +1366,9 @@
     document.getElementById('pumpModal').classList.remove('open');
     document.body.style.overflow = '';
   }
-  document.getElementById('openPump').addEventListener('click', openPump);
+  // NOTE: Pump is opened by the "Pump your bag" door button (#doorPump), wired
+  // in the EMOTION DOORS block below. The old #openPump element no longer exists
+  // in the HTML; the stray listener that referenced it has been removed.
 
   function renderPumpCoinBadges() {
     const wrap = document.getElementById('pumpCoinBadges');
