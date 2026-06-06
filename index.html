@@ -53,8 +53,17 @@
       <div class="ladder-head" style="text-align:center;">
         <h2 class="section-title">What's your coin about to <span class="grad">flip?</span></h2>
       </div>
-      <div class="ladder-head-cta">
-        <button class="calc-open-btn" id="openCalc">🧮 How far is your coin from flipping?</button>
+      <!-- EMOTION DOORS: 5 hero entry points above the coin list -->
+      <div class="emotion-doors" id="emotionDoors">
+        <button class="door-btn door-dunk"    id="doorDunk">    <span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
+        <button class="door-btn door-pump"    id="doorPump">    <span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
+        <button class="door-btn door-cope"    id="doorCope">    <span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
+        <button class="door-btn door-outrage" id="doorOutrage"> <span class="door-emoji">🤬</span><span class="door-label">What did crypto flip?</span></button>
+        <button class="door-btn door-wonder"  id="doorWonder">  <span class="door-emoji">🤯</span><span class="door-label">Show me something insane</span></button>
+      </div>
+      <!-- Secondary power-user link — quiet, below the doors -->
+      <div class="ladder-head-cta ladder-head-cta-secondary">
+        <button class="calc-open-btn calc-open-btn-quiet" id="openCalc">🧮 How far is my coin from flipping?</button>
       </div>
       <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
         <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
@@ -120,6 +129,194 @@
           </button>
           <button class="calc-share-btn sc-share-btn-x" id="scShareBtn2" onclick="scShare()">
             <span id="scShareIcon2">𝕏</span><span id="scShareText2">Share</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COPE MODAL -->
+<div class="modal-backdrop" id="copeModal" onclick="if(event.target===this)closeCope()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Cope">
+    <div class="modal-head">
+      <div>
+        <h3>Cope 💀</h3>
+        <div class="sub">Pick a coin. We'll handle the rest.</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closeCope()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
+      <div class="sc-coin-list" id="copeCoinList"></div>
+      <div class="sc-card-wrap" id="copeCardWrap" style="display:none">
+        <!-- cope line displayed above the card -->
+        <div class="cope-line-display" id="copeLineDisplay"></div>
+        <div id="copeResultCard" class="sc-result-card cope-result-card">
+          <!-- rendered by JS -->
+        </div>
+        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
+          <button class="calc-share-btn" id="copeShareBtn" onclick="copeExport()">
+            <span id="copeShareIcon">📋</span><span id="copeShareText">Copy as image</span>
+          </button>
+          <button class="calc-share-btn sc-share-btn-x" id="copeShareBtn2" onclick="copeShare()">
+            <span id="copeShareIcon2">𝕏</span><span id="copeShareText2">Share</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OUTRAGE MODAL -->
+<div class="modal-backdrop" id="outrageModal" onclick="if(event.target===this)closeOutrage()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="What did crypto flip?">
+    <div class="modal-head">
+      <div>
+        <h3>What did crypto flip? 🤬</h3>
+        <div class="sub">Pick the thing that made you angry. See which coin flips it.</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closeOutrage()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
+      <div class="outrage-item-list" id="outrageItemList"></div>
+      <div class="sc-card-wrap" id="outrageCardWrap" style="display:none">
+        <div id="outrageResultCard" class="sc-result-card">
+          <!-- rendered by JS -->
+        </div>
+        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
+          <button class="calc-share-btn" id="outrageShareBtn" onclick="outrageExport()">
+            <span id="outrageShareIcon">📋</span><span id="outrageShareText">Copy as image</span>
+          </button>
+          <button class="calc-share-btn sc-share-btn-x" id="outrageShareBtn2" onclick="outrageShare()">
+            <span id="outrageShareIcon2">𝕏</span><span id="outrageShareText2">Share</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WONDER MODAL -->
+<div class="modal-backdrop" id="wonderModal" onclick="if(event.target===this)closeWonder()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Show me something insane">
+    <div class="modal-head">
+      <div>
+        <h3>Something Insane 🤯</h3>
+        <div class="sub">No inputs. Just vibes.</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closeWonder()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
+      <div class="sc-card-wrap" id="wonderCardWrap">
+        <div id="wonderResultCard" class="sc-result-card">
+          <!-- rendered by JS -->
+        </div>
+        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
+          <button class="calc-share-btn wonder-reroll-btn" id="wonderRerollBtn" onclick="wonderReroll()">
+            🎲 Again
+          </button>
+          <button class="calc-share-btn" id="wonderShareBtn" onclick="wonderExport()">
+            <span id="wonderShareIcon">📋</span><span id="wonderShareText">Copy as image</span>
+          </button>
+          <button class="calc-share-btn sc-share-btn-x" id="wonderShareBtn2" onclick="wonderShare()">
+            <span id="wonderShareIcon2">𝕏</span><span id="wonderShareText2">Share</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PUMP MODAL -->
+<div class="modal-backdrop" id="pumpModal" onclick="if(event.target===this)closePump()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Pump — dream forward">
+    <div class="modal-head">
+      <div>
+        <h3>Pump <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">🚀</span></h3>
+        <div class="sub">Pick a coin. Dream a price. See what it flips.</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closePump()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
+
+      <!-- Step 1: pick coin -->
+      <div class="calc-section">
+        <div class="calc-lbl">Pick your coin</div>
+        <div class="coin-badges" id="pumpCoinBadges"><span style="color:var(--muted);font-size:13px;">Loading prices…</span></div>
+      </div>
+
+      <!-- Step 2: enter target -->
+      <div class="calc-section">
+        <div class="calc-lbl">Dream a price or pick a multiple</div>
+        <!-- Quick-pick multiples -->
+        <div class="pump-quick-row" id="pumpQuickRow">
+          <button class="pump-quick-btn" data-mult="2">2×</button>
+          <button class="pump-quick-btn" data-mult="5">5×</button>
+          <button class="pump-quick-btn" data-mult="10">10×</button>
+          <button class="pump-quick-btn" data-mult="100">100×</button>
+        </div>
+        <!-- Free input -->
+        <div class="pump-input-wrap">
+          <input class="pump-input" id="pumpInput" type="text"
+            placeholder='e.g. "10x" or "$1.00"'
+            autocomplete="off" spellcheck="false" inputmode="decimal"/>
+          <button class="pump-go-btn" id="pumpGoBtn">Go</button>
+        </div>
+        <div class="pump-input-hint" id="pumpInputHint"></div>
+      </div>
+
+      <!-- Result card + share -->
+      <div class="calc-result-section" id="pumpResultSection">
+        <div id="pumpPlaceholder" class="calc-result-placeholder">Pick a coin and enter a price or multiple.</div>
+        <div id="pumpResultCard" class="pump-result-card" style="display:none">
+          <!-- rendered by JS -->
+        </div>
+        <div class="calc-share-row sc-share-row" id="pumpShareRow" style="display:none">
+          <button class="calc-share-btn" id="pumpShareBtn" onclick="pumpExport()">
+            <span id="pumpShareIcon">📋</span><span id="pumpShareText">Copy as image</span>
+          </button>
+          <button class="calc-share-btn sc-share-btn-x" id="pumpShareBtn2" onclick="pumpShare()">
+            <span id="pumpShareIcon2">𝕏</span><span id="pumpShareText2">Share</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FLIPPENING MODAL -->
+<div class="modal-backdrop" id="flippeningModal" onclick="if(event.target===this)closeFlippen()">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Flippening — coin vs coin">
+    <div class="modal-head">
+      <div>
+        <h3>The Flippening <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">🔥</span></h3>
+        <div class="sub">Pick two coins. One of them is losing.</div>
+      </div>
+      <button class="modal-close" aria-label="Close" onclick="closeFlippen()">✕</button>
+    </div>
+    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
+      <div class="fl-pickers" id="flPickers">
+        <div class="fl-picker-col">
+          <div class="fl-picker-lbl">Your coin</div>
+          <div class="fl-coin-list" id="flCoinListA"></div>
+        </div>
+        <div class="fl-picker-divider">VS</div>
+        <div class="fl-picker-col">
+          <div class="fl-picker-lbl">Their coin</div>
+          <div class="fl-coin-list" id="flCoinListB"></div>
+        </div>
+      </div>
+      <div class="sc-card-wrap fl-card-wrap" id="flCardWrap" style="display:none">
+        <div id="flResultCard" class="fl-result-card">
+          <!-- rendered by JS -->
+        </div>
+        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
+          <button class="calc-share-btn" id="flShareBtn" onclick="flippenExport()">
+            <span id="flShareIcon">📋</span><span id="flShareText">Copy as image</span>
+          </button>
+          <button class="calc-share-btn sc-share-btn-x" id="flShareBtn2" onclick="flippenShare()">
+            <span id="flShareIcon2">𝕏</span><span id="flShareText2">Share</span>
           </button>
         </div>
       </div>
