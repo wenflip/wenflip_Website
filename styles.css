@@ -383,10 +383,10 @@
     transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
   }
   .show-all-btn:hover { background: var(--grad); border-color: transparent; box-shadow: 0 8px 30px rgba(46,224,106,0.32); transform: translateY(-2px); }
-  .btn-pulsex { background: var(--pulse-grad); border-color: transparent; color: #0a0a14; }
-  .btn-pulsex:hover { background: var(--pulse-grad); border-color: transparent; box-shadow: 0 8px 30px rgba(236,72,153,0.45); }
-  .btn-pulsex-large { padding: 18px 40px; font-size: 18px; font-weight: 800; box-shadow: 0 8px 40px rgba(236,72,153,0.35); }
-  .btn-pulsex-large:hover { box-shadow: 0 12px 50px rgba(236,72,153,0.55); transform: translateY(-2px); }
+  .btn-pulsex { background: var(--grad); border-color: transparent; color: #0a0a14; }
+  .btn-pulsex:hover { background: var(--grad); border-color: transparent; box-shadow: 0 8px 30px rgba(46,224,106,0.45); }
+  .btn-pulsex-large { padding: 18px 40px; font-size: 18px; font-weight: 800; box-shadow: 0 8px 40px rgba(46,224,106,0.40); }
+  .btn-pulsex-large:hover { box-shadow: 0 12px 50px rgba(46,224,106,0.60); transform: translateY(-2px); }
   .bridge-line { margin: 22px auto 0; max-width: 520px; font-size: clamp(14px, 1.55vw, 17px); font-weight: 700; color: rgba(255,255,255,0.75); text-align: center; line-height: 1.5; }
   .bridge-arrow { color: var(--accent); margin-right: 4px; }
   .bridge-pulse { background: var(--pulse-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }

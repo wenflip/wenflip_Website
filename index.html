@@ -61,9 +61,10 @@
         <button class="door-btn door-outrage" id="doorOutrage"> <span class="door-emoji">🤬</span><span class="door-label">What did crypto flip?</span></button>
         <button class="door-btn door-wonder"  id="doorWonder">  <span class="door-emoji">🤯</span><span class="door-label">Show me something insane</span></button>
       </div>
-      <!-- Secondary power-user link — quiet, below the doors -->
+      <!-- Secondary power-user links — quiet matched pair, below the doors -->
       <div class="ladder-head-cta ladder-head-cta-secondary">
-        <button class="calc-open-btn calc-open-btn-quiet" id="openCalc">🧮 How far is my coin from flipping?</button>
+        <button class="calc-open-btn calc-open-btn-quiet" onclick="openStatusCheckModal()">📸 Make a Flip Card</button>
+        <button class="calc-open-btn calc-open-btn-quiet" id="openCalc">🧮 How far from flipping?</button>
       </div>
       <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
         <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
@@ -94,14 +95,7 @@
       <a href="https://x.com/J_B199" target="_blank" rel="noopener">Follow @J_B199 on X</a>
       <a href="https://t.me/wen_flip" target="_blank" rel="noopener">Flip alerts on Telegram</a>
     </div>
-    <div class="disc" style="margin-top:12px;opacity:0.6;">
-      <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy PLS</a>
-      &nbsp;·&nbsp;
-      <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy HEX</a>
-      &nbsp;·&nbsp;
-      <a href="https://app.pulsex.com" target="_blank" rel="noopener" style="color:inherit;">Buy PLSX</a>
-    </div>
-    <div class="disc" style="margin-top:10px;opacity:0.45;">WenFlip · Powered by PulseChain &nbsp;·&nbsp; <a href="#notacoin" onclick="event.preventDefault();openTokenModal();" style="color:inherit;">wen token?</a> &nbsp;·&nbsp; <a href="#" onclick="event.preventDefault();openStatusCheckModal();" style="color:inherit;">status check</a></div>
+    <div class="disc" style="margin-top:10px;opacity:0.45;">WenFlip · Powered by PulseChain &nbsp;·&nbsp; <a href="#notacoin" onclick="event.preventDefault();openTokenModal();" style="color:inherit;">wen token?</a></div>
   </footer>
 </div>
 
