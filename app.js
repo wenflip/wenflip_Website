@@ -16,6 +16,15 @@
   ];
   const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null }));
 
+  // ==== CONTRACT-ADDRESS (CA) RESOLVER CONFIG ====
+  const MIN_LIQUIDITY_USD = 10000;
+  const MIN_VOLUME_24H = 1000;
+  // Mechanism A — wenflip impersonation (plaintext substring/fuzzy). Standalone 'flip' is NOT blocked.
+  const WENFLIP_BLOCK = ['wenflip','wen flip','wenflp','w3nflip','weflip','wflip'];
+  // Mechanism B — CSAM + hate (hashed, exact-token SHA-256 hex). POPULATED VIA hash-tool.html — leave empty.
+  const BLOCKED_HASHES = [];
+  const _blockedHashSet = new Set(BLOCKED_HASHES);
+
   // ==== LADDER ====
   const LADDER = [
     { price: 390000, name: "Rolls Royce Ghost (fully optioned)", tier: "heavyweight", category: "status" },
@@ -953,13 +962,174 @@
     });
   }
 
+  // ==== PASTE-A-CONTRACT-ADDRESS (CA) TOOL ====
+  // Lives ONLY inside the Status Check modal. Resolves an arbitrary token via DexScreener and
+  // renders it through renderStatusCardFromData — it never touches `state` or the TOKENS array,
+  // so a pasted address can never collide with or duplicate a built-in coin.
+
+  // Inline SVG data-URI fallback logo: dark circle + first letter of the symbol in white. No image files.
+  function caFallbackLogo(sym) {
+    const ch = ((String(sym||'?').trim()[0] || '?').toUpperCase()).replace(/[<>&"']/g,'') || '?';
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="32" r="32" fill="#15151f"/><text x="32" y="33" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="800" fill="#ffffff" text-anchor="middle" dominant-baseline="central">${ch}</text></svg>`;
+    return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+  }
+
+  // Normalize for the wenflip plaintext check: lowercase, strip everything but a-z0-9.
+  function caNormalize(str) { return String(str||'').toLowerCase().replace(/[^a-z0-9]/g,''); }
+
+  // SHA-256 hex of a string via SubtleCrypto.
+  async function caSha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  // Mechanism B: split name+symbol into alphanumeric tokens, SHA-256 each, test membership.
+  async function caHasBlockedToken(name, sym) {
+    if (_blockedHashSet.size === 0) return false;
+    const tokens = (String(name||'') + ' ' + String(sym||'')).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean);
+    for (const tok of tokens) {
+      if (_blockedHashSet.has(await caSha256Hex(tok))) return true;
+    }
+    return false;
+  }
+
+  // Mechanism A: does the normalized name/symbol CONTAIN a wenflip-impersonation entry?
+  // ('flip' / '$flip' alone is NOT blocked — Chainflip is real.)
+  function caIsWenflipImpersonation(name, sym) {
+    const norm = caNormalize(name) + caNormalize(sym);
+    return WENFLIP_BLOCK.some(entry => norm.includes(caNormalize(entry)));
+  }
+
+  // Resolver. Gates run in the exact order specified; each failure returns {ok:false, reason}.
+  async function resolveContractAddress(rawInput) {
+    // 1. Sanity
+    const address = String(rawInput||'').trim();
+    if (!address || address.length < 30) return { ok:false, reason:'invalid' };
+
+    // 2. Fetch the chain-agnostic TOKEN endpoint with an ~8s timeout
+    let json;
+    try {
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 8000);
+      let res;
+      try { res = await fetch(`https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(address)}`, { signal: ctrl.signal }); }
+      finally { clearTimeout(timer); }
+      if (!res.ok) return { ok:false, reason:'network' };
+      json = await res.json();
+    } catch(e) { return { ok:false, reason:'network' }; }
+    const pairs = Array.isArray(json && json.pairs) ? json.pairs : [];
+    if (pairs.length === 0) return { ok:false, reason:'notfound' };
+
+    // 3. Keep only pairs where baseToken.address matches the pasted address; pick deepest liquidity
+    const lc = address.toLowerCase();
+    const mine = pairs.filter(p => p && p.baseToken && String(p.baseToken.address||'').toLowerCase() === lc);
+    if (mine.length === 0) return { ok:false, reason:'notfound' };
+    mine.sort((a,b) => (b.liquidity?.usd || 0) - (a.liquidity?.usd || 0));
+    const pair = mine[0];
+
+    // 4. Liquidity floor
+    if ((pair.liquidity?.usd || 0) < MIN_LIQUIDITY_USD) return { ok:false, reason:'illiquid' };
+    // 5. Volume floor
+    if ((pair.volume?.h24 || 0) < MIN_VOLUME_24H) return { ok:false, reason:'novolume' };
+
+    // 6. Blocklist on baseToken.name + baseToken.symbol
+    const bName = pair.baseToken.name || '';
+    const bSym  = pair.baseToken.symbol || '';
+    if (caIsWenflipImpersonation(bName, bSym)) return { ok:false, reason:'wenflip' };
+    if (await caHasBlockedToken(bName, bSym))  return { ok:false, reason:'blocked' };
+
+    // 7. Success
+    return { ok:true, token: {
+      sym:  bSym,
+      name: bName,
+      price: parseFloat(pair.priceUsd),
+      chg:  pair.priceChange?.h24 ?? 0,
+      logo: (pair.info && pair.info.imageUrl) ? pair.info.imageUrl : caFallbackLogo(bSym),
+    }};
+  }
+
+  // ---- CA UI flow: input + button + inline failure message, inside the status modal ----
+  const CA_FAIL_MESSAGES = {
+    invalid:  "That's not a contract address. Try pasting the actual thing.",
+    network:  "DexScreener isn't answering. Try again in a sec.",
+    notfound: "Couldn't find that coin. Either it's not trading or you fat-fingered it.",
+    illiquid: "Not enough liquidity to call this a price. That's a group chat, not a market.",
+    novolume: "Nobody's trading this. The price is a fossil. No card.",
+    blocked:  "We're not putting that on a card. The ladder has standards. Barely, but it does.",
+  };
+
+  function caShowFail(reason) {
+    const box = document.getElementById('caFailMsg');
+    if (!box) return;
+    document.getElementById('scCardWrap').style.display = 'none';
+    if (reason === 'wenflip') {
+      box.innerHTML = `There is no wenflip token. Whatever you pasted is a scam and it isn't ours. Don't buy it. <a href="#notacoin" class="ca-fail-link" onclick="event.preventDefault();openTokenModal();">wen token?</a>`;
+    } else {
+      box.textContent = CA_FAIL_MESSAGES[reason] || CA_FAIL_MESSAGES.notfound;
+    }
+    box.style.display = 'block';
+  }
+  function caClearFail() {
+    const box = document.getElementById('caFailMsg');
+    if (box) { box.style.display = 'none'; box.textContent = ''; }
+  }
+
+  let _caBusy = false;
+  async function caSubmit() {
+    if (_caBusy) return;
+    const input = document.getElementById('caInput');
+    const btn = document.getElementById('caGoBtn');
+    if (!input || !btn) return;
+    caClearFail();
+    _caBusy = true; btn.disabled = true;
+    const prevLabel = btn.textContent;
+    btn.textContent = 'Pulling the receipt…';
+    const started = Date.now();
+    let result;
+    try { result = await resolveContractAddress(input.value); }
+    catch(e) { result = { ok:false, reason:'network' }; }
+    // Guarantee at least a ~1s deadpan beat
+    await new Promise(r => setTimeout(r, Math.max(0, 1000 - (Date.now() - started))));
+    try {
+      if (result.ok) { caClearFail(); renderStatusCardFromData(result.token); }
+      else { caShowFail(result.reason); }
+    } finally {
+      _caBusy = false; btn.disabled = false; btn.textContent = prevLabel;
+    }
+  }
+
+  // Wire the CA controls (static elements in the status modal; script is deferred so DOM exists).
+  (function wireCaTool(){
+    const btn = document.getElementById('caGoBtn');
+    const input = document.getElementById('caInput');
+    if (btn) btn.addEventListener('click', caSubmit);
+    if (input) {
+      input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); caSubmit(); } });
+      input.addEventListener('input', caClearFail);
+    }
+  })();
+
+  // Thin wrapper: look up a built-in coin by symbol, then delegate to the data-driven renderer.
+  // Behavior for built-ins is byte-for-byte identical to before (their names/syms/logos contain
+  // no HTML-special characters, so the escaping in renderStatusCardFromData is a no-op on them).
   function renderStatusCard(sym) {
     const s = state.find(x => x.sym===sym);
     const tk = TOKENS.find(t => t.sym===sym);
     if (!s || !s.price || !tk) return;
+    renderStatusCardFromData({ sym, name: tk.name, price: s.price, chg: s.chg || 0, logo: tk.logo });
+  }
 
-    const coinPrice = s.price;
-    const chg = s.chg || 0;
+  // Data-driven renderer. Takes {sym, name, price, chg, logo} directly — used by both the
+  // built-in picker (via renderStatusCard) and the pasted-CA path (which never touches `state`).
+  function renderStatusCardFromData(tokenObj) {
+    if (!tokenObj || tokenObj.price == null) return;
+    caClearFail();
+    const sym  = String(tokenObj.sym  || '');
+    const name = String(tokenObj.name || sym);
+    const logo = String(tokenObj.logo || '');
+
+    const coinPrice = tokenObj.price;
+    const chg = tokenObj.chg || 0;
     const chgSign = chg >= 0 ? '▲' : '▼';
     const chgCls = chg >= 0 ? 'sc-up' : 'sc-down';
     const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
@@ -1012,8 +1182,8 @@
     document.getElementById('scResultCard').innerHTML = `
       <div class="sc-zone sc-zone-identity">
         <div class="sc-id-row">
-          <img class="sc-logo" src="${tk.logo}" alt="${sym}"/>
-          <span class="sc-coin-fullname">${tk.name}</span>
+          <img class="sc-logo" src="${htmlAttr(logo)}" alt="${htmlAttr(sym)}"/>
+          <span class="sc-coin-fullname">${htmlAttr(name)}</span>
         </div>
         <div class="sc-price-row">
           <span class="sc-live-price">${fmtPrice(coinPrice)}</span>

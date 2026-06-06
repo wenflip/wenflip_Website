@@ -112,6 +112,11 @@
       <button class="modal-close" aria-label="Close" onclick="closeStatusCheckModal()">✕</button>
     </div>
     <div class="modal-body" id="statusCheckBody" style="padding:0 0 24px;overflow-y:auto;">
+      <div class="ca-tool">
+        <input id="caInput" class="ca-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="or paste any contract address" />
+        <button id="caGoBtn" class="ca-go-btn" type="button">Check</button>
+      </div>
+      <div id="caFailMsg" class="ca-fail" style="display:none"></div>
       <div class="sc-coin-list" id="scCoinList"></div>
       <div class="sc-card-wrap" id="scCardWrap" style="display:none">
         <div id="scResultCard" class="sc-result-card">
