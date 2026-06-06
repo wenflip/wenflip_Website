@@ -244,6 +244,7 @@
     background: rgba(255,255,255,0.05); border: 1px solid var(--line);
     color: rgba(245,245,250,0.7); text-decoration: none;
     transition: background .15s, border-color .15s, transform .1s;
+    cursor: pointer; padding: 0; font-size: inherit; line-height: 1;
   }
   .card-share:hover { background: rgba(46,224,106,0.12); border-color: rgba(46,224,106,0.40); color: var(--text); transform: translateY(-1px); }
   .card-share svg { width: 14px; height: 14px; fill: currentColor; display: block; }
@@ -525,3 +526,8 @@
     display: flex; justify-content: space-between; align-items: center;
     font-size: 10px; color: rgba(46,224,106,0.55); font-weight: 700; letter-spacing: 0.06em;
   }
+
+  /* Two-button share row inside status card modal */
+  .sc-share-row { gap: 10px; flex-wrap: wrap; }
+  .sc-share-btn-x { background: rgba(255,255,255,0.08); box-shadow: none; border: 1px solid var(--line); }
+  .sc-share-btn-x:hover { background: rgba(255,255,255,0.14); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }

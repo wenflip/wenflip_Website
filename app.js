@@ -567,7 +567,7 @@
             <div class="card-right">
               <span class="card-price">${fmtPrice(t.price)}</span>
               <span class="card-chg ${chgCls}">${chgStr}</span>
-              <a class="card-share" href="${tweetUrl(t, prev)}" target="_blank" rel="noopener" aria-label="Share ${t.sym} on X">${X_ICON}</a>
+              <button class="card-share" type="button" aria-label="Status card for ${t.sym}" data-sc-sym="${t.sym}">${X_ICON}</button>
               <span class="card-chevron" aria-hidden="true">›</span>
             </div>
           </div>
@@ -590,6 +590,12 @@
       const sym = row.getAttribute('data-zoom');
       row.addEventListener('click', e => { if (e.target.closest('.card-share')) return; openModalZoomedTo(sym); });
       row.addEventListener('keydown', e => { if (e.target.closest('.card-share')) return; if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openModalZoomedTo(sym); } });
+    });
+    el.querySelectorAll('.card-share[data-sc-sym]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault(); e.stopPropagation();
+        openStatusCheckModalForCoin(btn.dataset.scSym);
+      });
     });
   }
 
@@ -875,6 +881,14 @@
     document.getElementById('statusCheckModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+  function openStatusCheckModalForCoin(sym) {
+    renderScCoinList();
+    document.getElementById('scCardWrap').style.display = 'none';
+    document.getElementById('statusCheckModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Pre-render the card for this coin immediately
+    renderStatusCard(sym);
+  }
   function closeStatusCheckModal() {
     document.getElementById('statusCheckModal').classList.remove('open');
     document.body.style.overflow = '';
@@ -987,6 +1001,72 @@
   async function scExport() {
     const btn=document.getElementById('scShareBtn'),icon=document.getElementById('scShareIcon'),txt=document.getElementById('scShareText');
     await exportCardAsImage(document.getElementById('scResultCard'),btn,icon,txt,_isIOS);
+  }
+
+  async function scShare() {
+    const btn2=document.getElementById('scShareBtn2'),icon2=document.getElementById('scShareIcon2'),txt2=document.getElementById('scShareText2');
+    btn2.disabled=true; icon2.textContent='⏳'; txt2.textContent='Preparing…';
+    try {
+      await loadHtml2Canvas();
+      const cardEl=document.getElementById('scResultCard');
+      const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
+      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
+      const ctx=out.getContext('2d');
+      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
+      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
+      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      // Attempt native file share (works on mobile with share sheets)
+      const canShareFiles = navigator.canShare && navigator.share;
+      if (canShareFiles) {
+        // Build a File from the canvas blob, then test if the browser can share it
+        await new Promise((resolve, reject) => {
+          out.toBlob(async blob => {
+            try {
+              const file = new File([blob], 'wenflip-status.png', {type:'image/png'});
+              const shareData = { files:[file], title:'WenFlip Status', text:'Check the status on wenflip.com' };
+              if (navigator.canShare(shareData)) {
+                await navigator.share(shareData);
+                resolve();
+              } else {
+                // canShare says no — fall through to clipboard+composer
+                reject(new Error('canShare false'));
+              }
+            } catch(e) { reject(e); }
+          }, 'image/png');
+        });
+      } else {
+        throw new Error('no share');
+      }
+    } catch(err) {
+      // Fallback: copy image to clipboard + open X compose window
+      try {
+        const cardEl=document.getElementById('scResultCard');
+        const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
+        const out2=document.createElement('canvas'); out2.width=1080; out2.height=1080;
+        const ctx2=out2.getContext('2d');
+        const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
+        const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
+        ctx2.drawImage(srcCanvas,30,30,1020,1020);
+        await new Promise((resolve, reject) => {
+          out2.toBlob(async blob => {
+            try {
+              await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
+              window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
+              showCalcToast('Image copied — paste it into your post 🔥');
+              resolve();
+            } catch(e2) {
+              // Clipboard also failed — download + open composer
+              const link=document.createElement('a'); link.download='wenflip-status.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
+              window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
+              showCalcToast('Saved! Open X and attach the image. 🔥');
+              resolve();
+            }
+          }, 'image/png');
+        });
+      } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
+    } finally {
+      btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
+    }
   }
 
   // Patch Escape key to also close status check modal
