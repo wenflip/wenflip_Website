@@ -436,11 +436,17 @@
   .target-empty { padding: 20px; text-align: center; color: var(--muted); font-size: 14px; }
   .calc-result-section { padding: 20px 24px; border-top: 1px solid var(--line); }
   .calc-result-placeholder { color: var(--muted); font-size: 14px; text-align: center; padding: 10px 0; }
-  .calc-result-card {
-    width: min(440px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; padding: 30px 28px 46px;
+  /* === SHARED CARD BASE — all four exportable square cards inherit this === */
+  .flip-card {
+    width: min(360px, 100%); aspect-ratio: 1 / 1; margin: 0 auto;
     border-radius: 18px; background: var(--bg-3);
     border: 1px solid var(--line); position: relative; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: space-between; text-align: center;
+    display: flex; flex-direction: column;
+  }
+
+  .calc-result-card {
+    padding: 30px 28px 46px;
+    justify-content: space-between; text-align: center;
   }
   .calc-zone-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
   .calc-sb-side { flex: 1; min-width: 0; text-align: left; }
@@ -490,10 +496,8 @@
   /* Status card */
   .sc-card-wrap { padding: 16px 16px 0; }
   .sc-result-card {
-    width: min(440px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; padding: 28px 26px 44px;
-    border-radius: 18px; background: var(--bg-3);
-    border: 1px solid var(--line); position: relative; overflow: hidden;
-    display: flex; flex-direction: column; gap: 0;
+    padding: 28px 26px 44px;
+    gap: 0;
   }
   .sc-zone {
     padding: 10px 0;
@@ -575,11 +579,8 @@
   /* Flippening result card */
   .fl-card-wrap { padding: 16px 16px 0; }
   .fl-result-card {
-    width: min(440px, 100%); aspect-ratio: 1 / 1; margin: 0 auto;
     padding: 20px 20px 44px;
-    border-radius: 18px; background: var(--bg-3);
-    border: 1px solid var(--line); position: relative; overflow: hidden;
-    display: flex; flex-direction: column; gap: 0;
+    gap: 0;
   }
   .fl-title-strip {
     font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 800;
@@ -709,10 +710,8 @@
 
   /* Pump result card */
   .pump-result-card {
-    width: min(440px, 100%); aspect-ratio: 1 / 1; margin: 0 auto; padding: 28px 28px 48px;
-    border-radius: 18px; background: var(--bg-3);
-    border: 1px solid var(--line); position: relative; overflow: hidden;
-    display: flex; flex-direction: column; gap: 0;
+    padding: 28px 28px 48px;
+    gap: 0;
   }
   /* Subtle glow overlay for the dream aesthetic */
   .pump-result-card::before {
