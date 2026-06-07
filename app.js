@@ -1,6 +1,7 @@
   // ==== TOKEN CONFIG ====
   const TOKENS = [
     { sym: 'BTC',   name: 'Bitcoin',   chain: 'major',      pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', dexChain: 'ethereum',   logo: './logos/BTC_logo.png'    },
+    { sym: 'GOLD',  name: 'Gold',      chain: 'major',      pairAddress: '0x9c4fe5ffd9a9fc5678cfbd93aa2d4fd684b67c4c', dexChain: 'ethereum',   logo: './logos/GOLD_logo.png'   },
     { sym: 'ETH',   name: 'Ethereum',  chain: 'major',      pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', dexChain: 'bsc',        logo: './logos/ETH_logo.png'    },
     { sym: 'SOL',   name: 'Solana',    chain: 'major',      pairAddress: '0xbffec96e8f3b5058b1817c14e4380758fada01ef', dexChain: 'bsc',        logo: './logos/SOL_logo.png'    },
     { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
@@ -753,10 +754,53 @@
 
   renderTicker();
 
+  // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
+  // contract address string. Re-uses resolveContractAddress + renderStatusCardFromData + caShowFail
+  // exactly as caSubmit does — no duplicated logic.
+  async function openStatusCheckModalForCA(address) {
+    openStatusCheckModal();
+    // Let the modal paint before kicking off the async fetch
+    await new Promise(r => setTimeout(r, 80));
+    const caInput = document.getElementById('caInput');
+    if (caInput) caInput.value = address;
+    caClearFail();
+    let result;
+    try { result = await resolveContractAddress(address); }
+    catch(e) { result = { ok:false, reason:'network' }; }
+    if (result.ok) { caClearFail(); renderStatusCardFromData(result.token); }
+    else { caShowFail(result.reason); }
+  }
+
   function handleDeepLink() {
     const raw = window.location.hash.replace(/^#/,'').trim();
     if (!raw) return;
+
+    // Reserved keyword: #notacoin
     if (raw.toLowerCase()==='notacoin') { openTokenModal(); return; }
+
+    // Reserved keyword: #flip and all #flip=VALUE variants — checked BEFORE coin lookup
+    // so 'flip' can never be shadowed by a token symbol.
+    if (raw.toLowerCase() === 'flip' || raw.toLowerCase().startsWith('flip=')) {
+      const value = raw.toLowerCase() === 'flip' ? '' : raw.slice(5); // everything after 'flip='
+      if (!value) {
+        // #flip → open picker
+        openStatusCheckModal();
+        return;
+      }
+      // #flip=SYMBOL — case-insensitive match against built-in tokens
+      const symMatch = TOKENS.find(t => t.sym.toLowerCase() === value.toLowerCase());
+      if (symMatch) { openStatusCheckModalForCoin(symMatch.sym); return; }
+      // #flip=<contract address> — starts with 0x OR is long enough to be a CA
+      if (value.startsWith('0x') || value.length > 30) {
+        openStatusCheckModalForCA(value);
+        return;
+      }
+      // #flip=<anything else> → graceful fallback: open picker
+      openStatusCheckModal();
+      return;
+    }
+
+    // Existing: #SYMBOL → zoom the ladder to that coin
     const match = TOKENS.find(t => t.sym.toLowerCase()===raw.toLowerCase());
     if (match) openModalZoomedTo(match.sym);
   }
