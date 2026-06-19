@@ -657,16 +657,18 @@
      Reuses .ca-input / .ca-go-btn / .ca-fail from the Status modal.
      Overrides only what the narrower two-column layout requires. */
   .fl-ca-tool {
-    display: flex; gap: 6px; align-items: stretch;
-    margin-top: 8px; padding: 0 2px;
+    display: flex; flex-direction: column; gap: 5px;
+    margin-top: 4px; margin-bottom: 8px; padding: 0 2px;
   }
   .fl-ca-input {
     font-size: 12px !important;
     padding: 9px 10px !important;
+    width: 100% !important; box-sizing: border-box !important;
   }
   .fl-ca-btn {
     font-size: 12px !important;
     padding: 9px 12px !important;
+    width: 100% !important;
   }
   .fl-ca-fail {
     margin: 4px 2px 0 !important;
