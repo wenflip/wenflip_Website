@@ -119,7 +119,7 @@
       <div id="caFailMsg" class="ca-fail" style="display:none"></div>
       <div class="sc-coin-list" id="scCoinList"></div>
       <div class="sc-card-wrap" id="scCardWrap" style="display:none">
-        <div id="scResultCard" class="sc-result-card flip-card">
+        <div id="scResultCard" class="sc-result-card">
           <!-- rendered by JS -->
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
@@ -150,7 +150,7 @@
       <div class="sc-card-wrap" id="copeCardWrap" style="display:none">
         <!-- cope line displayed above the card -->
         <div class="cope-line-display" id="copeLineDisplay"></div>
-        <div id="copeResultCard" class="sc-result-card cope-result-card flip-card">
+        <div id="copeResultCard" class="sc-result-card cope-result-card">
           <!-- rendered by JS -->
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
@@ -179,7 +179,7 @@
     <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
       <div class="outrage-item-list" id="outrageItemList"></div>
       <div class="sc-card-wrap" id="outrageCardWrap" style="display:none">
-        <div id="outrageResultCard" class="sc-result-card flip-card">
+        <div id="outrageResultCard" class="sc-result-card">
           <!-- rendered by JS -->
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
@@ -207,7 +207,7 @@
     </div>
     <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
       <div class="sc-card-wrap" id="wonderCardWrap">
-        <div id="wonderResultCard" class="sc-result-card flip-card">
+        <div id="wonderResultCard" class="sc-result-card">
           <!-- rendered by JS -->
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
@@ -267,7 +267,7 @@
       <!-- Result card + share -->
       <div class="calc-result-section" id="pumpResultSection">
         <div id="pumpPlaceholder" class="calc-result-placeholder">Pick a coin and enter a price or multiple.</div>
-        <div id="pumpResultCard" class="pump-result-card flip-card" style="display:none">
+        <div id="pumpResultCard" class="pump-result-card" style="display:none">
           <!-- rendered by JS -->
         </div>
         <div class="calc-share-row sc-share-row" id="pumpShareRow" style="display:none">
@@ -299,15 +299,29 @@
         <div class="fl-picker-col">
           <div class="fl-picker-lbl">Your coin</div>
           <div class="fl-coin-list" id="flCoinListA"></div>
+          <div class="fl-ca-tool">
+            <input id="flCaInputA" class="ca-input fl-ca-input" type="text" inputmode="text"
+              autocomplete="off" autocapitalize="off" spellcheck="false"
+              placeholder="or paste contract address" />
+            <button id="flCaBtnA" class="ca-go-btn fl-ca-btn" type="button">Check</button>
+          </div>
+          <div id="flCaFailA" class="ca-fail fl-ca-fail" style="display:none"></div>
         </div>
         <div class="fl-picker-divider">VS</div>
         <div class="fl-picker-col">
           <div class="fl-picker-lbl">Their coin</div>
           <div class="fl-coin-list" id="flCoinListB"></div>
+          <div class="fl-ca-tool">
+            <input id="flCaInputB" class="ca-input fl-ca-input" type="text" inputmode="text"
+              autocomplete="off" autocapitalize="off" spellcheck="false"
+              placeholder="or paste contract address" />
+            <button id="flCaBtnB" class="ca-go-btn fl-ca-btn" type="button">Check</button>
+          </div>
+          <div id="flCaFailB" class="ca-fail fl-ca-fail" style="display:none"></div>
         </div>
       </div>
       <div class="sc-card-wrap fl-card-wrap" id="flCardWrap" style="display:none">
-        <div id="flResultCard" class="fl-result-card flip-card">
+        <div id="flResultCard" class="fl-result-card">
           <!-- rendered by JS -->
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
@@ -361,7 +375,7 @@
       </div>
       <div class="calc-result-section">
         <div id="calcPlaceholder" class="calc-result-placeholder">Pick a coin and a target to see the math.</div>
-        <div id="calcResultCard" class="calc-result-card flip-card" style="display:none">
+        <div id="calcResultCard" class="calc-result-card" style="display:none">
           <div class="calc-zone-top">
             <div class="calc-sb-side">
               <div class="calc-sb-coin"><img id="calcSbLogo" class="calc-sb-logo" alt=""/><span id="calcSbCoinName"></span></div>

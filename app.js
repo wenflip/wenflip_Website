@@ -1,7 +1,6 @@
   // ==== TOKEN CONFIG ====
   const TOKENS = [
     { sym: 'BTC',   name: 'Bitcoin',   chain: 'major',      pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', dexChain: 'ethereum',   logo: './logos/BTC_logo.png'    },
-    { sym: 'PAXG',  name: 'Gold',      chain: 'major',      pairAddress: '0x9c4fe5ffd9a9fc5678cfbd93aa2d4fd684b67c4c', dexChain: 'ethereum',   logo: './logos/GOLD_logo.png'   },
     { sym: 'ETH',   name: 'Ethereum',  chain: 'major',      pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', dexChain: 'bsc',        logo: './logos/ETH_logo.png'    },
     { sym: 'SOL',   name: 'Solana',    chain: 'major',      pairAddress: '0xbffec96e8f3b5058b1817c14e4380758fada01ef', dexChain: 'bsc',        logo: './logos/SOL_logo.png'    },
     { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
@@ -754,53 +753,10 @@
 
   renderTicker();
 
-  // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
-  // contract address string. Re-uses resolveContractAddress + renderStatusCardFromData + caShowFail
-  // exactly as caSubmit does — no duplicated logic.
-  async function openStatusCheckModalForCA(address) {
-    openStatusCheckModal();
-    // Let the modal paint before kicking off the async fetch
-    await new Promise(r => setTimeout(r, 80));
-    const caInput = document.getElementById('caInput');
-    if (caInput) caInput.value = address;
-    caClearFail();
-    let result;
-    try { result = await resolveContractAddress(address); }
-    catch(e) { result = { ok:false, reason:'network' }; }
-    if (result.ok) { caClearFail(); renderStatusCardFromData(result.token); }
-    else { caShowFail(result.reason); }
-  }
-
   function handleDeepLink() {
     const raw = window.location.hash.replace(/^#/,'').trim();
     if (!raw) return;
-
-    // Reserved keyword: #notacoin
     if (raw.toLowerCase()==='notacoin') { openTokenModal(); return; }
-
-    // Reserved keyword: #flip and all #flip=VALUE variants — checked BEFORE coin lookup
-    // so 'flip' can never be shadowed by a token symbol.
-    if (raw.toLowerCase() === 'flip' || raw.toLowerCase().startsWith('flip=')) {
-      const value = raw.toLowerCase() === 'flip' ? '' : raw.slice(5); // everything after 'flip='
-      if (!value) {
-        // #flip → open picker
-        openStatusCheckModal();
-        return;
-      }
-      // #flip=SYMBOL — case-insensitive match against built-in tokens
-      const symMatch = TOKENS.find(t => t.sym.toLowerCase() === value.toLowerCase());
-      if (symMatch) { openStatusCheckModalForCoin(symMatch.sym); return; }
-      // #flip=<contract address> — starts with 0x OR is long enough to be a CA
-      if (value.startsWith('0x') || value.length > 30) {
-        openStatusCheckModalForCA(value);
-        return;
-      }
-      // #flip=<anything else> → graceful fallback: open picker
-      openStatusCheckModal();
-      return;
-    }
-
-    // Existing: #SYMBOL → zoom the ladder to that coin
     const match = TOKENS.find(t => t.sym.toLowerCase()===raw.toLowerCase());
     if (match) openModalZoomedTo(match.sym);
   }
@@ -1327,7 +1283,19 @@
   }
 
   // ==== FLIPPENING MODAL ====
+  // flCoinA / flCoinB each hold a full coin object: {sym, name, price, chg, logo}
+  // or null. Built-in taps convert via _flObjFromBuiltin(); pasted CAs set directly
+  // from resolveContractAddress's returned token. Symbol collisions are impossible
+  // because we never key on sym after this point.
   let flCoinA = null, flCoinB = null;
+
+  // Convert a built-in coin (by sym) to the shared object shape.
+  function _flObjFromBuiltin(sym) {
+    const s  = state.find(x => x.sym === sym);
+    const tk = TOKENS.find(t => t.sym === sym);
+    if (!s || !tk) return null;
+    return { sym: tk.sym, name: tk.name, price: s.price, chg: s.chg || 0, logo: tk.logo };
+  }
 
   function openFlippen() {
     flCoinA = null; flCoinB = null;
@@ -1349,10 +1317,11 @@
     ['A','B'].forEach(side => {
       const wrap = document.getElementById('flCoinList' + side);
       const selected = side === 'A' ? flCoinA : flCoinB;
+      // A pasted coin won't match any t.sym → no built-in row appears highlighted, which is correct.
       wrap.innerHTML = TOKENS.map(t => {
         const s = state.find(x => x.sym === t.sym);
         const loading = !s || s.price == null;
-        const sel = selected === t.sym ? ' fl-selected' : '';
+        const sel = (selected && selected._builtin && selected.sym === t.sym) ? ' fl-selected' : '';
         return `<button class="sc-coin-row fl-coin-row${loading?' loading':''}${sel}" data-sym="${t.sym}" data-side="${side}">
           <span class="sc-coin-logo-wrap"><img src="${t.logo}" alt="${t.sym}"/></span>
           <span class="sc-coin-name">${t.name}</span>
@@ -1361,15 +1330,98 @@
       }).join('');
       wrap.querySelectorAll('.fl-coin-row:not(.loading)').forEach(btn => {
         btn.addEventListener('click', () => {
-          const sym = btn.dataset.sym;
-          if (btn.dataset.side === 'A') flCoinA = sym;
-          else flCoinB = sym;
+          const obj = _flObjFromBuiltin(btn.dataset.sym);
+          if (!obj) return;
+          obj._builtin = true; // mark so picker highlight works
+          // Clear any CA input/fail for this side
+          _flCaClear(btn.dataset.side);
+          if (btn.dataset.side === 'A') flCoinA = obj;
+          else flCoinB = obj;
           renderFlippenPickers();
           if (flCoinA && flCoinB) renderFlippen();
         });
       });
     });
   }
+
+  // ── Per-side CA input helpers ────────────────────────────────────────────────
+  // Show/hide inline fail message for a given side (A or B).
+  function _flCaShowFail(side, reason) {
+    const box = document.getElementById('flCaFail' + side);
+    if (!box) return;
+    if (reason === 'wenflip') {
+      box.innerHTML = `There is no wenflip token. Don't buy it. <a href="#notacoin" class="ca-fail-link" onclick="event.preventDefault();openTokenModal();">wen token?</a>`;
+    } else {
+      box.textContent = CA_FAIL_MESSAGES[reason] || CA_FAIL_MESSAGES.notfound;
+    }
+    box.style.display = 'block';
+  }
+  function _flCaClear(side) {
+    const box = document.getElementById('flCaFail' + side);
+    if (box) { box.style.display = 'none'; box.textContent = ''; }
+    const input = document.getElementById('flCaInput' + side);
+    if (input) input.value = '';
+  }
+
+  // Busy flags — one per side so the two inputs don't block each other.
+  const _flCaBusy = { A: false, B: false };
+
+  async function flCaSubmit(side) {
+    if (_flCaBusy[side]) return;
+    const input = document.getElementById('flCaInput' + side);
+    const btn   = document.getElementById('flCaBtn'   + side);
+    if (!input || !btn) return;
+
+    const box = document.getElementById('flCaFail' + side);
+    if (box) { box.style.display = 'none'; box.textContent = ''; }
+
+    _flCaBusy[side] = true;
+    btn.disabled = true;
+    const prevLabel = btn.textContent;
+    btn.textContent = 'Pulling…';
+
+    const started = Date.now();
+    let result;
+    try { result = await resolveContractAddress(input.value); }
+    catch(e) { result = { ok: false, reason: 'network' }; }
+
+    // 1-second deadpan beat (same as the status modal)
+    await new Promise(r => setTimeout(r, Math.max(0, 1000 - (Date.now() - started))));
+
+    try {
+      if (result.ok) {
+        // Set this side to the pasted coin object — no _builtin flag, so no built-in row highlights.
+        const coinObj = result.token;
+        if (side === 'A') flCoinA = coinObj;
+        else              flCoinB = coinObj;
+        // Refresh pickers to clear any highlight on built-in rows for this side.
+        renderFlippenPickers();
+        if (flCoinA && flCoinB) renderFlippen();
+      } else {
+        _flCaShowFail(side, result.reason);
+      }
+    } finally {
+      _flCaBusy[side] = false;
+      btn.disabled = false;
+      btn.textContent = prevLabel;
+    }
+  }
+
+  // Wire the per-side CA inputs. Called once after the modal HTML exists (deferred script).
+  (function wireFlCaTool() {
+    ['A','B'].forEach(side => {
+      const btn   = document.getElementById('flCaBtn'   + side);
+      const input = document.getElementById('flCaInput' + side);
+      if (btn)   btn.addEventListener('click', () => flCaSubmit(side));
+      if (input) {
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); flCaSubmit(side); } });
+        input.addEventListener('input', () => {
+          const b = document.getElementById('flCaFail' + side);
+          if (b) { b.style.display = 'none'; b.textContent = ''; }
+        });
+      }
+    });
+  })();
 
   // Truncate long strings for the card
   function flTrunc(str, max) {
@@ -1380,10 +1432,11 @@
   function renderFlippen() {
     if (!flCoinA || !flCoinB) return;
 
-    // Same-coin guard
-    if (flCoinA === flCoinB) {
+    // Same-coin guard — compare by sym string (handles built-in vs built-in;
+    // two different pasted tokens that happen to share a sym are unlikely but
+    // would show as a tie, which is acceptable).
+    if (flCoinA.sym === flCoinB.sym) {
       document.getElementById('flCardWrap').style.display = 'none';
-      // Show gentle prompt — re-render pickers with a nudge message
       const existing = document.getElementById('flSameWarn');
       if (!existing) {
         const warn = document.createElement('p');
@@ -1397,14 +1450,11 @@
     const existingWarn = document.getElementById('flSameWarn');
     if (existingWarn) existingWarn.remove();
 
-    const sA = state.find(x => x.sym === flCoinA);
-    const sB = state.find(x => x.sym === flCoinB);
-    const tkA = TOKENS.find(t => t.sym === flCoinA);
-    const tkB = TOKENS.find(t => t.sym === flCoinB);
-    if (!sA || !sB || !tkA || !tkB) return;
-
-    const priceA = sA.price;
-    const priceB = sB.price;
+    // Both sides are now plain coin objects — no symbol lookups needed.
+    const coinA = flCoinA;
+    const coinB = flCoinB;
+    const priceA = coinA.price;
+    const priceB = coinB.price;
     const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
     // Find cleared rung for each coin
@@ -1413,24 +1463,23 @@
     const rungA = (idxA >= 0 && priceA != null && LADDER[idxA] && LADDER[idxA].price <= priceA) ? LADDER[idxA] : null;
     const rungB = (idxB >= 0 && priceB != null && LADDER[idxB] && LADDER[idxB].price <= priceB) ? LADDER[idxB] : null;
 
-    // Build per-side HTML
-    function sideSummary(tk, rung) {
-      const symHtml = `<span class="fl-sym">${tk.sym}</span>`;
+    // Build per-side HTML — coinObj has {sym, name, price, chg, logo}
+    function sideSummary(rung) {
       if (!rung) {
         return `<div class="fl-side-item-name fl-item-none">doesn't flip anything yet</div><div class="fl-side-item-price fl-item-none">—</div>`;
       }
       return `<div class="fl-side-item-name">${flTrunc(rung.name, 42)}</div><div class="fl-side-item-price">${fmtItemPrice(rung.price)}</div>`;
     }
 
-    function sideBlock(tk, s, rung, align) {
-      const priceDisplay = s && s.price != null ? fmtPrice(s.price) : '—';
+    function sideBlock(coinObj, rung, align) {
+      const priceDisplay = coinObj.price != null ? fmtPrice(coinObj.price) : '—';
       return `
         <div class="fl-side fl-side-${align}">
-          <img class="fl-logo" src="${tk.logo}" alt="${tk.sym}"/>
-          <div class="fl-coin-name">${flTrunc(tk.name, 14)}</div>
+          <img class="fl-logo" src="${htmlAttr(coinObj.logo)}" alt="${htmlAttr(coinObj.sym)}"/>
+          <div class="fl-coin-name">${flTrunc(coinObj.name, 14)}</div>
           <div class="fl-coin-price">${priceDisplay}</div>
           <div class="fl-flips-lbl">FLIPS</div>
-          ${sideSummary(tk, rung)}
+          ${sideSummary(rung)}
         </div>`;
     }
 
@@ -1443,41 +1492,39 @@
     if (!rungA && !rungB) {
       verdictHtml = `<div class="fl-verdict fl-verdict-tie">Neither one flips anything. We're all here.</div>`;
     } else if (objPriceA === objPriceB) {
-      // Exact same rung (tie)
       verdictHtml = `<div class="fl-verdict fl-verdict-tie">Dead heat. Embarrassing for everyone.</div>`;
     } else if (objPriceA > objPriceB) {
-      const winnerName = flTrunc(tkA.sym, 10);
-      const loserObj = rungB ? flTrunc(rungB.name, 32) : 'nothing';
-      const winnerObj = flTrunc(rungA.name, 32);
-      verdictHtml = `<div class="fl-verdict"><span class="fl-winner">${winnerName}</span> flips ${winnerObj}.<br><span class="fl-loser">${flTrunc(tkB.sym,10)}</span> flips ${loserObj}.</div>`;
+      const winnerName = flTrunc(coinA.sym, 10);
+      const loserObj   = rungB ? flTrunc(rungB.name, 32) : 'nothing';
+      const winnerObj  = flTrunc(rungA.name, 32);
+      verdictHtml = `<div class="fl-verdict"><span class="fl-winner">${winnerName}</span> flips ${winnerObj}.<br><span class="fl-loser">${flTrunc(coinB.sym,10)}</span> flips ${loserObj}.</div>`;
       if (rungB && objPriceB > 0) {
         const ratio = objPriceA / objPriceB;
         const ratioFmt = ratio >= 10 ? Math.round(ratio).toLocaleString() : parseFloat(ratio.toFixed(1));
         magnitudeHtml = `<div class="fl-magnitude">${winnerName} flips ${ratioFmt}× more stuff.</div>`;
       } else if (!rungB) {
-        magnitudeHtml = `<div class="fl-magnitude">${winnerName} is on the board. ${flTrunc(tkB.sym,10)} is not.</div>`;
+        magnitudeHtml = `<div class="fl-magnitude">${winnerName} is on the board. ${flTrunc(coinB.sym,10)} is not.</div>`;
       }
     } else {
-      // objPriceB > objPriceA
-      const winnerName = flTrunc(tkB.sym, 10);
-      const loserObj = rungA ? flTrunc(rungA.name, 32) : 'nothing';
-      const winnerObj = flTrunc(rungB.name, 32);
-      verdictHtml = `<div class="fl-verdict"><span class="fl-winner">${winnerName}</span> flips ${winnerObj}.<br><span class="fl-loser">${flTrunc(tkA.sym,10)}</span> flips ${loserObj}.</div>`;
+      const winnerName = flTrunc(coinB.sym, 10);
+      const loserObj   = rungA ? flTrunc(rungA.name, 32) : 'nothing';
+      const winnerObj  = flTrunc(rungB.name, 32);
+      verdictHtml = `<div class="fl-verdict"><span class="fl-winner">${winnerName}</span> flips ${winnerObj}.<br><span class="fl-loser">${flTrunc(coinA.sym,10)}</span> flips ${loserObj}.</div>`;
       if (rungA && objPriceA > 0) {
         const ratio = objPriceB / objPriceA;
         const ratioFmt = ratio >= 10 ? Math.round(ratio).toLocaleString() : parseFloat(ratio.toFixed(1));
         magnitudeHtml = `<div class="fl-magnitude">${winnerName} flips ${ratioFmt}× more stuff.</div>`;
       } else if (!rungA) {
-        magnitudeHtml = `<div class="fl-magnitude">${winnerName} is on the board. ${flTrunc(tkA.sym,10)} is not.</div>`;
+        magnitudeHtml = `<div class="fl-magnitude">${winnerName} is on the board. ${flTrunc(coinA.sym,10)} is not.</div>`;
       }
     }
 
     document.getElementById('flResultCard').innerHTML = `
       <div class="fl-title-strip">THE FLIPPENING</div>
       <div class="fl-arena">
-        ${sideBlock(tkA, sA, rungA, 'left')}
+        ${sideBlock(coinA, rungA, 'left')}
         <div class="fl-vs">VS</div>
-        ${sideBlock(tkB, sB, rungB, 'right')}
+        ${sideBlock(coinB, rungB, 'right')}
       </div>
       <div class="fl-verdict-zone">
         ${verdictHtml}
@@ -1493,9 +1540,9 @@
     wrap.style.display = '';
     // Reset share button labels
     const icon = document.getElementById('flShareIcon');
-    const txt = document.getElementById('flShareText');
+    const txt  = document.getElementById('flShareText');
     if (icon) icon.textContent = _isIOS ? '💾' : '📋';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
+    if (txt)  txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
     requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
   }
 
