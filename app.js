@@ -1,7 +1,7 @@
   // ==== TOKEN CONFIG ====
   const TOKENS = [
     { sym: 'BTC',   name: 'Bitcoin',   chain: 'major',      pairAddress: '0x4585fe77225b41b697c938b018e2ac67ac5a20c0', dexChain: 'ethereum',   logo: './logos/BTC_logo.png'    },
-    { sym: 'GOLD',  name: 'Gold',      chain: 'major',      pairAddress: '0x9c4fe5ffd9a9fc5678cfbd93aa2d4fd684b67c4c', dexChain: 'ethereum',   logo: './logos/GOLD_logo.png'   },
+    { sym: 'PAXG',  name: 'Gold',      chain: 'major',      pairAddress: '0x9c4fe5ffd9a9fc5678cfbd93aa2d4fd684b67c4c', dexChain: 'ethereum',   logo: './logos/GOLD_logo.png'   },
     { sym: 'ETH',   name: 'Ethereum',  chain: 'major',      pairAddress: '0x531febfeb9a61d948c384acfbe6dcc51057aea7e', dexChain: 'bsc',        logo: './logos/ETH_logo.png'    },
     { sym: 'SOL',   name: 'Solana',    chain: 'major',      pairAddress: '0xbffec96e8f3b5058b1817c14e4380758fada01ef', dexChain: 'bsc',        logo: './logos/SOL_logo.png'    },
     { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
