@@ -993,3 +993,34 @@
     .ca-tool { flex-direction: column; }
     .ca-go-btn { width: 100%; }
   }
+
+  /* ===== JUST FLIPPED FEED ===== */
+  .just-flipped { max-width: 860px; margin: 36px auto 0; }
+  .jf-head { text-align: center; margin-bottom: 16px; }
+  .jf-head .section-title { font-size: clamp(26px, 4vw, 40px); }
+  .jf-sub { margin: 8px auto 0; max-width: 460px; color: var(--muted); font-size: clamp(12px, 1.4vw, 14px); line-height: 1.5; }
+  .jf-feed { display: flex; flex-direction: column; gap: 10px; }
+  .jf-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 16px; border-radius: 12px;
+    background: var(--bg-2); border: 1px solid var(--line);
+  }
+  .jf-logo { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: rgba(255,255,255,0.06); }
+  .jf-logo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+  .jf-body { min-width: 0; flex: 1; }
+  .jf-headline { font-size: 14px; color: var(--text); line-height: 1.35; }
+  .jf-sym { font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.01em; }
+  .jf-kicker { margin-top: 2px; font-size: 11px; color: var(--muted); line-height: 1.4; }
+  .jf-time { flex-shrink: 0; align-self: flex-start; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; padding-top: 1px; }
+  .jf-empty, .jf-loading {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    padding: 28px 20px; color: var(--muted); font-size: 13px; letter-spacing: 0.04em;
+    background: var(--bg-2); border: 1px solid var(--line); border-radius: 12px;
+  }
+  .jf-loading .skel-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grad); animation: pulse 1.6s ease-in-out infinite; }
+  @media (max-width: 600px) {
+    .jf-row { padding: 10px 12px; gap: 10px; }
+    .jf-headline { font-size: 13px; }
+    .jf-kicker { font-size: 10.5px; }
+    .jf-time { font-size: 10px; }
+  }

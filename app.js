@@ -2410,3 +2410,105 @@
       closeCope(); closeOutrage(); closeWonder();
     }
   }, true);
+
+  // ==== JUST FLIPPED FEED ====
+  // Live feed of recent upward flips. Fully self-contained: own fetch + 60s poll,
+  // client-side relative timestamps, graceful logo fallback. Fails silently — it must
+  // never throw into the page or leave a broken layout if the endpoint hiccups.
+  (function initJustFlipped(){
+    const FEED_URL = 'https://wenflip-bot-worker.wenflip-ops.workers.dev/api/recent-flips?dir=up';
+    const MAX_ROWS = 10;
+    const feedEl = document.getElementById('jfFeed');
+    if (!feedEl) return; // markup missing — nothing to do
+
+    let latestFlips = [];    // last good payload, capped to MAX_ROWS
+    let hasLoaded   = false;  // first fetch (success or fail) has resolved
+
+    // Resolve a logo by symbol against the existing TOKENS table (same source the
+    // ticker/ladder use). Case-insensitive. Falls back to the neutral lettered
+    // circle used elsewhere on the site — never a broken image.
+    function logoForSym(sym) {
+      const key = String(sym || '').toLowerCase();
+      const tk = TOKENS.find(t => t.sym.toLowerCase() === key);
+      return tk ? tk.logo : caFallbackLogo(sym);
+    }
+
+    // Minimal HTML-escape for endpoint-supplied text (item / kicker / sym).
+    function jfEsc(str) {
+      return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Relative timestamp from a ms epoch: "just now", "3m ago", "2h ago", "1d ago".
+    function relTime(ts) {
+      const diff = Date.now() - Number(ts);
+      if (!isFinite(diff) || diff < 0) return 'just now';
+      const s = Math.floor(diff / 1000);
+      if (s < 45) return 'just now';
+      const m = Math.floor(s / 60);
+      if (m < 60) return m + 'm ago';
+      const h = Math.floor(m / 60);
+      if (h < 24) return h + 'h ago';
+      return Math.floor(h / 24) + 'd ago';
+    }
+
+    function rowHtml(f) {
+      const sym  = jfEsc(f.sym);
+      const item = jfEsc(f.item);
+      const star = f.featured ? '⭐ ' : '';
+      const primaryLogo  = jfEsc(logoForSym(f.sym));
+      const fallbackLogo = caFallbackLogo(f.sym); // data-URI: encodeURIComponent output is quote-safe
+      return `
+        <div class="jf-row">
+          <div class="jf-logo"><img src="${primaryLogo}" alt="${sym}" loading="lazy" onerror="this.onerror=null;this.src='${fallbackLogo}'"/></div>
+          <div class="jf-body">
+            <div class="jf-headline"><span class="jf-sym">${sym}</span> flipped ${star}${item}</div>
+            <div class="jf-kicker">${jfEsc(f.kicker)}</div>
+          </div>
+          <div class="jf-time" data-ts="${Number(f.ts) || 0}">${relTime(f.ts)}</div>
+        </div>`;
+    }
+
+    function render() {
+      if (!hasLoaded) {
+        feedEl.innerHTML = '<div class="jf-loading"><span class="skel-dot"></span><span>Loading flips…</span></div>';
+        return;
+      }
+      if (!latestFlips.length) {
+        feedEl.innerHTML = '<div class="jf-empty">No flips yet — check back soon.</div>';
+        return;
+      }
+      feedEl.innerHTML = latestFlips.map(rowHtml).join('');
+    }
+
+    // Re-age the relative-time labels in place between polls, so "2m ago" stays honest.
+    function tickTimes() {
+      feedEl.querySelectorAll('.jf-time[data-ts]').forEach(el => {
+        const ts = Number(el.getAttribute('data-ts'));
+        if (ts) el.textContent = relTime(ts);
+      });
+    }
+
+    async function refreshFeed() {
+      try {
+        const res = await fetch(FEED_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        if (!json || json.ok === false || !Array.isArray(json.flips)) throw new Error('bad payload');
+        latestFlips = json.flips.slice(0, MAX_ROWS);
+        hasLoaded = true;
+        render();
+      } catch (e) {
+        console.warn('just-flipped feed failed', e);
+        // Fail silently. Keep showing prior good data if we have it; otherwise fall
+        // back to the quiet empty line rather than a broken box or a JS error.
+        if (!hasLoaded) { hasLoaded = true; latestFlips = []; render(); }
+      }
+    }
+
+    render();                          // initial loading state
+    refreshFeed();                     // first fetch on load
+    setInterval(refreshFeed, 60_000);  // poll, matching the price-ticker cadence
+    setInterval(tickTimes, 30_000);    // age timestamps between polls
+  })();
