@@ -492,6 +492,17 @@
     return LADDER.length - 1;
   }
 
+  // Honest progress from the rung a coin already cleared to the next rung up.
+  // Integer 0–99. Same gap-based math the homepage ladder uses — NOT
+  // coinPrice/nextRung (which is always ~90–99% because rungs sit close together).
+  function flipProgressPct(coinPrice, clearedRung, nextRung) {
+    if (!nextRung) return 100;
+    const floor = clearedRung ? clearedRung.price : 0;
+    const span = nextRung.price - floor;
+    if (span <= 0) return 0;
+    return Math.min(99, Math.max(0, Math.round(((coinPrice - floor) / span) * 100)));
+  }
+
   function fmtTime(seconds) {
     if (!isFinite(seconds) || seconds <= 0) return '—';
     const ms = seconds * 1000;
@@ -1208,7 +1219,7 @@
       hasDivider4 = true;
     } else {
       // Normal case
-      const pctRaw = Math.min(99, Math.round((coinPrice / nextRung.price) * 100));
+      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
       const dollarGap = nextRung.price - coinPrice;
       zone3Html = `<div class="sc-zone">
         <div class="sc-label">STATUS: FLIPPED</div>
@@ -2060,7 +2071,7 @@
       </div>`;
       hasDivider4 = true;
     } else {
-      const pctRaw = Math.min(99, Math.round((coinPrice / nextRung.price) * 100));
+      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
       const dollarGap = nextRung.price - coinPrice;
       zone3Html = `<div class="sc-zone">
         <div class="sc-label">STATUS: FLIPPED</div>
@@ -2179,8 +2190,9 @@
 
     if (!showGap) {
       const idxAbove = findRungIndex(coinPrice);
+      const clearedRung = LADDER[idxAbove];
       const nextRung = LADDER[idxAbove - 1];
-      const pctRaw = nextRung ? Math.min(99, Math.round((coinPrice / nextRung.price) * 100)) : 100;
+      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
       zone4Html = `<div class="sc-zone">
         <div class="sc-label">COIN THAT FLIPS IT</div>
         <div class="sc-id-row" style="margin-bottom:4px;">
@@ -2299,7 +2311,7 @@
       </div>`;
       hasDivider4 = true;
     } else {
-      const pctRaw = Math.min(99, Math.round((coinPrice / nextRung.price) * 100));
+      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
       const dollarGap = nextRung.price - coinPrice;
       zone3Html = `<div class="sc-zone">
         <div class="sc-label">STATUS: FLIPPED</div>
