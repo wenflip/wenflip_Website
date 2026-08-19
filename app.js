@@ -241,7 +241,7 @@
     { price: 1.25, name: "Reese\'s Cup", tier: "snack", category: "snack" },
     { price: 1.1, name: "Pop Rocks package", tier: "snack", category: "snack" },
     { price: 1.05, name: "Claw machine attempt", tier: "snack", category: "snack" },
-    { price: 1, name: "Karaoke song credit", tier: "snack", category: "snack" },
+    { price: 1, name: "Item from the $1 shop", tier: "snack", category: "snack" },
     { price: 0.98, name: "Single cigarette", tier: "snack", category: "snack" },
     { price: 0.9, name: "Onion", tier: "snack", category: "snack" },
     { price: 0.88, name: "Pear", tier: "snack", category: "snack" },
@@ -343,11 +343,11 @@
     { price: 0.00012, name: "One PulseChain transaction", tier: "absurd_floor", category: "snack" },
     { price: 0.0001, name: "Grain of fine sand", tier: "absurd_floor", category: "snack" },
     { price: 5e-05, name: "≈ 25 seconds of US minimum-wage work", tier: "time", category: "snack" },
-    { price: 2e-05, name: "≈ 10 seconds (a camera shutter click)", tier: "time", category: "snack" },
-    { price: 1e-05, name: "≈ 5 seconds (a finger snap)", tier: "time", category: "snack" },
-    { price: 5e-06, name: "≈ 2.5 seconds (reading one word)", tier: "time", category: "snack" },
-    { price: 2e-06, name: "≈ 1 second (saying \'Bitcoin\')", tier: "time", category: "snack" },
-    { price: 1e-06, name: "≈ 0.5 seconds (a single breath)", tier: "time", category: "snack" },
+    { price: 2e-05, name: "≈ 10 seconds of US minimum-wage work", tier: "time", category: "snack" },
+    { price: 1e-05, name: "≈ 5 seconds of US minimum-wage work", tier: "time", category: "snack" },
+    { price: 5e-06, name: "≈ 2.5 seconds of US minimum-wage work", tier: "time", category: "snack" },
+    { price: 2e-06, name: "≈ 1 seconds of US minimum-wage work", tier: "time", category: "snack" },
+    { price: 1e-06, name: "≈ 0.5 seconds of US minimum-wage work", tier: "time", category: "snack" },
   ];
 
   // ==== EMOTION DOORS — CONTENT LISTS (verbatim, do not edit inline) ====
