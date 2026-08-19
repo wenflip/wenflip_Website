@@ -1184,7 +1184,13 @@
 .hero-box-head { display: flex; align-items: center; gap: 9px; }
 .hero-box-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.06); }
 .hero-box-sym { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
-
+.hero-box-chg {
+  font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums;
+  white-space: nowrap; margin-left: 2px;
+}
+.hero-box-chg.up { color: var(--green); }
+.hero-box-chg.down { color: var(--red); }
+    
 .hero-box-mult {
   font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
   color: var(--accent); margin-top: 8px;
