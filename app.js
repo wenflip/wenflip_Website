@@ -2430,8 +2430,7 @@
   // ==== HERO FLIP GRID ====
   // 6 core coins, each showing what it flips at the active multiplier.
   // Click a box → opens the existing Pump modal pre-loaded to that coin + multiplier.
-  const HERO_COINS = ['PLS','PLSX','INC','HEX','pDAI','pWBTC'];
-  let heroMult = 2;               // default: 2× (Today = 1×)
+  const HERO_COINS = ['PLS','PLSX','INC','HEX','eHEX','PRVX','pDAI','pWBTC','DWB'];  let heroMult = 2;               // default: 2× (Today = 1×)
   let _heroLastSig = '';          // change-guard so the interval doesn't reset hover/focus
 
   // Coin price × multiplier → ladder item name (or null if below the board).
