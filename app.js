@@ -1857,20 +1857,24 @@
     ];
     const disclaim = disclaimerLines[Math.floor(Math.random() * disclaimerLines.length)];
 
-    card.innerHTML = `
-      <div class="pump-header-row">
-        <img class="pump-logo" src="${tk.logo}" alt="${tk.sym}"/>
-        <div class="pump-coin-id">
-          <div class="pump-coin-sym">${tk.sym}</div>
-          <div class="pump-coin-name-sm">${pumpTrunc(tk.name, 18)}</div>
+     card.innerHTML = `
+      <div class="pump-top">
+        <div class="pump-header-row">
+          <img class="pump-logo" src="${tk.logo}" alt="${tk.sym}"/>
+          <div class="pump-coin-id">
+            <div class="pump-coin-sym">${tk.sym}</div>
+            <div class="pump-coin-name-sm">${pumpTrunc(tk.name, 18)}</div>
+          </div>
+          ${multLabel ? `<div class="pump-mult-badge">${multLabel}</div>` : ''}
         </div>
-        ${multLabel ? `<div class="pump-mult-badge">${multLabel}</div>` : ''}
+        <div class="pump-at-line">At&nbsp;<span class="pump-at-price">${hypPriceStr}</span></div>
+        ${dreamHtml}
       </div>
-      <div class="pump-at-line">At&nbsp;<span class="pump-at-price">${hypPriceStr}</span></div>
-      ${dreamHtml}
-      <div class="pump-divider"></div>
-      ${groundHtml}
-      <div class="pump-disclaim">${disclaim}</div>
+      <div class="pump-bottom">
+        <div class="pump-divider"></div>
+        ${groundHtml}
+        <div class="pump-disclaim">${disclaim}</div>
+      </div>
       <div class="pump-stamp">
         <span class="pump-date">${dateStr}</span>
         <span class="pump-wm">wenflip.com</span>
