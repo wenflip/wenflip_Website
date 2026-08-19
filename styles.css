@@ -993,7 +993,112 @@
     .ca-tool { flex-direction: column; }
     .ca-go-btn { width: 100%; }
   }
+  // ==== HERO FLIP GRID ====
+  // 6 core coins, each showing what it flips at the active multiplier.
+  // Click a box → opens the existing Pump modal pre-loaded to that coin + multiplier.
+  const HERO_COINS = ['PLS','PLSX','INC','HEX','pDAI','pWBTC'];
+  let heroMult = 2;               // default: 2× (Today = 1×)
+  let _heroLastSig = '';          // change-guard so the interval doesn't reset hover/focus
 
+  // Coin price × multiplier → ladder item name (or null if below the board).
+  function heroFlipItem(coinPrice, mult) {
+    const hyp = coinPrice * mult;
+    const idx = findRungIndex(hyp);
+    const rung = (idx >= 0 && LADDER[idx] && LADDER[idx].price <= hyp) ? LADDER[idx] : null;
+    return rung ? rung.name : null;
+  }
+
+  function renderHeroGrid() {
+    const el = document.getElementById('heroGrid');
+    if (!el) return;
+
+    // Only rebuild the DOM if the rendered content would actually change.
+    const sig = heroMult + '|' + HERO_COINS.map(sym => {
+      const s = state.find(x => x.sym === sym);
+      if (!s || s.price == null) return sym + ':loading';
+      return sym + ':' + (heroFlipItem(s.price, heroMult) || 'none');
+    }).join('|');
+    if (sig === _heroLastSig) return;
+    _heroLastSig = sig;
+
+    el.innerHTML = HERO_COINS.map(sym => {
+      const tk = TOKENS.find(t => t.sym === sym);
+      const s  = state.find(x => x.sym === sym);
+      if (!tk) return '';
+      const loading = !s || s.price == null;
+
+      if (loading) {
+        return `<div class="hero-box loading" data-sym="${sym}">
+          <div class="hero-box-head">
+            <img class="hero-box-logo" src="${tk.logo}" alt="${sym}"/>
+            <span class="hero-box-sym">${sym}</span>
+          </div>
+          <div class="hero-box-flips-lbl">flips</div>
+          <div class="hero-box-item none">loading…</div>
+        </div>`;
+      }
+
+      const itemName = heroFlipItem(s.price, heroMult);
+      const multLine = heroMult > 1 ? `<div class="hero-box-mult">at a ${heroMult}×</div>` : '';
+      const itemHtml = itemName
+        ? `<div class="hero-box-item">${itemName}</div>`
+        : `<div class="hero-box-item none">nothing yet</div>`;
+
+      return `<div class="hero-box" data-sym="${sym}" role="button" tabindex="0" aria-label="Open ${sym} in Pump">
+        <div class="hero-box-head">
+          <img class="hero-box-logo" src="${tk.logo}" alt="${sym}"/>
+          <span class="hero-box-sym">${sym}</span>
+        </div>
+        ${multLine}
+        <div class="hero-box-flips-lbl">flips</div>
+        ${itemHtml}
+      </div>`;
+    }).join('');
+
+    el.querySelectorAll('.hero-box:not(.loading)').forEach(box => {
+      const sym = box.getAttribute('data-sym');
+      box.addEventListener('click', () => openHeroPump(sym, heroMult));
+      box.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHeroPump(sym, heroMult); }
+      });
+    });
+  }
+
+  // Open the existing Pump modal, pre-loaded to a coin at the given multiplier.
+  function openHeroPump(sym, mult) {
+    openPump();                         // reset + open (defined in the PUMP MODAL section above)
+    pumpCoin = sym;
+    renderPumpCoinBadges();             // reflect the pre-selected coin
+    const multStr = String(mult);
+    const input = document.getElementById('pumpInput');
+    if (input) input.value = multStr + 'x';
+    // Highlight a matching quick-pick if one exists (2/5/10/100); Today (1×) has none.
+    pumpActiveQuick = document.querySelector('.pump-quick-btn[data-mult="' + multStr + '"]') ? multStr : null;
+    updatePumpQuickRow();
+    updatePumpResult();
+  }
+
+  // Toggle wiring — Today / 2× / 5× / 10×
+  (function wireHeroMult() {
+    const wrap = document.getElementById('heroMult');
+    if (!wrap) return;
+    wrap.addEventListener('click', e => {
+      const btn = e.target.closest('.hero-mult-btn');
+      if (!btn) return;
+      const m = parseFloat(btn.getAttribute('data-mult'));
+      if (!isFinite(m) || m === heroMult) return;
+      heroMult = m;
+      wrap.querySelectorAll('.hero-mult-btn').forEach(b => {
+        const active = b === btn;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      renderHeroGrid();
+    });
+  })();
+
+  renderHeroGrid();                     // initial paint (loading until first prices land)
+  setInterval(renderHeroGrid, 4000);    // fills in + stays live; no-op when nothing changed
   /* ===== JUST FLIPPED FEED ===== */
   .just-flipped { max-width: 860px; margin: 36px auto 0; }
   .jf-head { text-align: center; margin-bottom: 16px; }
@@ -1024,3 +1129,80 @@
     .jf-kicker { font-size: 10.5px; }
     .jf-time { font-size: 10px; }
   }
+/* ===================================================================
+   HERO FLIP GRID (redesign) — 6 core coins, multiplier toggle
+   =================================================================== */
+
+/* Shrink the logo, keep it centered. Original .logo gradient/glow still applies. */
+.hero .logo { font-size: clamp(30px, 5vw, 52px); margin: 0 auto; }
+
+.hero-flip { max-width: 780px; margin: 22px auto 0; }
+
+/* Multiplier toggle — mirrors the Pump quick-pick styling */
+.hero-mult {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 18px;
+}
+.hero-mult-btn {
+  padding: 8px 18px; border-radius: 999px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+  color: var(--muted); font-weight: 800; font-size: 14px; cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+}
+.hero-mult-btn:hover { background: rgba(46,224,106,0.10); border-color: rgba(46,224,106,0.40); color: var(--text); }
+.hero-mult-btn.active {
+  background: var(--grad); border-color: transparent; color: #fff;
+  box-shadow: 0 4px 18px rgba(46,224,106,0.32);
+}
+
+/* Contained, centered 3×2 grid */
+.hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.hero-grid-loading {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 60px 20px; color: var(--muted); font-size: 14px; letter-spacing: 0.04em;
+}
+.hero-grid-loading .skel-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grad); animation: pulse 1.6s ease-in-out infinite; }
+
+/* Individual coin box — clean, joke-only */
+.hero-box {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 18px 16px 20px; border-radius: 14px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  cursor: pointer; text-align: left; min-height: 150px;
+  transition: transform .12s ease, border-color .15s ease, box-shadow .2s ease, background .15s ease;
+}
+.hero-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(46,224,106,0.40);
+  background: rgba(46,224,106,0.04);
+  box-shadow: 0 8px 30px rgba(46,224,106,0.14);
+}
+.hero-box.loading { opacity: 0.45; pointer-events: none; }
+
+.hero-box-head { display: flex; align-items: center; gap: 9px; }
+.hero-box-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.06); }
+.hero-box-sym { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+
+.hero-box-mult {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-top: 8px;
+}
+.hero-box-flips-lbl {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-top: 8px;
+}
+.hero-box-item {
+  font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700;
+  color: var(--text); line-height: 1.28; margin-top: 2px;
+}
+.hero-box-item.none { color: rgba(245,245,250,0.35); font-style: italic; font-weight: 600; }
+
+/* Tablet → 2 across */
+@media (max-width: 760px) { .hero-grid { grid-template-columns: repeat(2, 1fr); } }
+/* Phone → 1 across */
+@media (max-width: 460px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-box { min-height: 0; padding: 16px 14px; }
+}
