@@ -35,15 +35,38 @@
 <body>
 
 <header class="hero container">
-  <span class="live-pill"><span class="pulse-dot"></span>Live · Multi-chain</span>
+  <!-- LIVE PILL — switched OFF (kept in source; uncomment to restore) -->
+  <!-- <span class="live-pill"><span class="pulse-dot"></span>Live · Multi-chain</span> -->
+
   <h1 class="logo">wenflip</h1>
+
+  <!-- HERO COPY — switched OFF (kept in source; uncomment to restore) -->
+  <!--
   <p class="hero-descriptor">Your daily scoreboard for crypto vs. the cost of living.</p>
   <p class="subhead">Modern America priced you out of healthcare, college, and homeownership. Crypto is the receipt for what they took. We just show the math, one Dorito at a time.</p>
   <p class="bridge-line"><span class="bridge-arrow">→</span> <span class="bridge-pulse">PulseChain</span> runs the same math for pennies.</p>
-  <p class="updated" id="updated">Fetching live prices…</p>
+  -->
+
+  <!-- HERO FLIP GRID — 6 core coins + multiplier toggle -->
+  <div class="hero-flip">
+    <div class="hero-mult" id="heroMult" role="tablist" aria-label="Flip multiplier">
+      <button type="button" class="hero-mult-btn"        data-mult="1"  role="tab" aria-selected="false">Today</button>
+      <button type="button" class="hero-mult-btn active" data-mult="2"  role="tab" aria-selected="true">2×</button>
+      <button type="button" class="hero-mult-btn"        data-mult="5"  role="tab" aria-selected="false">5×</button>
+      <button type="button" class="hero-mult-btn"        data-mult="10" role="tab" aria-selected="false">10×</button>
+    </div>
+
+    <div class="hero-grid" id="heroGrid">
+      <div class="hero-grid-loading"><span class="skel-dot"></span><span>Loading live flips…</span></div>
+    </div>
+
+    <p class="updated" id="updated">Fetching live prices…</p>
+  </div>
 </header>
 
-<div class="ticker-wrap">
+<!-- TICKER — switched OFF. Element kept in the DOM so app.js renderTicker() still runs
+     without throwing; remove the inline display:none to switch the bar back on. -->
+<div class="ticker-wrap" id="tickerWrap" style="display:none">
   <div class="ticker" id="ticker"></div>
 </div>
 
