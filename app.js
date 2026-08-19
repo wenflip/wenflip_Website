@@ -1993,8 +1993,7 @@
   // Door 3: Cope → new Cope modal
   document.getElementById('doorCope').addEventListener('click', openCope);
 
-  // Door 4: Outrage → new Outrage modal
-  document.getElementById('doorOutrage').addEventListener('click', openOutrage);
+ 
 
   // Door 5: Wonder → zero-input: open modal + immediately render a random coin
   document.getElementById('doorWonder').addEventListener('click', openWonder);
