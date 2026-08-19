@@ -396,7 +396,7 @@
     heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',        emoji: '💎' },
     snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $0.001 to $1,000', emoji: '🏠' },
     absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',  emoji: '🏖️' },
-    time:         { cls: 'tier-dust',   text: '⏱ Sub-Dust Tier — time, not things',  emoji: '⏱️' },
+    time:         { cls: 'tier-dust',   text: '⏱ Sub-Dust Tier',  emoji: '⏱️' },
   };
 
   const MIN_WAGE_PER_SEC = 7.25 / 3600;
