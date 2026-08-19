@@ -1024,3 +1024,80 @@
     .jf-kicker { font-size: 10.5px; }
     .jf-time { font-size: 10px; }
   }
+/* ===================================================================
+   HERO FLIP GRID (redesign) — 6 core coins, multiplier toggle
+   =================================================================== */
+
+/* Shrink the logo, keep it centered. Original .logo gradient/glow still applies. */
+.hero .logo { font-size: clamp(30px, 5vw, 52px); margin: 0 auto; }
+
+.hero-flip { max-width: 780px; margin: 22px auto 0; }
+
+/* Multiplier toggle — mirrors the Pump quick-pick styling */
+.hero-mult {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 18px;
+}
+.hero-mult-btn {
+  padding: 8px 18px; border-radius: 999px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+  color: var(--muted); font-weight: 800; font-size: 14px; cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+}
+.hero-mult-btn:hover { background: rgba(46,224,106,0.10); border-color: rgba(46,224,106,0.40); color: var(--text); }
+.hero-mult-btn.active {
+  background: var(--grad); border-color: transparent; color: #fff;
+  box-shadow: 0 4px 18px rgba(46,224,106,0.32);
+}
+
+/* Contained, centered 3×2 grid */
+.hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.hero-grid-loading {
+  grid-column: 1 / -1;
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 60px 20px; color: var(--muted); font-size: 14px; letter-spacing: 0.04em;
+}
+.hero-grid-loading .skel-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--grad); animation: pulse 1.6s ease-in-out infinite; }
+
+/* Individual coin box — clean, joke-only */
+.hero-box {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 18px 16px 20px; border-radius: 14px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  cursor: pointer; text-align: left; min-height: 150px;
+  transition: transform .12s ease, border-color .15s ease, box-shadow .2s ease, background .15s ease;
+}
+.hero-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(46,224,106,0.40);
+  background: rgba(46,224,106,0.04);
+  box-shadow: 0 8px 30px rgba(46,224,106,0.14);
+}
+.hero-box.loading { opacity: 0.45; pointer-events: none; }
+
+.hero-box-head { display: flex; align-items: center; gap: 9px; }
+.hero-box-logo { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: rgba(255,255,255,0.06); }
+.hero-box-sym { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: -0.01em; }
+
+.hero-box-mult {
+  font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--accent); margin-top: 8px;
+}
+.hero-box-flips-lbl {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); margin-top: 8px;
+}
+.hero-box-item {
+  font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700;
+  color: var(--text); line-height: 1.28; margin-top: 2px;
+}
+.hero-box-item.none { color: rgba(245,245,250,0.35); font-style: italic; font-weight: 600; }
+
+/* Tablet → 2 across */
+@media (max-width: 760px) { .hero-grid { grid-template-columns: repeat(2, 1fr); } }
+/* Phone → 1 across */
+@media (max-width: 460px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-box { min-height: 0; padding: 16px 14px; }
+}
