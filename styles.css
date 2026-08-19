@@ -103,7 +103,7 @@
   }
   .logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
   .main-grid { max-width: 860px; margin: 26px auto 0; }
-  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
+  .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
   .section-title .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .tier-band {
     display: flex; align-items: center; gap: 12px;
@@ -1134,7 +1134,7 @@
    =================================================================== */
 
 /* Shrink the logo, keep it centered. Original .logo gradient/glow still applies. */
-.hero .logo { font-size: clamp(30px, 5vw, 52px); margin: 0 auto; }
+.hero .logo { font-size: clamp(40px, 6.5vw, 72px); margin: 0 auto; }
 
 .hero-flip { max-width: 780px; margin: 22px auto 0; }
 
