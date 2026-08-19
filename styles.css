@@ -1202,7 +1202,10 @@
 /* Tablet → 2 across */
 @media (max-width: 760px) { .hero-grid { grid-template-columns: repeat(2, 1fr); } }
 /* Phone → 1 across */
-@media (max-width: 460px) {
+@media (max-width: 600px) {
   .hero-grid { grid-template-columns: 1fr; }
   .hero-box { min-height: 0; padding: 16px 14px; }
+  .hero-box-mult { margin-top: 4px; }
+  .hero-box-flips-lbl { margin-top: 4px; }
+  .hero-box-item { font-size: 15px; }
 }
