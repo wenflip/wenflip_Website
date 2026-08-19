@@ -2445,18 +2445,19 @@
     const sig = heroMult + '|' + HERO_COINS.map(sym => {
       const s = state.find(x => x.sym === sym);
       if (!s || s.price == null) return sym + ':loading';
-      return sym + ':' + (heroFlipItem(s.price, heroMult) || 'none');
+      return sym + ':' + (heroFlipItem(s.price, heroMult) || 'none') + ':' + (s.chg || 0).toFixed(2);
     }).join('|');
     if (sig === _heroLastSig) return;
     _heroLastSig = sig;
 
-    el.innerHTML = HERO_COINS.map(sym => {
+       el.innerHTML = HERO_COINS.map(sym => {
       const tk = TOKENS.find(t => t.sym === sym);
       const s  = state.find(x => x.sym === sym);
       if (!tk) return '';
       const loading = !s || s.price == null;
 
       if (loading) {
+        // No % shown while loading — chg is 0 until real data lands; showing it would mislead.
         return `<div class="hero-box loading" data-sym="${sym}">
           <div class="hero-box-head">
             <img class="hero-box-logo" src="${tk.logo}" alt="${sym}"/>
@@ -2466,6 +2467,12 @@
           <div class="hero-box-item none">loading…</div>
         </div>`;
       }
+
+      // 24h change — green up / red down, arrow, no "(24h)" label. Reuses live state.chg.
+      const chg = s.chg || 0;
+      const chgCls = chg >= 0 ? 'hero-box-chg up' : 'hero-box-chg down';
+      const chgArrow = chg >= 0 ? '▲' : '▼';
+      const chgHtml = `<span class="${chgCls}">${chgArrow} ${Math.abs(chg).toFixed(2)}%</span>`;
 
       const itemName = heroFlipItem(s.price, heroMult);
       const multLine = heroMult > 1 ? `<div class="hero-box-mult">at a ${heroMult}×</div>` : '';
@@ -2477,13 +2484,14 @@
         <div class="hero-box-head">
           <img class="hero-box-logo" src="${tk.logo}" alt="${sym}"/>
           <span class="hero-box-sym">${sym}</span>
+          ${chgHtml}
         </div>
         ${multLine}
         <div class="hero-box-flips-lbl">flips</div>
         ${itemHtml}
       </div>`;
     }).join('');
-
+    
     el.querySelectorAll('.hero-box:not(.loading)').forEach(box => {
       const sym = box.getAttribute('data-sym');
       box.addEventListener('click', () => openHeroPump(sym, heroMult));
