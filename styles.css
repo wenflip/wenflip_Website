@@ -735,8 +735,12 @@
   /* Pump result card */
   .pump-result-card {
     padding: 28px 28px 48px;
+    justify-content: space-between;
     gap: 0;
   }
+  .pump-top { flex-shrink: 0; }
+  .pump-bottom { flex-shrink: 0; }
+
   /* Subtle glow overlay for the dream aesthetic */
   .pump-result-card::before {
     content: ''; position: absolute; inset: 0; pointer-events: none; border-radius: 18px;
