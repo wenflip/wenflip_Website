@@ -6,7 +6,7 @@
     { sym: 'SOL',   name: 'Solana',    chain: 'major',      pairAddress: '0xbffec96e8f3b5058b1817c14e4380758fada01ef', dexChain: 'bsc',        logo: './logos/SOL_logo.png'    },
     { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
     { sym: 'XRP',   name: 'XRP',       chain: 'major',      pairAddress: '0xb90fe999be6869af0afc557dccfbe169ea3403d6', dexChain: 'base',       logo: './logos/XRP_logo.png'    },
-    { sym: 'DOGE',  name: 'Dogecoin',  chain: 'major',      pairAddress: '0x353d328efbef48b79a570cbc2fde20f40e9f2063', dexChain: 'bsc',        logo: './logos/DOGE_logo.png'   },
+    { sym: 'DOGE',  name: 'Dogecoin',  chain: 'major',      pairAddress: '0x89da4102853c6cf3f4e9979cbb1dc4a166f38e84', dexChain: 'bsc',        logo: './logos/DOGE_logo.png'   },
     { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', logo: './logos/pwBTC_Logo.png',  identity: 'Bargain-bin Bitcoin copy. Way below the real thing.'         },
     { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', logo: './logos/INC_logo.png',    identity: 'Earned for providing liquidity on PulseX.'                   },
     { sym: 'pDAI',  name: 'pDAI',      chain: 'pulsechain', pairAddress: '0xfc64556faa683e6087f425819c7ca3c558e13ac1', dexChain: 'pulsechain', logo: './logos/pDAI_logo.png',   identity: 'An unbacked copy of DAI. Betting it reaches $1.'             },
