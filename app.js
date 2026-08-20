@@ -564,10 +564,10 @@ const LADDER = [
   }
 
   function chainPillHtml(t) {
-    const isPulse = t.chain === 'pulsechain';
-    const cls = isPulse ? 'pulsechain' : 'major';
-    const label = isPulse ? 'PulseChain' : 'Major';
-    return `<span class="chain-pill ${cls}"><span class="chain-pill-dot"></span>${label}</span>`;
+    // Pills removed from ladder cards — the All / PulseChain / Majors filter tabs
+    // already make chain membership clear. Kept as a no-op so the ${chainPill}
+    // slot in renderLadder() renders nothing.
+    return '';
   }
 
   const X_ICON = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.402 6.231H2.746l7.73-8.835L2.42 2.25h6.58l4.26 5.638 5.984-5.638Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>`;
