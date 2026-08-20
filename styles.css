@@ -854,20 +854,20 @@
     letter-spacing: 0.01em;
   }
 
-  /* Per-door colour accents */
-  .door-dunk    { border-color: rgba(239,68,68,0.35); }
+  /* Per-door colour accents — faint resting tint so they're not four grey boxes */
+  .door-dunk    { background: rgba(239,68,68,0.07);  border-color: rgba(239,68,68,0.42); }
   .door-dunk:hover { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.55); box-shadow: 0 8px 28px rgba(239,68,68,0.22); }
 
-  .door-pump    { border-color: rgba(46,224,106,0.35); }
+  .door-pump    { background: rgba(46,224,106,0.07); border-color: rgba(46,224,106,0.42); }
   .door-pump:hover { background: rgba(46,224,106,0.12); border-color: rgba(46,224,106,0.55); box-shadow: 0 8px 28px rgba(46,224,106,0.20); }
 
-  .door-cope    { border-color: rgba(148,163,184,0.30); }
+  .door-cope    { background: rgba(148,163,184,0.06); border-color: rgba(148,163,184,0.40); }
   .door-cope:hover { background: rgba(148,163,184,0.10); border-color: rgba(148,163,184,0.50); box-shadow: 0 8px 28px rgba(148,163,184,0.15); }
 
   .door-outrage { border-color: rgba(251,191,36,0.35); }
   .door-outrage:hover { background: rgba(251,191,36,0.10); border-color: rgba(251,191,36,0.55); box-shadow: 0 8px 28px rgba(251,191,36,0.18); }
 
-  .door-wonder  { border-color: rgba(139,92,246,0.35); }
+  .door-wonder  { background: rgba(139,92,246,0.07); border-color: rgba(139,92,246,0.42); }
   .door-wonder:hover { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.55); box-shadow: 0 8px 28px rgba(139,92,246,0.18); }
 
   /* Quiet secondary calculator link */
@@ -886,6 +886,43 @@
     border-color: rgba(255,255,255,0.22) !important;
     color: var(--text) !important;
     transform: none !important;
+  }
+  /* ===== MIDDLE SECTION LAYOUT (signpost / toys / actions / coin zone) ===== */
+
+  /* Signpost — a caption, not a headline. Sits quietly above the toys. */
+  .more-signpost {
+    font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: lowercase; color: var(--muted);
+    text-align: center; margin: 6px 0 2px;
+  }
+
+  /* Primary action: Make a Flip Card — its own centred row, green-outline + soft glow */
+  .flipcard-cta-row { display: flex; justify-content: center; margin-top: 18px; }
+  .flipcard-cta {
+    max-width: 420px; font-size: 16px;
+    box-shadow: 0 0 26px -8px rgba(46,224,106,0.38);
+  }
+
+  /* Quiet utility: How far from flipping — single ghost line below the action */
+  .util-cta-row { display: flex; justify-content: center; margin-top: 10px; }
+
+  /* Coin zone: breathing room, then filters as a tight header on the list */
+  .coin-zone { margin-top: 30px; }
+
+  /* Explicit "see the full ladder" door — makes the hidden feature visible */
+  .full-ladder-cta-row { display: flex; justify-content: center; margin-top: 14px; }
+  .full-ladder-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; max-width: 460px;
+    padding: 14px 24px; border-radius: 12px;
+    background: rgba(46,224,106,0.08); border: 1px solid rgba(46,224,106,0.45);
+    color: var(--text); font-weight: 700; font-size: 15px; cursor: pointer;
+    font-family: 'Inter', sans-serif; letter-spacing: 0.01em;
+    transition: transform .15s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .full-ladder-btn:hover {
+    background: var(--grad); border-color: transparent;
+    box-shadow: 0 8px 30px rgba(46,224,106,0.32); transform: translateY(-2px);
   }
 
   @media (max-width: 600px) {
