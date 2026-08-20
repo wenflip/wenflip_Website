@@ -74,30 +74,44 @@
 <div class="container">
   <div class="main-grid">
     <section>
+      <!-- SIGNPOST: small caption, not a headline -->
       <div class="ladder-head" style="text-align:center;">
-        <h2 class="section-title">more wenflip below</h2>
+        <p class="more-signpost">more wenflip below</p>
       </div>
-      <!-- EMOTION DOORS: 5 hero entry points above the coin list -->
-          <div class="emotion-doors" id="emotionDoors">
-        <button class="door-btn door-dunk"   id="doorDunk">   <span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
-        <button class="door-btn door-pump"   id="doorPump">   <span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
-        <button class="door-btn door-cope"   id="doorCope">   <span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
-        <button class="door-btn door-wonder" id="doorWonder"> <span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
+
+      <!-- TOYS: 4 mood generators (the colourful set) -->
+      <div class="emotion-doors" id="emotionDoors">
+        <button class="door-btn door-dunk"   id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
+        <button class="door-btn door-pump"   id="doorPump"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
+        <button class="door-btn door-cope"   id="doorCope"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
+        <button class="door-btn door-wonder" id="doorWonder"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
       </div>
-      <!-- Secondary power-user links — quiet matched pair, below the doors -->
-      <div class="ladder-head-cta ladder-head-cta-secondary">
-        <button class="calc-open-btn calc-open-btn-quiet" onclick="openStatusCheckModal()">📸 Make a Flip Card</button>
+
+      <!-- PRIMARY ACTION: the money button, its own emphasised row -->
+      <div class="flipcard-cta-row">
+        <button class="calc-open-btn flipcard-cta" onclick="openStatusCheckModal()">📸 Make a Flip Card</button>
+      </div>
+
+      <!-- QUIET UTILITY -->
+      <div class="util-cta-row">
         <button class="calc-open-btn calc-open-btn-quiet" id="openCalc">🧮 How far from flipping?</button>
       </div>
-      <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
-        <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
-        <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
-        <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">Majors</button>
-      </div>
-      <div class="clusters" id="clusters">
-        <div class="clusters-loading">
-          <span class="skel-dot"></span>
-          <span>Loading live prices…</span>
+
+      <!-- COIN ZONE: filters as a tight header on the list, then the list, then the ladder door -->
+      <div class="coin-zone">
+        <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
+          <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
+          <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
+          <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">Majors</button>
+        </div>
+        <div class="clusters" id="clusters">
+          <div class="clusters-loading">
+            <span class="skel-dot"></span>
+            <span>Loading live prices…</span>
+          </div>
+        </div>
+        <div class="full-ladder-cta-row">
+          <button class="full-ladder-btn" onclick="openModal()">📖 See the full ladder →</button>
         </div>
       </div>
     </section>
