@@ -1063,6 +1063,18 @@
    HERO FLIP GRID (redesign) — 6 core coins, multiplier toggle
    =================================================================== */
 
+.logo-tagline {
+  margin: 10px auto 0;
+  max-width: 560px;
+  color: var(--muted);
+  font-size: clamp(14px, 2.2vw, 17px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+
 /* Shrink the logo, keep it centered. Original .logo gradient/glow still applies. */
 .hero .logo { font-size: clamp(40px, 6.5vw, 72px); margin: 0 auto; }
 
