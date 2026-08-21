@@ -405,10 +405,9 @@ const LADDER = [
     heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',        emoji: '💎' },
     snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $0.001 to $1,000', emoji: '🏠' },
     absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',  emoji: '🏖️' },
-    time:         { cls: 'tier-dust',   text: '⏱ Sub-Dust Tier',  emoji: '⏱️' },
+    void:         { cls: 'tier-dust',   text: '🕳 The Gutter — stuff so worthless it fell through the floor',  emoji: '🕳️' },
   };
 
-  const MIN_WAGE_PER_SEC = 7.25 / 3600;
 
   // ── Coin price formatter ─────────────────────────────────────────────────
   // Used ONLY for live coin prices (ticker, cards, share cards, calc).
@@ -511,28 +510,10 @@ const LADDER = [
     return Math.min(99, Math.max(0, Math.round(((coinPrice - floor) / span) * 100)));
   }
 
-  function fmtTime(seconds) {
-    if (!isFinite(seconds) || seconds <= 0) return '—';
-    const ms = seconds * 1000;
-    if (ms < 1) return parseFloat(ms.toPrecision(2)) + 'ms';
-    if (seconds < 1) {
-      let v = ms >= 10 ? Math.round(ms) : parseFloat(ms.toFixed(1));
-      return v + (v === 1 ? ' millisecond' : ' milliseconds');
-    }
-    if (seconds < 60) {
-      let v = seconds >= 10 ? Math.round(seconds) : parseFloat(seconds.toFixed(1));
-      return v + (v === 1 ? ' second' : ' seconds');
-    }
-    if (seconds < 3600) { const v = Math.round(seconds/60); return v + (v===1?' minute':' minutes'); }
-    const v = Math.round(seconds/3600); return v + (v===1?' hour':' hours');
-  }
-  function secsOfWork(price) { return price / MIN_WAGE_PER_SEC; }
-  function timePhrase(price) { return fmtTime(secsOfWork(price)) + ' of minimum-wage work'; }
-  function isTimeMode(t) { return t.price != null && t.price < 0.0001; }
 
-  function rungLabelForToken(rung, timeMode) {
+
+  function rungLabelForToken(rung) {
     if (!rung) return null;
-    if (timeMode) return { name: timePhrase(rung.price), price: fmtItemPrice(rung.price), featured: !!rung.featured };
     return { name: rung.name, price: fmtItemPrice(rung.price), featured: !!rung.featured };
   }
 
@@ -593,9 +574,8 @@ const LADDER = [
       const i = findRungIndex(t.price);
       const nextRung = LADDER[i - 1];
       const prevRung = LADDER[i];
-      const timeMode = isTimeMode(t);
-      const next = rungLabelForToken(nextRung, timeMode);
-      const prev = rungLabelForToken(prevRung, timeMode);
+      const next = rungLabelForToken(nextRung);
+      const prev = rungLabelForToken(prevRung);
       const chgCls = t.chg >= 0 ? 'pos' : 'neg';
       const chgStr = (t.chg >= 0 ? '+' : '') + (t.chg||0).toFixed(2) + '%';
       const chainCls = t.chain === 'pulsechain' ? 'chain-pulsechain' : 'chain-major';
@@ -607,7 +587,7 @@ const LADDER = [
         const span = nextRung.price - (prevRung ? prevRung.price : 0);
         pct = span > 0 ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100)) : 0;
       } else {
-        // No next rung (sub-dust / time-mode): fall back to cheapest rung above coin price
+        // No next rung (top of ladder): fall back to cheapest rung above coin price
         const fallback = [...LADDER].reverse().find(r => r.price > t.price);
         const targetP = fallback ? fallback.price : 0.0001;
         pct = Math.min(100, Math.max(0, (t.price / targetP) * 100));
@@ -615,11 +595,9 @@ const LADDER = [
       // Minimum visible sliver for any non-zero progress
       const pctDisplay = pct > 0 ? Math.max(3, pct) : 0;
 
-      let caption = '';
+           let caption = '';
       if (!nextRung) {
         caption = `<span class="cap-pct">Top of the ladder 🏆</span>`;
-      } else if (timeMode) {
-        caption = `<span class="cap-next">${timePhrase(t.price)}</span>`;
       } else {
         const pctRounded = pct < 1 ? pct.toFixed(1) : Math.round(pct);
         caption = `<span class="cap-pct">${pctRounded}% to</span><span class="cap-sep">·</span><span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span><span class="cap-sep">·</span><span class="cap-next">${next ? next.price : ''}</span>`;
