@@ -694,7 +694,16 @@ const LADDER = [
     body.innerHTML = html.join('');
   }
 
-  function openModal() { renderFullLadder(); document.getElementById('modal').classList.add('open'); document.body.style.overflow='hidden'; }
+  function openModal() {
+    const LADDER_OPEN_PRICE = 2600;
+    renderFullLadder();
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const idx = findRungIndex(LADDER_OPEN_PRICE);
+    const body = document.getElementById('modalBody');
+    const target = body.querySelector(`.frung[data-rung-index="${idx}"]`);
+    if (target) requestAnimationFrame(() => target.scrollIntoView({behavior:'instant', block:'center'}));
+  }
   function openModalZoomedTo(sym) {
     const t = state.find(s => s.sym === sym);
     if (!t || t.price == null) { openModal(); return; }
