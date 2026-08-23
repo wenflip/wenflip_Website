@@ -31,6 +31,20 @@
 
  // ==== LADDER ====
 const LADDER = [
+    { price: 1000000000, name: 'a Powerball jackpot (the advertised one)', tier: 'heavyweight', category: 'status' },
+    { price: 300000000, name: "a billionaire's superyacht", tier: 'heavyweight', category: 'status' },
+    { price: 100000000, name: 'a single painting at auction', tier: 'heavyweight', category: 'status' },
+    { price: 30000000, name: 'a new private jet', tier: 'heavyweight', category: 'status' },
+    { price: 8000000, name: 'a 30-second Super Bowl ad', tier: 'heavyweight', category: 'status' },
+    { price: 5000000, name: "a billionaire's doomsday bunker", tier: 'heavyweight', category: 'status' },
+    { price: 3000000, name: "a nurse's entire working life", tier: 'heavyweight', category: 'extraction' },
+    { price: 2600000, name: "a teacher's whole 40-year career", tier: 'heavyweight', category: 'extraction', featured: true },
+    { price: 1500000, name: 'a comfortable retirement (the real number)', tier: 'heavyweight', category: 'extraction' },
+    { price: 1000000, name: 'a million dollars', tier: 'heavyweight', category: 'status' },
+    { price: 600000, name: 'a ticket to space', tier: 'heavyweight', category: 'status' },
+    { price: 500000, name: 'your own private island', tier: 'heavyweight', category: 'status' },
+    { price: 450000, name: 'a year of full household staff', tier: 'heavyweight', category: 'status' },
+    { price: 415000, name: 'a paid-off house, free and clear', tier: 'heavyweight', category: 'extraction' },
     { price: 390000, name: 'a Rolls Royce Ghost (fully optioned)', tier: 'heavyweight', category: 'status' },
     { price: 380000, name: 'a thoroughbred racehorse (Keeneland average yearling)', tier: 'heavyweight', category: 'status' },
     { price: 350000, name: 'a Rolls Royce Ghost (base, new)', tier: 'heavyweight', category: 'status' },
