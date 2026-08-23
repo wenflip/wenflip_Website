@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>wenflip / bag check — what your bag actually buys</title>
+<meta name="description" content="Type your bag. See what it actually buys. Today, not someday." />
+<link rel="canonical" href="https://wenflip.com/bag" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wenflip.com/bag" />
+<meta property="og:title" content="wenflip / bag check — what your bag actually buys" />
+<meta property="og:description" content="Type your bag. See what it actually buys. Today, not someday." />
+<meta property="og:site_name" content="wenflip.com" />
+<meta property="og:image" content="https://wenflip.com/og-image.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="wenflip / bag check — what your bag actually buys" />
+<meta name="twitter:description" content="Type your bag. See what it actually buys. Today, not someday." />
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#2ee06a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.dexscreener.com">
+<link rel="dns-prefetch" href="https://api.dexscreener.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0a0a14; --bg-2:#11111f; --bg-3:#161629;
+    --text:#f5f5fa; --muted:#8a8aa8; --line:rgba(255,255,255,0.08);
+    --green:#22c55e; --red:#ef4444; --gold:#fbbf24;
+    --accent:#2ee06a; --accent-deep:#1f8a4c; --accent-glow:rgba(46,224,106,0.25);
+    --grad:linear-gradient(135deg,#1f8a4c 0%,#2ee06a 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{
+    background:
+      radial-gradient(1000px 600px at 80% -10%, rgba(46,224,106,0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(31,138,76,0.08), transparent 60%),
+      var(--bg);
+    min-height:100vh; overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  .container{max-width:640px;margin:0 auto;padding:0 20px;}
+
+  /* ===== HERO ===== */
+  .hero{padding:44px 0 8px;text-align:center;}
+  .brand{
+    display:inline-flex;align-items:baseline;gap:10px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.03em;
+    font-size:clamp(32px,6.5vw,54px);line-height:1;
+  }
+  .brand .wf{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(46,224,106,0.18));}
+  .brand .slash{color:rgba(255,255,255,0.20);font-weight:400;}
+  .brand .sec{color:var(--text);}
+  .tag{margin:16px auto 0;max-width:460px;color:var(--muted);font-size:clamp(14px,2vw,17px);font-weight:600;line-height:1.5;text-wrap:balance;}
+  .backlink{display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--muted);}
+  .backlink:hover{color:var(--text);}
+
+  /* ===== INPUT PANEL ===== */
+  .panel{margin:28px auto 0;background:var(--bg-2);border:1px solid var(--line);border-radius:18px;overflow:hidden;}
+  .panel-sec{padding:16px 20px;}
+  .panel-sec + .panel-sec{border-top:1px solid var(--line);}
+  .lbl{font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+  .coin-badges{display:flex;flex-wrap:wrap;gap:8px;}
+  .coin-badge{
+    display:flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;
+    border:1px solid var(--line);background:rgba(255,255,255,0.04);
+    font-weight:800;font-size:13px;cursor:pointer;user-select:none;
+    transition:border-color .15s,background .15s,box-shadow .15s;
+  }
+  .coin-badge img{width:20px;height:20px;border-radius:50%;object-fit:cover;background:rgba(255,255,255,0.06);}
+  .coin-badge:hover{border-color:rgba(46,224,106,0.45);background:rgba(46,224,106,0.10);}
+  .coin-badge.selected{border-color:var(--accent);background:rgba(46,224,106,0.14);box-shadow:0 0 14px rgba(46,224,106,0.35);}
+  .coin-badge.loading{opacity:0.45;pointer-events:none;}
+
+  .qty-row{display:flex;gap:8px;align-items:center;}
+  .qty-input{
+    flex:1;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--line);
+    border-radius:12px;color:var(--text);font-size:16px;font-family:'Inter',sans-serif;outline:none;
+    transition:border-color .15s;font-variant-numeric:tabular-nums;
+  }
+  .qty-input:focus{border-color:rgba(46,224,106,0.45);}
+  .qty-input::placeholder{color:var(--muted);}
+  .do-btn{
+    padding:12px 22px;border-radius:12px;background:var(--grad);border:none;color:#fff;
+    font-weight:800;font-size:15px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;
+    transition:transform .15s,box-shadow .15s;
+  }
+  .do-btn:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(46,224,106,0.38);}
+
+  /* ===== CARD (silent receipt) ===== */
+  .card-area{margin:26px auto 0;}
+  .card-placeholder{text-align:center;color:var(--muted);font-size:14px;padding:40px 0;}
+  .flip-card{
+    width:min(360px,100%);aspect-ratio:1/1;margin:0 auto;
+    border-radius:18px;background:var(--bg-3);border:1px solid var(--line);
+    position:relative;overflow:hidden;display:flex;flex-direction:column;
+    padding:26px 26px 44px;
+  }
+  .bc-id{display:flex;align-items:center;gap:9px;}
+  .bc-logo{width:30px;height:30px;border-radius:50%;object-fit:cover;flex-shrink:0;background:rgba(255,255,255,0.06);}
+  .bc-sym{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.01em;}
+  .bc-mid{margin-top:auto;margin-bottom:auto;text-align:left;}
+  .bc-bag{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;line-height:1.1;letter-spacing:-0.02em;color:var(--text);}
+  .bc-value{font-size:16px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:6px;}
+  .bc-buys-lbl{font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin:20px 0 6px;}
+  .bc-obj{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;line-height:1.2;color:var(--text);
+          overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+  .bc-obj-price{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px;}
+  .bc-divider{height:1px;background:rgba(255,255,255,0.08);margin:16px 0 0;}
+  .bc-stamp{
+    position:absolute;bottom:26px;left:26px;right:26px;display:flex;justify-content:space-between;align-items:center;
+    font-size:11px;color:rgba(46,224,106,0.60);font-weight:700;letter-spacing:0.06em;
+  }
+  .bc-sig{position:absolute;bottom:12px;left:26px;right:26px;text-align:center;font-size:10px;color:rgba(245,245,250,0.30);font-style:italic;letter-spacing:0.02em;}
+
+  .updated{margin:18px 0 4px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:0.06em;min-height:16px;}
+  .updated b{color:var(--text);font-weight:700;}
+
+  .share-row{display:flex;justify-content:center;gap:10px;margin-top:16px;}
+  .share-btn{
+    display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;
+    background:var(--grad);border:none;color:#fff;font-weight:800;font-size:14px;cursor:pointer;
+    font-family:'Inter',sans-serif;box-shadow:0 8px 30px rgba(46,224,106,0.32);
+    transition:transform .15s,box-shadow .2s;
+  }
+  .share-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(46,224,106,0.45);}
+  .share-btn:disabled{opacity:0.5;pointer-events:none;}
+  .share-btn.ghost{background:rgba(255,255,255,0.06);box-shadow:none;border:1px solid var(--line);}
+  .share-btn.ghost:hover{background:rgba(255,255,255,0.12);box-shadow:0 8px 24px rgba(0,0,0,0.35);}
+
+  /* ===== FOOTER ===== */
+  footer{margin-top:44px;padding:28px 0 44px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px;}
+  footer .ftag{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:12px;}
+  footer .flinks{display:flex;gap:18px;justify-content:center;margin:12px 0;flex-wrap:wrap;}
+  footer .flinks a:hover{color:var(--text);}
+  footer .disc{margin-top:14px;font-size:12px;opacity:0.7;}
+
+  .toast{
+    position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:rgba(34,197,94,0.92);color:#fff;padding:12px 26px;border-radius:999px;
+    font-weight:800;font-size:14px;box-shadow:0 8px 30px rgba(34,197,94,0.4);
+    opacity:0;pointer-events:none;z-index:9999;transition:opacity .3s ease,transform .3s ease;white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  @media (max-width:600px){
+    .qty-row{flex-wrap:wrap;}
+    .bc-bag{font-size:24px;}
+    .bc-obj{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero container">
+  <div class="brand"><span class="wf">wenflip</span><span class="slash">/</span><span class="sec">bag check</span></div>
+  <p class="tag">Type your bag. See what it actually buys. Today, not someday.</p>
+  <a class="backlink" href="/">← back to the ladder</a>
+</header>
+
+<div class="container">
+  <div class="panel">
+    <div class="panel-sec">
+      <div class="lbl">Your coin</div>
+      <div class="coin-badges" id="coinBadges"><span style="color:var(--muted);font-size:13px;">Loading…</span></div>
+    </div>
+    <div class="panel-sec">
+      <div class="lbl">How many</div>
+      <div class="qty-row">
+        <input class="qty-input" id="qtyInput" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="e.g. 1,000,000" />
+        <button class="do-btn" id="doBtn">do the math</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-area" id="cardArea">
+    <div class="card-placeholder" id="cardPlaceholder">Pick a coin and type how much you hold.</div>
+    <div id="bcCard" class="flip-card" style="display:none"><!-- rendered by JS --></div>
+  </div>
+
+  <p class="updated" id="updated"></p>
+
+  <div class="share-row" id="shareRow" style="display:none">
+    <button class="share-btn" id="pngBtn" onclick="bcExport()"><span id="pngIcon">📋</span><span id="pngText">Save PNG</span></button>
+    <button class="share-btn ghost" id="linkBtn" onclick="copyLink()">🔗 Copy link</button>
+  </div>
+
+  <footer>
+    <div class="ftag">Real prices. Real receipts.</div>
+    <div class="disc">Live price · not a projection.</div>
+    <div class="flinks" style="margin-top:14px;">
+      <a href="/parity">wen parity?</a>
+      <a href="https://x.com/J_B199" target="_blank" rel="noopener">Follow @J_B199 on X</a>
+      <a href="https://t.me/wen_flip" target="_blank" rel="noopener">Flip alerts on Telegram</a>
+    </div>
+    <div class="disc" style="margin-top:10px;opacity:0.45;">wenflip · Powered by PulseChain</div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   COIN ROSTER — pulled from the site's TOKENS array.
+   Logo paths made root-absolute so they resolve from /bag/.
+   ============================================================ */
+const TOKENS = [
+  { sym:'BTC',  name:'Bitcoin',    dexChain:'ethereum',   pair:'0x4585fe77225b41b697c938b018e2ac67ac5a20c0', logo:'/logos/BTC_logo.png' },
+  { sym:'GOLD', name:'Gold',       dexChain:'ethereum',   pair:'0x9c4fe5ffd9a9fc5678cfbd93aa2d4fd684b67c4c', logo:'/logos/GOLD_logo.png' },
+  { sym:'ETH',  name:'Ethereum',   dexChain:'bsc',        pair:'0x531febfeb9a61d948c384acfbe6dcc51057aea7e', logo:'/logos/ETH_logo.png' },
+  { sym:'SOL',  name:'Solana',     dexChain:'bsc',        pair:'0xbffec96e8f3b5058b1817c14e4380758fada01ef', logo:'/logos/SOL_logo.png' },
+  { sym:'BNB',  name:'BNB',        dexChain:'bsc',        pair:'0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', logo:'/logos/BNB_logo.png' },
+  { sym:'XRP',  name:'XRP',        dexChain:'base',       pair:'0xb90fe999be6869af0afc557dccfbe169ea3403d6', logo:'/logos/XRP_logo.png' },
+  { sym:'DOGE', name:'Dogecoin',   dexChain:'bsc',        pair:'0x89da4102853c6cf3f4e9979cbb1dc4a166f38e84', logo:'/logos/DOGE_logo.png' },
+  { sym:'DAI',  name:'Dai',        dexChain:'ethereum',   pair:'0x48da0965ab2d2cbf1c17c09cfb5cbe67ad5b1406', logo:'/logos/DAI_logo.png' },
+  { sym:'pWBTC',name:'pWBTC',      dexChain:'pulsechain', pair:'0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', logo:'/logos/pwBTC_Logo.png' },
+  { sym:'INC',  name:'Incentive',  dexChain:'pulsechain', pair:'0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', logo:'/logos/INC_logo.png' },
+  { sym:'pDAI', name:'pDAI',       dexChain:'pulsechain', pair:'0xfc64556faa683e6087f425819c7ca3c558e13ac1', logo:'/logos/pDAI_logo.png' },
+  { sym:'HEX',  name:'HEX',        dexChain:'pulsechain', pair:'0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', logo:'/logos/HEX_Logo.png' },
+  { sym:'eHEX', name:'eHEX',       dexChain:'pulsechain', pair:'0xf0ea3efe42c11c8819948ec2d3179f4084863d3f', logo:'/logos/HEX_Logo.png' },
+  { sym:'PLSX', name:'PulseX',     dexChain:'pulsechain', pair:'0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', logo:'/logos/PulseX_logo.png' },
+  { sym:'PLS',  name:'Pulse',      dexChain:'pulsechain', pair:'0xe56043671df55de5cdf8459710433c10324de0ae', logo:'/logos/PLS_Logo.png' },
+  { sym:'PRVX', name:'PRVX',       dexChain:'pulsechain', pair:'0x7f681a5ad615238357ba148c281e2eaefd2de55a', logo:'/logos/PRVX_logo.png' },
+  { sym:'DWB',  name:'dickwifbutt',dexChain:'pulsechain', pair:'0xe644f9b23375d07f5fe11cc223716c6db7ea356b', logo:'/logos/DWB_logo.png' },
+];
+
+/* ============================================================
+   OBJECT LADDER — same object/price data the site renders.
+   Sorted strictly descending by price. Only price + name used here.
+   ============================================================ */
+const LADDER = [
+  { price:390000, name:'a Rolls Royce Ghost (fully optioned)' },
+  { price:380000, name:'a thoroughbred racehorse (Keeneland average yearling)' },
+  { price:350000, name:'a Rolls Royce Ghost (base, new)' },
+  { price:315000, name:'the cost of raising one child to age 18 (USDA estimate)' },
+  { price:300000, name:'a used Cessna Citation (entry-level private jet)' },
+  { price:280000, name:'one year of 24/7 personal security detail' },
+  { price:258000, name:'a Lamborghini Urus (base, new)' },
+  { price:240000, name:'a Lamborghini Huracán (entry, new)' },
+  { price:220000, name:'a Ferrari Roma (base, new)' },
+  { price:180000, name:'a gold-plated bathtub (bespoke commission)' },
+  { price:170000, name:"a forgettable abstract painting at Christie's" },
+  { price:160000, name:'one year at Phillips Exeter Academy (boarding)' },
+  { price:150000, name:'a full Beverly Hills plastic surgery makeover' },
+  { price:140000, name:'one year of luxury nursing home (private room)' },
+  { price:130000, name:'a full gestational surrogacy in the USA' },
+  { price:120000, name:'a live-in nanny (NYC)' },
+  { price:115000, name:'a Porsche 911 Carrera (base, new)' },
+  { price:110000, name:'a gold toilet (18-karat, functional)' },
+  { price:90000,  name:'full-mouth dental implants (all teeth)' },
+  { price:87000,  name:'one year at Harvard (full cost of attendance)' },
+  { price:75000,  name:'a full luxury kitchen remodel (high-end suburban)' },
+  { price:60000,  name:'a down payment on a house' },
+  { price:52000,  name:'a used Porsche 911 (decent year)' },
+  { price:48000,  name:'an average new car (industry average)' },
+  { price:45000,  name:'a full IVF package (3 cycles)' },
+  { price:43000,  name:'an epic bachelor Vegas weekend (party of 12)' },
+  { price:40000,  name:'a Tesla Model 3' },
+  { price:35000,  name:'one year of NYC private preschool' },
+  { price:30000,  name:'a wedding photographer (high-end with video)' },
+  { price:25000,  name:'a new compact car' },
+  { price:22000,  name:'an average wedding (small, intimate)' },
+  { price:20000,  name:'an engagement ring (nicer)' },
+  { price:18000,  name:'a used motorcycle (mid-tier touring)' },
+  { price:16000,  name:'one year of average US daycare' },
+  { price:14000,  name:'two weeks at a luxury all-inclusive resort' },
+  { price:13500,  name:'one year of state college tuition (in-state)' },
+  { price:12000,  name:'a Hermès Birkin bag' },
+  { price:10000,  name:'an engagement ring (modest)' },
+  { price:8500,   name:'one year of public university tuition (in-state)' },
+  { price:8300,   name:'one year of federal income tax for a $75K single earner' },
+  { price:7500,   name:'a rhinoplasty (nose job)' },
+  { price:6500,   name:'a BBL (Brazilian butt lift)' },
+  { price:6000,   name:'a used car (rough condition)' },
+  { price:5800,   name:'a Super Bowl ticket (nosebleeds)' },
+  { price:5738,   name:"one year of FICA payroll taxes for a $75K earner (you'll never see it back)" },
+  { price:5500,   name:'a bottle of Pappy Van Winkle 23' },
+  { price:5000,   name:'a full Invisalign treatment' },
+  { price:4800,   name:'a Lambo wheel rim' },
+  { price:3500,   name:'a mountain bike' },
+  { price:3200,   name:'a C-section copay' },
+  { price:3000,   name:'one year of US median property tax' },
+  { price:2800,   name:'one year of advisor fees on $280K (1% AUM)' },
+  { price:2600,   name:'a coffin (mid-range)' },
+  { price:2500,   name:'an epidural during birth' },
+  { price:2400,   name:'a CrossFit annual membership' },
+  { price:2200,   name:'a LASIK eye (per eye)' },
+  { price:2100,   name:'a sterilization procedure (out of pocket)' },
+  { price:2000,   name:'a decent laptop' },
+  { price:1800,   name:'an uninsured ER visit (minor)' },
+  { price:1650,   name:'a veneer (per tooth)' },
+  { price:1500,   name:'annual car insurance (cheap)' },
+  { price:1400,   name:'a new gaming console' },
+  { price:1300,   name:'an IUD insertion (out of pocket)' },
+  { price:1250,   name:'a root canal' },
+  { price:1200,   name:'a year of college textbooks' },
+  { price:1150,   name:'a CoolSculpting session' },
+  { price:1100,   name:'a vasectomy' },
+  { price:1050,   name:'a dental crown' },
+  { price:1025,   name:'a funeral plot (cheap)' },
+  { price:1000,   name:'one year of mutual fund expense ratios on $100K (1%)' },
+  { price:950,    name:'a cremation (basic)' },
+  { price:900,    name:'a weekend Airbnb' },
+  { price:880,    name:'one year of premium pet insurance' },
+  { price:875,    name:"one month's rent (small midwest town)" },
+  { price:850,    name:'one year of average insurance copays' },
+  { price:750,    name:"a wedding band (men's, plain)" },
+  { price:650,    name:'a used iPhone' },
+  { price:530,    name:'one month of health insurance (unsubsidized ACA, single adult)' },
+  { price:500,    name:'one annuity surrender charge (5% on $10K)' },
+  { price:425,    name:'a round-trip domestic flight' },
+  { price:415,    name:'a wisdom tooth removal (per tooth)' },
+  { price:410,    name:'a bottle of Macallan 18' },
+  { price:405,    name:'a Vegas night at the Bellagio' },
+  { price:400,    name:'a non-surgical cosmetic session' },
+  { price:379,    name:'one iPhone screen repair (out of warranty)' },
+  { price:349,    name:'an Apple Watch SE (entry model)' },
+  { price:275,    name:'a nice dinner for two' },
+  { price:260,    name:'a shot of Ozempic (per dose)' },
+  { price:255,    name:'an H&R Block in-person filing' },
+  { price:253,    name:'one year of weekly out-of-network ATM use' },
+  { price:250,    name:'a Roomba (basic)' },
+  { price:240,    name:'one year of ChatGPT Plus' },
+  { price:230,    name:'one year of Notion AI' },
+  { price:225,    name:'one year of overdraft fees (typical overdrafting household)' },
+  { price:220,    name:'one year of Xbox Game Pass Ultimate' },
+  { price:215,    name:'one year of Netflix (standard)' },
+  { price:210,    name:'a bag of designer pre-workout supplement' },
+  { price:205,    name:'one year of LinkedIn Premium' },
+  { price:204,    name:'one year of Disney+ (no ads)' },
+  { price:200,    name:'a bottle of Dom Pérignon' },
+  { price:198,    name:"a Cameo from someone you've heard of" },
+  { price:195,    name:'an IV drip wellness session' },
+  { price:190,    name:'an hour with a private chef' },
+  { price:188,    name:'a TurboTax Self-Employed filing (federal + state)' },
+  { price:180,    name:'one year of checking account maintenance fees ($15/mo)' },
+  { price:179,    name:'AirPods (with ANC)' },
+  { price:178,    name:'a Costco run that got out of hand' },
+  { price:175,    name:'one year of Audible' },
+  { price:170,    name:'a night at a bougie hot pot restaurant' },
+  { price:165,    name:'a pair of Lululemon leggings' },
+  { price:156,    name:'one Spotify Premium year' },
+  { price:155,    name:'a therapy session (full cash price)' },
+  { price:154,    name:'a Substack subscription you regret' },
+  { price:150,    name:'an emotional support animal certification (online)' },
+  { price:145,    name:'an AI girlfriend monthly subscription' },
+  { price:135,    name:'a night at a Holiday Inn Express' },
+  { price:130,    name:'a paternity test' },
+  { price:125,    name:'a concert nosebleed' },
+  { price:120,    name:'one Hulu year' },
+  { price:118,    name:'one Midjourney year' },
+  { price:105,    name:'a Global Entry application' },
+  { price:102,    name:'a Hamilton ticket (cheap)' },
+  { price:100,    name:'a DNA test (23andMe)' },
+  { price:98,     name:'a Ring doorbell' },
+  { price:90,     name:'a private massage (60 min)' },
+  { price:85,     name:'a pair of jeans' },
+  { price:82,     name:'a TaskRabbit IKEA assembly' },
+  { price:80,     name:'TSA PreCheck' },
+  { price:78,     name:'one PlayStation Plus year' },
+  { price:77,     name:'a Vegas night at a budget hotel' },
+  { price:76,     name:'one ChatGPT API top-up (moderate use month)' },
+  { price:75,     name:'a Hello Fresh meal kit week' },
+  { price:72,     name:'a Lyft surge ride at 2am' },
+  { price:71,     name:'an Uber Eats order at 2am' },
+  { price:70,     name:'a personal trainer session' },
+  { price:68,     name:'a sensory deprivation tank float' },
+  { price:66,     name:'a bag of premium CBD gummies' },
+  { price:63,     name:'one annual Costco membership' },
+  { price:60,     name:'one Ticketmaster service fee (pair of tickets)' },
+  { price:55,     name:'a tank of gas' },
+  { price:52,     name:'an Equinox day pass' },
+  { price:50,     name:"a Sam's Club membership" },
+  { price:49,     name:'a Tinder Platinum month' },
+  { price:48,     name:'one year of Robinhood Gold (paid annually)' },
+  { price:45,     name:'a cryotherapy session' },
+  { price:44,     name:'one Peloton All-Access Membership month' },
+  { price:42,     name:'one movie night for two (tickets + popcorn)' },
+  { price:40,     name:'a Steam game' },
+  { price:39,     name:'a Cameo from a C-list celeb' },
+  { price:38,     name:'a SoulCycle class' },
+  { price:36,     name:'one airline checked-bag fee (first bag, one way)' },
+  { price:35,     name:'one month of gym membership (typical chain)' },
+  { price:34,     name:'a pedicure' },
+  { price:33,     name:'a DoorDash delivery (with all fees)' },
+  { price:32,     name:'an escape room (per person)' },
+  { price:31,     name:'a Hinge premium month' },
+  { price:30,     name:'a Tinder Gold month' },
+  { price:29,     name:'an axe-throwing session' },
+  { price:28,     name:'a wire transfer fee (typical domestic)' },
+  { price:27,     name:'a large delivery pizza' },
+  { price:26.77,  name:'an overdraft fee (Bankrate 2025 average)' },
+  { price:26.5,   name:'a CrossFit class drop-in' },
+  { price:26,     name:'a Bumble Boost month' },
+  { price:25,     name:'an Uber ride across town' },
+  { price:24,     name:'an Erewhon smoothie' },
+  { price:23,     name:'a therapy session (typical copay)' },
+  { price:22,     name:'a Planet Fitness Black Card month' },
+  { price:21,     name:'a budget haircut (Great Clips tier)' },
+  { price:20,     name:'a full-service car wash' },
+  { price:18.5,   name:'a Claude Pro month' },
+  { price:18,     name:'a paperback book' },
+  { price:17,     name:'an NSF (non-sufficient funds) fee' },
+  { price:15,     name:'a movie ticket' },
+  { price:14,     name:'a Twitter Blue verification month' },
+  { price:13,     name:'a Chipotle burrito' },
+  { price:12,     name:'one stadium beer' },
+  { price:11.5,   name:'a Botox unit' },
+  { price:11,     name:'a pack of cigarettes' },
+  { price:10.5,   name:'an OnlyFans subscription (avg)' },
+  { price:9,      name:'one fast-food combo meal' },
+  { price:8,      name:'a round of mini golf' },
+  { price:7.5,    name:'a Starbucks coffee' },
+  { price:7,      name:'a Tinder profile boost' },
+  { price:6.5,    name:'an Adderall pill (10mg generic, cash retail without insurance)' },
+  { price:6,      name:'a Big Mac' },
+  { price:5.5,    name:'a mid-tier scratch-off ticket' },
+  { price:5,      name:'a Postmates delivery fee' },
+  { price:4.86,   name:'an ATM out-of-network fee (Bankrate 2025 average)' },
+  { price:4.75,   name:'a cheap cigar' },
+  { price:4.5,    name:'a mechanical bull ride' },
+  { price:4.25,   name:'a penny slot pull at max bet' },
+  { price:4,      name:'a pre-rolled cone' },
+  { price:3.75,   name:'a Four Loko' },
+  { price:3.5,    name:'a greeting card' },
+  { price:3.2,    name:'one gallon of gas' },
+  { price:3,      name:'one loaf of bread (name brand)' },
+  { price:2.85,   name:'a mini bottle of liquor (airplane bottle)' },
+  { price:2.75,   name:'a can of Monster' },
+  { price:2.6,    name:'a 5-Hour Energy shot' },
+  { price:2.5,    name:'a Liquid Death' },
+  { price:2.4,    name:'a White Claw' },
+  { price:2.3,    name:'a Truly seltzer' },
+  { price:2,      name:'a Powerball ticket' },
+  { price:1.95,   name:'a scratch-off ticket (entry-tier)' },
+  { price:1.85,   name:'a pickle from 7-Eleven cooler' },
+  { price:1.75,   name:'an apple' },
+  { price:1.65,   name:'a Slim Jim' },
+  { price:1.5,    name:'a roll of toilet paper' },
+  { price:1.45,   name:'a pickle (from a jar)' },
+  { price:1.35,   name:'a Hot Wheels car' },
+  { price:1.25,   name:"a Reese's Cup" },
+  { price:1.1,    name:'a Pop Rocks package' },
+  { price:1.05,   name:'a claw machine attempt' },
+  { price:1,      name:'an item from the $1 shop' },
+  { price:0.98,   name:'a single cigarette' },
+  { price:0.9,    name:'an onion' },
+  { price:0.88,   name:'a pear' },
+  { price:0.85,   name:'an AA battery' },
+  { price:0.82,   name:'a potato' },
+  { price:0.78,   name:'a tomato' },
+  { price:0.75,   name:'an orange' },
+  { price:0.73,   name:'a postage stamp' },
+  { price:0.65,   name:"a McDonald's chicken nugget" },
+  { price:0.6,    name:'a pack of ramen' },
+  { price:0.52,   name:'a lime' },
+  { price:0.5,    name:'a condom (from a 12-pack)' },
+  { price:0.48,   name:'a lemon' },
+  { price:0.45,   name:'a disposable razor' },
+  { price:0.42,   name:'nicotine gum' },
+  { price:0.4,    name:'an arcade game token' },
+  { price:0.38,   name:'a CBD gummy' },
+  { price:0.35,   name:'an AAA battery' },
+  { price:0.33,   name:'a Capri Sun' },
+  { price:0.3,    name:'a banana' },
+  { price:0.28,   name:'a gumball' },
+  { price:0.25,   name:'a single egg' },
+  { price:0.23,   name:'a nicotine pouch (Zyn)' },
+  { price:0.22,   name:'a Bic pen' },
+  { price:0.2,    name:'a penny slot pull (min bet)' },
+  { price:0.18,   name:'a bowl of cooked rice' },
+  { price:0.16,   name:'a claw machine prize (cost basis)' },
+  { price:0.15,   name:'a single tortilla' },
+  { price:0.14,   name:'a Snickers fun size' },
+  { price:0.13,   name:'the lettuce from a Big Mac' },
+  { price:0.12,   name:'a carrot' },
+  { price:0.11,   name:'a donut hole' },
+  { price:0.095,  name:'a Tootsie Pop' },
+  { price:0.09,   name:'a Dum Dum lollipop' },
+  { price:0.085,  name:'a pair of wooden chopsticks' },
+  { price:0.08,   name:'a slice of bread' },
+  { price:0.075,  name:'a soft pretzel bite' },
+  { price:0.07,   name:'a tea bag' },
+  { price:0.065,  name:'a Tylenol tablet' },
+  { price:0.06,   name:'a melatonin gummy' },
+  { price:0.055,  name:'a Listerine strip' },
+  { price:0.05,   name:'a pencil' },
+  { price:0.048,  name:'a Solo cup' },
+  { price:0.045,  name:'a stick of gum' },
+  { price:0.04,   name:'a paper plate' },
+  { price:0.038,  name:'a plastic fork' },
+  { price:0.035,  name:'a clothes peg' },
+  { price:0.033,  name:'a Bandaid' },
+  { price:0.03,   name:'a ketchup packet' },
+  { price:0.028,  name:"a Hershey's Kiss" },
+  { price:0.026,  name:'a single Altoid mint' },
+  { price:0.024,  name:'a Tums tablet' },
+  { price:0.022,  name:'a paper fortune from a fortune cookie' },
+  { price:0.02,   name:'an Ibuprofen tablet' },
+  { price:0.018,  name:'a single Pringle' },
+  { price:0.016,  name:'a single Dorito' },
+  { price:0.014,  name:'a sugar packet' },
+  { price:0.013,  name:'a plastic spoon' },
+  { price:0.012,  name:'a Popsicle stick' },
+  { price:0.011,  name:'a Tootsie Roll mini' },
+  { price:0.0105, name:'a bobby pin' },
+  { price:0.01,   name:'a thumbtack' },
+  { price:0.0095, name:'a plastic straw' },
+  { price:0.009,  name:'a saltine cracker' },
+  { price:0.0085, name:'a single pretzel stick' },
+  { price:0.008,  name:'a single napkin' },
+  { price:0.0075, name:'a single coffee filter' },
+  { price:0.007,  name:'a single sheet of rolling paper' },
+  { price:0.0065, name:'a paperclip' },
+  { price:0.006,  name:'a square of aluminum foil' },
+  { price:0.0055, name:'a single Cheeto' },
+  { price:0.005,  name:'a Q-tip' },
+  { price:0.0045, name:'a sheet of printer paper' },
+  { price:0.004,  name:'a Tic Tac' },
+  { price:0.0038, name:'a single match' },
+  { price:0.0035, name:'a rubber band' },
+  { price:0.003,  name:'a sheet of toilet paper' },
+  { price:0.0028, name:'a single Skittle' },
+  { price:0.0025, name:'a toothpick' },
+  { price:0.0023, name:'a Goldfish cracker' },
+  { price:0.002,  name:'a single M&M' },
+  { price:0.0018, name:'a single coffee bean' },
+  { price:0.0016, name:'a single sprinkle (large)' },
+  { price:0.0014, name:'a sunflower seed' },
+  { price:0.0012, name:'a single Cheerio' },
+  { price:0.001,  name:'a single staple' },
+  { price:0.0008, name:'a Froot Loop' },
+  { price:0.0007, name:'a pinch of pepper' },
+  { price:0.0006, name:'a single coffee ground' },
+  { price:0.00055,name:'a single sprinkle (small)' },
+  { price:0.0005, name:'a single eyelash' },
+  { price:0.00045,name:'a piece of confetti' },
+  { price:0.0004, name:'a grain of sugar' },
+  { price:0.00035,name:'a grain of rice' },
+  { price:0.0003, name:'a single mustard seed' },
+  { price:0.00025,name:'a poppy seed' },
+  { price:0.0002, name:'a sesame seed' },
+  { price:0.00015,name:'a speck of dust' },
+  { price:0.00012,name:'a broken rubber band' },
+  { price:0.0001, name:'a grain of fine sand' },
+  { price:7e-05,  name:'a crumb from the bottom of the bag' },
+  { price:5e-05,  name:"a dropped McDonald's chip" },
+  { price:3.5e-05,name:'a flake of dandruff' },
+  { price:2.5e-05,name:'a popcorn kernel that didnt pop' },
+  { price:2e-05,  name:'a squeezed-out lime wedge' },
+  { price:1.5e-05,name:'a fingernail clipping' },
+  { price:1e-05,  name:'a popped bubble-wrap bubble' },
+  { price:7.5e-06,name:'a used cotton swab' },
+  { price:5e-06,  name:'a single belly button lint' },
+  { price:3e-06,  name:'a strand of shed cat hair' },
+  { price:2e-06,  name:'a used tooth floss string' },
+  { price:1.5e-06,name:'a burnt match head' },
+  { price:1e-06,  name:'a single toothbrush bristle' },
+];
+
+/* highest-priced rung ≤ value (same walk the site uses) */
+function findRungIndex(price){
+  if(price==null) return -1;
+  for(let i=0;i<LADDER.length;i++){ if(LADDER[i].price<=price) return i; }
+  return LADDER.length-1; // below the lowest rung → cheapest item
+}
+
+/* ---------- formatters ---------- */
+const SUB=['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+function fmtSmall(p){ // subscript notation for sub-$1 values
+  if(p>=0.0001){ const mag=Math.floor(Math.log10(p)); const f=Math.pow(10,3-mag); const t=Math.floor(p*f)/f; return '$'+t.toFixed(-mag+3).replace(/0+$/,'').replace(/\.$/,''); }
+  const mag=Math.floor(Math.log10(p)); const lz=-mag-1; const f=Math.pow(10,3-mag);
+  const t=Math.floor(p*f)/f; const raw=t.toFixed(lz+4); const after=raw.split('.')[1]||'';
+  let z=0; for(let i=0;i<after.length;i++){ if(after[i]==='0')z++; else break; }
+  return '$0.0'+(SUB[z]||z)+after.slice(z).replace(/0+$/,'');
+}
+// bag value → whole dollars w/ commas; cents only under $1
+function fmtBag(v){
+  if(v==null) return '—';
+  if(v<=0) return '$0';
+  if(v>=1) return '$'+Math.round(v).toLocaleString('en-US');
+  return fmtSmall(v);
+}
+// object price → character-for-character stored value
+function fmtItemPrice(p){
+  if(p==null) return '—';
+  if(p>=1000) return '$'+p.toLocaleString('en-US',{maximumFractionDigits:0});
+  if(p>=1)    return '$'+p.toFixed(2).replace(/\.?0+$/,'');
+  if(p>=0.0001){ const mag=Math.floor(Math.log10(p)); const dec=Math.max(0,-mag+3); return '$'+p.toFixed(dec).replace(/0+$/,'').replace(/\.$/,''); }
+  return '$'+p.toPrecision(2);
+}
+// quantity → commas, keep fractional bags readable
+function fmtQty(n){
+  if(Number.isInteger(n)) return n.toLocaleString('en-US');
+  return n.toLocaleString('en-US',{maximumFractionDigits:8});
+}
+
+/* ---------- state ---------- */
+const priceCache = {};      // sym → last good price
+let selectedSym = 'pDAI';
+let lastFetch = null;
+
+function coinBySym(sym){ return TOKENS.find(t => t.sym.toLowerCase() === String(sym||'').toLowerCase()); }
+
+/* ---------- price fetch ---------- */
+async function fetchPrice(coin){
+  const url = `https://api.dexscreener.com/latest/dex/pairs/${coin.dexChain}/${coin.pair}`;
+  const res = await fetch(url);
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const json = await res.json();
+  const pr = json.pair || (Array.isArray(json.pairs)?json.pairs[0]:null);
+  if(!pr || !pr.priceUsd) throw new Error('no pair data');
+  return parseFloat(pr.priceUsd);
+}
+async function ensurePrice(sym){
+  const coin = coinBySym(sym); if(!coin) return;
+  try{ priceCache[sym] = await fetchPrice(coin); lastFetch = Date.now(); }
+  catch(e){ console.warn('price fetch failed', sym, e); /* keep last good */ }
+  renderUpdated();
+}
+
+/* ---------- coin picker ---------- */
+function renderBadges(){
+  const wrap = document.getElementById('coinBadges');
+  wrap.innerHTML = TOKENS.map(t =>
+    `<button class="coin-badge${t.sym===selectedSym?' selected':''}" data-sym="${t.sym}" title="${t.name}">
+      <img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span>
+    </button>`).join('');
+  wrap.querySelectorAll('.coin-badge').forEach(b => {
+    b.addEventListener('click', async () => {
+      selectedSym = b.dataset.sym;
+      renderBadges();
+      syncURL(true);
+      if(priceCache[selectedSym]==null) await ensurePrice(selectedSym);
+      render();
+    });
+  });
+}
+
+/* ---------- parse quantity ---------- */
+function parseQty(raw){
+  if(raw==null) return NaN;
+  const s = String(raw).trim().replace(/,/g,'');
+  if(!s) return NaN;
+  const v = parseFloat(s);
+  return (isFinite(v) && v>0) ? v : NaN;
+}
+
+/* ---------- render the receipt card ---------- */
+function render(){
+  const card = document.getElementById('bcCard');
+  const ph = document.getElementById('cardPlaceholder');
+  const shareRow = document.getElementById('shareRow');
+  const coin = coinBySym(selectedSym);
+  const qty = parseQty(document.getElementById('qtyInput').value);
+  const price = priceCache[selectedSym];
+
+  if(!coin || isNaN(qty)){
+    card.style.display='none'; shareRow.style.display='none';
+    ph.style.display=''; ph.textContent='Type how much you hold ☝️';
+    return;
+  }
+  if(price==null){
+    card.style.display='none'; shareRow.style.display='none';
+    ph.style.display=''; ph.textContent='Prices unavailable — refresh in a sec.';
+    return;
+  }
+
+  const bagValue = qty * price;
+  const rung = LADDER[findRungIndex(bagValue)];
+  const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+  ph.style.display='none'; card.style.display='';
+  card.innerHTML = `
+    <div class="bc-id"><img class="bc-logo" src="${coin.logo}" alt="${coin.sym}"/><span class="bc-sym">${coin.sym}</span></div>
+    <div class="bc-mid">
+      <div class="bc-bag">${fmtQty(qty)} ${coin.sym}</div>
+      <div class="bc-value">= ${fmtBag(bagValue)} today</div>
+      <div class="bc-buys-lbl">buys</div>
+      <div class="bc-obj">${rung.name}</div>
+      <div class="bc-obj-price">${fmtItemPrice(rung.price)}</div>
+    </div>
+    <div class="bc-divider"></div>
+    <div class="bc-stamp"><span>${dateStr}</span><span>wenflip.com</span></div>
+    <div class="bc-sig">Live price · not a projection</div>
+  `;
+  shareRow.style.display='';
+  const ic=document.getElementById('pngIcon'), tx=document.getElementById('pngText');
+  if(ic) ic.textContent=_isIOS?'💾':'📋';
+  if(tx) tx.textContent=_isIOS?'Save PNG':'Save PNG';
+}
+
+function renderUpdated(){
+  const el=document.getElementById('updated');
+  if(!lastFetch){ el.innerHTML=''; return; }
+  const s=Math.round((Date.now()-lastFetch)/1000);
+  el.innerHTML=`Live price · updated <b>${s}s ago</b>`;
+}
+setInterval(renderUpdated,1000);
+
+/* ---------- URL state ---------- */
+function syncURL(push){
+  const qtyRaw = document.getElementById('qtyInput').value.replace(/,/g,'').trim();
+  const params = new URLSearchParams();
+  params.set('coin', selectedSym.toLowerCase());
+  if(qtyRaw) params.set('n', qtyRaw);
+  const url = window.location.pathname + '?' + params.toString();
+  if(push) history.pushState(null,'',url); else history.replaceState(null,'',url);
+}
+function readURL(){
+  const p = new URLSearchParams(window.location.search);
+  const coinP = p.get('coin'); const nP = p.get('n');
+  if(coinP && coinBySym(coinP)) selectedSym = coinBySym(coinP).sym;
+  if(nP && parseQty(nP)) document.getElementById('qtyInput').value = fmtQty(parseQty(nP));
+}
+
+/* ---------- image export (site's 1080×1080 approach) ---------- */
+const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+async function loadHtml2Canvas(){
+  if(window.html2canvas) return;
+  await new Promise((res,rej)=>{ const s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+    s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
+    s.crossOrigin='anonymous'; s.onload=res; s.onerror=()=>rej(new Error('html2canvas failed')); document.head.appendChild(s); });
+}
+function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
+async function bcExport(){
+  const btn=document.getElementById('pngBtn'), ic=document.getElementById('pngIcon'), tx=document.getElementById('pngText');
+  btn.disabled=true; ic.textContent='⏳'; tx.textContent='Generating…';
+  try{
+    await loadHtml2Canvas();
+    const card=document.getElementById('bcCard');
+    const src=await window.html2canvas(card,{backgroundColor:null,scale:3,useCORS:true,logging:false});
+    const out=document.createElement('canvas'); out.width=1080; out.height=1080;
+    const ctx=out.getContext('2d');
+    const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
+    const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
+    ctx.drawImage(src,30,30,1020,1020);
+    if(_isIOS){
+      const link=document.createElement('a'); link.download='wenflip-bag.png'; link.href=out.toDataURL('image/png');
+      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('Saved! Share it on X. 🔥');
+    } else {
+      out.toBlob(async blob=>{ try{
+        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('Copied! Paste it into X. 🔥');
+      }catch{
+        const link=document.createElement('a'); link.download='wenflip-bag.png'; link.href=URL.createObjectURL(blob);
+        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('Saved! Share it on X. 🔥');
+      }}, 'image/png');
+    }
+  }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
+  finally{ btn.disabled=false; ic.textContent=_isIOS?'💾':'📋'; tx.textContent='Save PNG'; }
+}
+async function copyLink(){
+  syncURL(false);
+  try{ await navigator.clipboard.writeText(window.location.href); showToast('Link copied 🔗'); }
+  catch{ showToast('Copy failed — grab it from the address bar'); }
+}
+
+/* ---------- wiring ---------- */
+const qtyEl = document.getElementById('qtyInput');
+let deb=null;
+qtyEl.addEventListener('input', ()=>{ clearTimeout(deb); deb=setTimeout(()=>{ syncURL(false); render(); },250); });
+qtyEl.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); syncURL(true); render(); } });
+document.getElementById('doBtn').addEventListener('click', ()=>{ syncURL(true); render(); });
+window.addEventListener('popstate', async ()=>{ readURL(); renderBadges(); if(priceCache[selectedSym]==null) await ensurePrice(selectedSym); render(); });
+
+/* ---------- boot ---------- */
+(async function boot(){
+  // default demo: pDAI at 1,000,000 (unless URL overrides)
+  document.getElementById('qtyInput').value = fmtQty(1000000);
+  readURL();
+  renderBadges();
+  render();                      // placeholder until price lands
+  await ensurePrice(selectedSym);
+  render();
+  setInterval(()=>{ ensurePrice(selectedSym).then(render); }, 60000);
+})();
+</script>
+</body>
+</html>
