@@ -1159,3 +1159,29 @@
   .hero-box-flips-lbl { margin-top: 4px; }
   .hero-box-item { font-size: 15px; }
 }
+
+/* ===== ZONE PANELS — separate the feed & games from the page column ===== */
+
+/* Just Flipped: contained tray, flat (glow stays exclusive to the CTA) */
+.just-flipped {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 28px 24px;
+}
+/* Lift the rows one shade so they read as cards ON the tray, not merged into it */
+.just-flipped .jf-row { background: var(--bg-3); }
+
+/* Games: matching tray, also flat so it never competes with the CTA */
+.emotion-doors {
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px;
+}
+
+/* Tighten panel padding on phones so it doesn't eat width */
+@media (max-width: 600px) {
+  .just-flipped  { padding: 20px 14px; }
+  .emotion-doors { padding: 14px; }
+}
