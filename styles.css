@@ -1185,3 +1185,38 @@
   .just-flipped  { padding: 20px 14px; }
   .emotion-doors { padding: 14px; }
 }
+
+/* ===== LADDER NAV BUTTONS — drained to neutral ghosts =====
+   These are navigation utilities, not actions. Green is reserved for
+   the receipt-makers (Make a Flip Card / Bag check) and the CTA, so
+   these lose the green entirely and read as quiet nav. */
+
+/* "See the full ladder" — override its green resting + hover state */
+.full-ladder-btn {
+  background: transparent;
+  border-color: rgba(255,255,255,0.12);
+  color: var(--muted);
+  box-shadow: none;
+}
+.full-ladder-btn:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.22);
+  color: var(--text);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+/* "Show all coins" (emitted by app.js — class override only, no JS touched) */
+.show-all-btn {
+  background: transparent;
+  border-color: rgba(255,255,255,0.12);
+  color: var(--muted);
+  box-shadow: none;
+}
+.show-all-btn:hover {
+  background: rgba(255,255,255,0.04);
+  border-color: rgba(255,255,255,0.22);
+  color: var(--text);
+  box-shadow: none;
+  transform: translateY(-1px);
+}
