@@ -7,6 +7,8 @@
     { sym: 'BNB',   name: 'BNB',       chain: 'major',      pairAddress: '0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', dexChain: 'bsc',        logo: './logos/BNB_logo.png'    },
     { sym: 'XRP',   name: 'XRP',       chain: 'major',      pairAddress: '0xb90fe999be6869af0afc557dccfbe169ea3403d6', dexChain: 'base',       logo: './logos/XRP_logo.png'    },
     { sym: 'DOGE',  name: 'Dogecoin',  chain: 'major',      pairAddress: '0x89da4102853c6cf3f4e9979cbb1dc4a166f38e84', dexChain: 'bsc',        logo: './logos/DOGE_logo.png'   },
+    { sym: 'ADA',   name: 'Cardano',   chain: 'major',      pairAddress: '0x28415ff2c35b65b9e5c7de82126b4015ab9d031f', dexChain: 'bsc',        logo: './logos/ADA_logo.png'    },
+    { sym: 'SHIB',  name: 'Shiba Inu', chain: 'major',      pairAddress: '0x811beed0119b4afce20d2583eb608c6f7af1954f', dexChain: 'ethereum',   logo: './logos/SHIB_logo.png'   },
     { sym: 'DAI',   name: 'Dai',       chain: 'major',      pairAddress: '0x48da0965ab2d2cbf1c17c09cfb5cbe67ad5b1406', dexChain: 'ethereum',   logo: './logos/DAI_logo.png'    },
     { sym: 'pWBTC', name: 'pWBTC',     chain: 'pulsechain', pairAddress: '0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', dexChain: 'pulsechain', logo: './logos/pwBTC_Logo.png',  identity: 'Bargain-bin Bitcoin copy.'         },
     { sym: 'INC',   name: 'Incentive', chain: 'pulsechain', pairAddress: '0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', dexChain: 'pulsechain', logo: './logos/INC_logo.png',    identity: 'Earned for providing liquidity on PulseX.'                   },
