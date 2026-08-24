@@ -20,7 +20,7 @@
     { sym: 'PRVX',  name: 'PRVX',      chain: 'pulsechain', pairAddress: '0x7f681a5ad615238357ba148c281e2eaefd2de55a', dexChain: 'pulsechain', logo: './logos/PRVX_logo.png',   identity: 'A long-shot bet on killing centralized exchanges.'           },
     { sym: 'DWB',   name: 'dickwifbutt',       chain: 'pulsechain', pairAddress: '0xe644f9b23375d07f5fe11cc223716c6db7ea356b', dexChain: 'pulsechain', logo: './logos/DWB_logo.png',    identity: 'A butt with a dick. That is all.'   },
   ];
-  const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null }));
+    const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null, lastGood: null }));
 
   // ==== CONTRACT-ADDRESS (CA) RESOLVER CONFIG ====
   const MIN_LIQUIDITY_USD = 10000;
@@ -632,7 +632,7 @@ const LADDER = [
             </div>
             <div class="card-spacer"></div>
             <div class="card-right">
-              <span class="card-price">${fmtPrice(t.price)}</span>
+              <span class="card-price"${(t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS) ? ' style="opacity:.5" title="Last known price — live feed is lagging"' : ''}>${fmtPrice(t.price)}</span>${(t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS) ? '<span style="font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.5;margin-left:5px;text-transform:uppercase;">stale</span>' : ''}
               <span class="card-chg ${chgCls}">${chgStr}</span>
               <button class="card-share" type="button" aria-label="Status card for ${t.sym}" data-sc-sym="${t.sym}">${X_ICON}</button>
               <span class="card-chevron" aria-hidden="true">›</span>
@@ -742,37 +742,111 @@ const LADDER = [
   }
   setInterval(renderUpdated, 1000);
 
-  async function fetchOne(t) {
-    const pairAddr = (t.pairAddress || '').trim();
-    const stateIdx = state.findIndex(s => s.sym === t.sym);
-    if (!pairAddr) { if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error='no pair address';} return; }
-    try {
-      const url = `https://api.dexscreener.com/latest/dex/pairs/${t.dexChain}/${pairAddr}`;
-      const res = await fetch(url);
-      if (!res.ok) { if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error=`HTTP ${res.status}`;} return; }
-      const json = await res.json();
-      const pair = json.pair || (Array.isArray(json.pairs) ? json.pairs[0] : null);
-      if (!pair || !pair.priceUsd) { if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error='no pair data';} return; }
-      if (stateIdx >= 0) {
-        state[stateIdx].price = parseFloat(pair.priceUsd);
-        state[stateIdx].chg = pair.priceChange?.h24 ?? 0;
-        state[stateIdx].status = 'ok';
-        state[stateIdx].error = null;
+  // ==== LIVE PRICE FETCH — batched by chain, timed out, keeps last good price ====
+  const FETCH_TIMEOUT_MS = 5000;    // give up on any one chain's request after 5s
+  const BASE_REFRESH_MS  = 60000;   // normal refresh cadence (same 60s as before)
+  const MAX_REFRESH_MS   = 240000;  // slowest we'll poll during a total outage
+  const STALE_AFTER_MS   = 90000;   // a price older than this shows a "stale" tag
+
+  let _refreshTimer   = null;
+  let _refreshDelayMs = BASE_REFRESH_MS;
+
+  const renderAll = () => { renderTicker(); renderLadder(); renderUpdated(); };
+
+  // Group coins by their DexScreener chain (pulsechain / ethereum / bsc / base).
+  function tokensByChain() {
+    const groups = {};
+    for (const t of TOKENS) {
+      const chain = (t.dexChain || '').trim();
+      const addr  = (t.pairAddress || '').trim();
+      if (!chain || !addr) {
+        const i = state.findIndex(s => s.sym === t.sym);
+        if (i >= 0) { state[i].status = 'err'; state[i].error = 'no pair address'; }
+        continue;
       }
-    } catch(e) {
-      console.warn('fetch failed for', t.sym, e);
-      if (stateIdx>=0){state[stateIdx].status='err';state[stateIdx].error=String(e).slice(0,40);}
+      (groups[chain] = groups[chain] || []).push(t);
+    }
+    return groups;
+  }
+
+  // Apply one live pair to a coin. Missing pair => keep the old price (don't blank it).
+  function _applyPair(t, pair) {
+    const i = state.findIndex(s => s.sym === t.sym);
+    if (i < 0) return false;
+    if (!pair || pair.priceUsd == null) {
+      state[i].status = 'err';
+      state[i].error  = 'no pair data';
+      return false;                       // price left as-is (last good value)
+    }
+    state[i].price    = parseFloat(pair.priceUsd);
+    state[i].chg      = pair.priceChange?.h24 ?? 0;
+    state[i].status   = 'ok';
+    state[i].error    = null;
+    state[i].lastGood = Date.now();
+    return true;
+  }
+
+  // A whole chain failed/timed out: keep those coins' last prices, just mark them errored.
+  function _markChainStale(tokens, reason) {
+    for (const t of tokens) {
+      const i = state.findIndex(s => s.sym === t.sym);
+      if (i >= 0) { state[i].status = 'err'; state[i].error = String(reason).slice(0, 60); }
     }
   }
 
+  // Fetch ONE chain's coins in a single request, with a hard 5s timeout.
+  async function fetchChainBatch(chain, tokens) {
+    const addrs = tokens.map(t => t.pairAddress.trim()).join(',');
+    const url   = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${addrs}`;
+
+    const ctrl  = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+    let json;
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      json = await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+
+    // Match returned pairs back to coins by pairAddress (order isn't guaranteed).
+    const pairs  = Array.isArray(json.pairs) ? json.pairs : (json.pair ? [json.pair] : []);
+    const byAddr = {};
+    for (const p of pairs) { if (p && p.pairAddress) byAddr[p.pairAddress.toLowerCase()] = p; }
+
+    let ok = 0;
+    for (const t of tokens) {
+      if (_applyPair(t, byAddr[t.pairAddress.trim().toLowerCase()])) ok++;
+    }
+    return ok;
+  }
+
   async function refreshAll() {
-    await Promise.all(TOKENS.map(fetchOne));
-    // Only advance lastFetch if at least one coin fetched successfully.
-    // If every fetch failed, leave lastFetch at its last good value so
-    // "last updated Ns ago" keeps counting up honestly.
+    const groups = tokensByChain();
+    const chains = Object.keys(groups);
+
+    // Fire every chain at once. Each chain paints THE MOMENT it returns, so fast
+    // chains (PulseChain) show immediately even while a slow chain is still hanging.
+    const jobs = chains.map(chain =>
+      fetchChainBatch(chain, groups[chain])
+        .then(ok => { renderAll(); return ok; })
+        .catch(err => { _markChainStale(groups[chain], err); renderAll(); throw err; })
+    );
+
+    const results = await Promise.allSettled(jobs);
+
     const anyOk = state.some(s => s.status === 'ok');
     if (anyOk) lastFetch = Date.now();
-    renderTicker(); renderLadder(); renderUpdated();
+
+    // Back off ONLY if every chain failed; any success snaps back to the normal 60s.
+    const totalOutage = results.length > 0 && results.every(r => r.status === 'rejected');
+    _refreshDelayMs = totalOutage ? Math.min(MAX_REFRESH_MS, _refreshDelayMs * 2) : BASE_REFRESH_MS;
+
+    clearTimeout(_refreshTimer);
+    _refreshTimer = setTimeout(refreshAll, _refreshDelayMs);
+
+    renderAll();
   }
 
   renderTicker();
@@ -812,7 +886,6 @@ const LADDER = [
   }
 
   refreshAll().then(handleDeepLink);
-  setInterval(refreshAll, 60_000);
 
   // ==== FLIP CALCULATOR ====
   let calcCoin = null, calcTarget = null;
