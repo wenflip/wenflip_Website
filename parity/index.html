@@ -4,17 +4,17 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>wenflip / parity — wen 1:1?</title>
-<meta name="description" content="The copies, the forks, and the dollar they're all chasing. Cal keeps score." />
+<meta name="description" content="The copies, the forks, and the dollar they're all chasing. Wen 1:1?" />
 <link rel="canonical" href="https://wenflip.com/parity" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://wenflip.com/parity" />
 <meta property="og:title" content="wenflip / parity — wen 1:1?" />
-<meta property="og:description" content="The copies, the forks, and the dollar they're all chasing. Cal keeps score." />
+<meta property="og:description" content="The copies, the forks, and the dollar they're all chasing. Wen 1:1?" />
 <meta property="og:site_name" content="wenflip.com" />
 <meta property="og:image" content="https://wenflip.com/og-image.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="wenflip / parity — wen 1:1?" />
-<meta name="twitter:description" content="The copies, the forks, and the dollar they're all chasing. Cal keeps score." />
+<meta name="twitter:description" content="The copies, the forks, and the dollar they're all chasing. Wen 1:1?" />
 <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="shortcut icon" href="/favicon.ico" />
@@ -61,7 +61,7 @@
   .brand .slash{color:rgba(255,255,255,0.20);font-weight:400;}
   .brand .sec{color:var(--text);}
   .tag{
-    margin:16px auto 0;max-width:540px;color:var(--muted);
+    margin:16px auto 0;max-width:560px;color:var(--muted);
     font-size:clamp(14px,2vw,17px);font-weight:600;line-height:1.5;text-wrap:balance;
   }
   .backlink{
@@ -76,7 +76,7 @@
     position:relative;border-radius:16px;overflow:hidden;
     background:var(--bg-2);border:1px solid var(--line);
     border-left:3px solid rgba(236,72,153,0.55);
-    padding:18px 20px 20px;cursor:pointer;text-align:left;width:100%;
+    padding:18px 20px 18px;cursor:pointer;text-align:left;width:100%;
     font-family:'Inter',sans-serif;
     transition:transform .12s ease,border-color .15s ease,box-shadow .2s ease,background .15s ease;
   }
@@ -95,6 +95,7 @@
     background:rgba(255,255,255,0.06);border:2px solid var(--bg-2);
   }
   .p-logos img:last-child{margin-left:-10px;}
+  .p-id{min-width:0;}
   .p-pair{
     font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;
     letter-spacing:-0.01em;white-space:nowrap;
@@ -109,14 +110,19 @@
   .p-mult-num{font-size:26px;font-weight:700;line-height:1;letter-spacing:-0.02em;color:var(--text);}
   .p-mult.flip .p-mult-num{color:var(--accent);}
   .p-mult-lbl{font-size:10px;color:var(--muted);font-weight:800;letter-spacing:0.08em;text-transform:uppercase;margin-top:3px;font-family:'Inter',sans-serif;}
+  .p-mult.flip .p-mult-lbl{color:var(--accent);}
+  .p-chev{color:rgba(255,255,255,0.20);font-size:20px;flex-shrink:0;align-self:center;margin-left:4px;}
 
-  .p-bar-track{height:6px;border-radius:999px;background:rgba(255,255,255,0.09);overflow:hidden;margin:14px 0 10px;}
-  .p-bar-fill{height:100%;border-radius:999px;background:var(--accent);transition:width 700ms ease-out;min-width:3px;box-shadow:0 0 10px rgba(46,224,106,0.35);}
-  .p-box.flipped .p-bar-fill{background:var(--grad);}
-
-  .p-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-  .p-cal{font-size:12px;color:rgba(245,245,250,0.55);font-style:italic;line-height:1.4;}
-  .p-chev{color:rgba(255,255,255,0.20);font-size:18px;flex-shrink:0;}
+  /* ---- the bar: a marker vs the 1:1 post ---- */
+  .p-bar{margin:20px 0 2px;}
+  .p-track{position:relative;height:8px;border-radius:999px;background:rgba(255,255,255,0.10);}
+  .p-zone-right{position:absolute;top:0;bottom:0;left:50%;right:0;border-radius:0 999px 999px 0;background:rgba(46,224,106,0.05);}
+  .p-overshoot{position:absolute;top:0;bottom:0;left:50%;background:var(--grad);border-radius:999px;box-shadow:0 0 10px rgba(46,224,106,0.35);}
+  .p-post{position:absolute;top:-8px;bottom:-8px;left:50%;width:2px;transform:translateX(-50%);background:rgba(245,245,250,0.85);z-index:1;}
+  .p-post::before{content:"";position:absolute;top:-6px;left:50%;width:7px;height:7px;transform:translateX(-50%) rotate(45deg);background:rgba(245,245,250,0.9);border-radius:1px;}
+  .p-marker{position:absolute;top:50%;width:10px;height:22px;border-radius:5px;transform:translate(-50%,-50%);background:var(--pulse-magenta);box-shadow:0 0 12px rgba(236,72,153,0.6);z-index:3;transition:left 700ms ease-out;}
+  .p-box.flipped .p-marker{background:var(--accent);box-shadow:0 0 12px rgba(46,224,106,0.6);}
+  .p-post-label{text-align:center;margin-top:14px;font-size:10.5px;font-weight:700;letter-spacing:0.02em;color:var(--muted);}
 
   .p-loading{opacity:0.45;pointer-events:none;}
   .p-loading .p-mult-num{color:var(--muted);}
@@ -177,11 +183,17 @@
   .pc-biglbl{font-size:12px;font-weight:800;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-top:6px;}
   .pc-verdict{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
 
-  .pc-bar-track{height:6px;border-radius:999px;background:rgba(255,255,255,0.10);overflow:hidden;margin:14px 0 4px;}
-  .pc-bar-fill{height:100%;border-radius:999px;background:var(--accent);min-width:3px;}
-  .pc-mid.flip .pc-bar-fill{background:var(--grad);}
+  /* ---- card bar: marker vs the 1:1 post ---- */
+  .pc-track{position:relative;height:8px;border-radius:999px;background:rgba(255,255,255,0.10);margin:16px 0 4px;}
+  .pc-zone-right{position:absolute;top:0;bottom:0;left:50%;right:0;border-radius:0 999px 999px 0;background:rgba(46,224,106,0.06);}
+  .pc-overshoot{position:absolute;top:0;bottom:0;left:50%;background:var(--grad);border-radius:999px;}
+  .pc-post{position:absolute;top:-7px;bottom:-7px;left:50%;width:2px;transform:translateX(-50%);background:rgba(245,245,250,0.85);z-index:1;}
+  .pc-post::before{content:"";position:absolute;top:-5px;left:50%;width:6px;height:6px;transform:translateX(-50%) rotate(45deg);background:rgba(245,245,250,0.9);border-radius:1px;}
+  .pc-marker{position:absolute;top:50%;width:9px;height:20px;border-radius:5px;transform:translate(-50%,-50%);background:var(--pulse-magenta);z-index:3;}
+  .pc-mid.flip .pc-marker{background:var(--accent);}
+  .pc-post-label{text-align:center;font-size:10px;font-weight:700;color:var(--muted);margin-top:12px;}
 
-  .pc-cal{font-size:12px;color:rgba(245,245,250,0.55);font-style:italic;text-align:center;line-height:1.45;padding:0 4px;flex-shrink:0;}
+  .pc-desc{font-size:12px;color:rgba(245,245,250,0.55);text-align:center;line-height:1.45;padding:0 4px;flex-shrink:0;margin-top:6px;}
 
   .pc-stamp{
     position:absolute;bottom:14px;left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;
@@ -207,7 +219,7 @@
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
   @media (max-width:600px){
-    .p-box{padding:16px 16px 18px;}
+    .p-box{padding:16px 16px 16px;}
     .p-mult-num{font-size:22px;}
     .pc-bignum{font-size:46px;}
   }
@@ -219,7 +231,7 @@
   <div class="brand">
     <span class="wf">wenflip</span><span class="slash">/</span><span class="sec">parity</span>
   </div>
-  <p class="tag">The copies, the forks, and the dollar they're all chasing. Cal keeps score. He is not emotional about it.</p>
+  <p class="tag">Every fork is chasing the original it's named after. Here's how close they actually are — live.</p>
   <a class="backlink" href="/">← back to the ladder</a>
 </header>
 
@@ -230,13 +242,12 @@
   <p class="updated" id="updated">Fetching live prices…</p>
 
   <footer>
-    <div class="ftag">Wen 1:1? Cal is patient.</div>
+    <div class="ftag">Wen 1:1?</div>
     <div class="disc">A gauge, not a promise. Just memes and math.</div>
     <div class="flinks" style="margin-top:14px;">
       <a href="https://x.com/J_B199" target="_blank" rel="noopener">Follow @J_B199 on X</a>
       <a href="https://t.me/wen_flip" target="_blank" rel="noopener">Flip alerts on Telegram</a>
     </div>
-    <div class="disc" style="margin-top:10px;opacity:0.6;">Cal's a calculator. He does the math on what your money could've been. He doesn't have feelings about it. <span style="opacity:0.7;">(He has some feelings about it.)</span></div>
     <div class="disc" style="margin-top:10px;opacity:0.45;">wenflip · Powered by PulseChain</div>
   </footer>
 </div>
@@ -264,41 +275,40 @@
 /* ============================================================
    PARITY PAIRS — edit here. Order is fixed (stable for bookmarks
    & screenshots). A = the PulseChain token, B = the target it chases.
-   crossable:true → parity is a crossing point, bar can blow past 100%.
-   crossable:false → parity is the finish line, 100% is the ceiling.
+   myth = the neutral one-line frame (why these two are compared).
+   The bar reads A relative to B: centre post = 1:1, marker left of
+   it = still a copy, marker on/past it = flipped.
    ============================================================ */
 const PAIRS = [
   {
-    id:'pdai-dai', crossable:false,
+    id:'pdai-dai',
     myth:'an unbacked copy, betting on a dollar',
     a:{sym:'pDAI', name:'pDAI', chain:'PulseChain', dexChain:'pulsechain',
        pair:'0xfc64556faa683e6087f425819c7ca3c558e13ac1', logo:'/logos/pDAI_logo.png'},
     b:{sym:'DAI', name:'Dai', chain:'Ethereum', dexChain:'ethereum',
        pair:'0x48da0965ab2d2cbf1c17c09cfb5cbe67ad5b1406', logo:'/logos/DAI_logo.png'},
-    climb: m => `An unbacked copy betting it reaches a dollar. ${m} to go. Cal is patient.`,
-    flip:  m => `It reached the dollar. Cal is stunned. Cal will not show it.`,
   },
   {
-    id:'phex-ehex', crossable:true,
-    myth:'the fork, chasing the original',
-    a:{sym:'pHEX', name:'HEX', chain:'PulseChain', dexChain:'pulsechain',
-       pair:'0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', logo:'/logos/HEX_Logo.png'},
-    b:{sym:'eHEX', name:'HEX', chain:'Ethereum', dexChain:'pulsechain',
-       pair:'0xf0ea3efe42c11c8819948ec2d3179f4084863d3f', logo:'/logos/HEX_Logo.png'},
-    climb: m => `The fork, chasing the original. ${m} to go. Cal has seen slower.`,
-    flip:  m => `The copy passed the original by ${m}. Let that sink in. Cal already did.`,
-  },
-  {
-    id:'pwbtc-btc', crossable:false,
+    id:'pwbtc-btc',
     myth:'bargain-bin Bitcoin, chasing the real thing',
     a:{sym:'pWBTC', name:'pWBTC', chain:'PulseChain', dexChain:'pulsechain',
        pair:'0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', logo:'/logos/pwBTC_Logo.png'},
     b:{sym:'BTC', name:'Bitcoin', chain:'Ethereum', dexChain:'ethereum',
        pair:'0x4585fe77225b41b697c938b018e2ac67ac5a20c0', logo:'/logos/BTC_logo.png'},
-    climb: m => `Bargain-bin Bitcoin. ${m} to go. Cal is very patient.`,
-    flip:  m => `A wrapped copy just outran Bitcoin. Cal doesn't believe it either.`,
+  },
+  {
+    id:'phex-ehex',
+    myth:'the fork that outran the original',
+    a:{sym:'pHEX', name:'HEX', chain:'PulseChain', dexChain:'pulsechain',
+       pair:'0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', logo:'/logos/HEX_Logo.png'},
+    b:{sym:'eHEX', name:'HEX', chain:'Ethereum', dexChain:'pulsechain',
+       pair:'0xf0ea3efe42c11c8819948ec2d3179f4084863d3f', logo:'/logos/HEX_Logo.png'},
   },
 ];
+
+/* right edge of the track = this many × past parity. 2.5× (pHEX) sits
+   comfortably inside; anything beyond parks the marker at the edge. */
+const CAP = 3;
 
 /* live price state, keyed by pair id → {aPrice, bPrice} */
 const priceState = {};
@@ -335,13 +345,20 @@ function computeParity(p){
   if(st.aPrice==null || st.bPrice==null || st.bPrice<=0) return null;
   const ratio = st.aPrice / st.bPrice;      // A relative to target
   const flipped = ratio >= 1;               // A has reached / passed target
-  const pct = Math.min(100, ratio*100);     // 0–100 fill
   const mult = flipped ? ratio : (1/ratio); // "× past" or "× to go"
   return {
     aPrice: st.aPrice, bPrice: st.bPrice,
-    ratio, flipped, pct,
+    ratio, flipped,
     multStr: fmtMult(mult)+'×',
   };
+}
+
+/* marker position on the track, as a left% (0–100).
+   0× → 0% (far left) · 1× parity → 50% (centre post) · CAP× → 100% (right edge) */
+function markerPct(ratio){
+  if(ratio <= 1) return Math.max(0.6, ratio * 50);
+  const capped = Math.min(ratio, CAP);
+  return 50 + ((capped - 1) / (CAP - 1)) * 50;
 }
 
 /* ---------- render the board ---------- */
@@ -349,38 +366,50 @@ function renderBoard(){
   const el = document.getElementById('board');
   el.innerHTML = PAIRS.map(p => {
     const r = computeParity(p);
+    const postLabel = `1:1 · ${p.a.sym} = ${p.b.sym}`;
     if(!r){
       return `<div class="p-box p-loading" data-id="${p.id}" role="button" tabindex="-1" aria-disabled="true">
         <div class="p-top">
           <div class="p-logos"><img src="${p.a.logo}" alt="${p.a.sym}"/><img src="${p.b.logo}" alt="${p.b.sym}"/></div>
-          <div>
+          <div class="p-id">
             <div class="p-pair">${p.a.sym}<span class="vs">:</span>${p.b.sym}</div>
             <div class="p-myth">${p.myth}</div>
           </div>
           <div class="p-spacer"></div>
           <div class="p-mult"><div class="p-mult-num">—</div><div class="p-mult-lbl">loading</div></div>
+          <div class="p-chev">›</div>
         </div>
-        <div class="p-bar-track"><div class="p-bar-fill" style="width:3px"></div></div>
-        <div class="p-foot"><span class="p-cal">Cal is pulling the numbers…</span><span class="p-chev">›</span></div>
+        <div class="p-bar">
+          <div class="p-track"><div class="p-post"></div></div>
+          <div class="p-post-label">${postLabel}</div>
+        </div>
       </div>`;
     }
-    const calLine = r.flipped ? p.flip(r.multStr) : p.climb(r.multStr);
-    const barW = Math.max(1.5, r.pct);
+    const mLeft = markerPct(r.ratio);
+    const overW = r.flipped ? (mLeft - 50) : 0;
     return `<div class="p-box${r.flipped?' flipped':''}" data-id="${p.id}" role="button" tabindex="0" aria-label="Open ${p.a.sym} to ${p.b.sym} parity card">
       <div class="p-top">
         <div class="p-logos"><img src="${p.a.logo}" alt="${p.a.sym}"/><img src="${p.b.logo}" alt="${p.b.sym}"/></div>
-        <div>
+        <div class="p-id">
           <div class="p-pair">${p.a.sym}<span class="vs">:</span>${p.b.sym}</div>
           <div class="p-myth">${p.myth}</div>
         </div>
         <div class="p-spacer"></div>
         <div class="p-mult${r.flipped?' flip':''}">
           <div class="p-mult-num">${r.multStr}</div>
-          <div class="p-mult-lbl">${r.flipped?'past parity':'to parity'}</div>
+          <div class="p-mult-lbl">${r.flipped?'flipped':'to parity'}</div>
         </div>
+        <div class="p-chev">›</div>
       </div>
-      <div class="p-bar-track"><div class="p-bar-fill" style="width:${barW}%"></div></div>
-      <div class="p-foot"><span class="p-cal">${calLine}</span><span class="p-chev">›</span></div>
+      <div class="p-bar">
+        <div class="p-track">
+          <div class="p-zone-right"></div>
+          ${r.flipped?`<div class="p-overshoot" style="width:${overW}%"></div>`:''}
+          <div class="p-post"></div>
+          <div class="p-marker" style="left:${mLeft}%"></div>
+        </div>
+        <div class="p-post-label">${postLabel}</div>
+      </div>
     </div>`;
   }).join('');
 
@@ -397,10 +426,11 @@ function renderParityCard(id){
   const r = computeParity(p);
   if(!p || !r) return;
   const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  const calLine = r.flipped ? p.flip(r.multStr) : p.climb(r.multStr);
-  const barW = Math.max(1.5, r.pct);
-  const verdict = r.flipped ? 'PARITY ✓' : '';
+  const mLeft = markerPct(r.ratio);
+  const overW = r.flipped ? (mLeft - 50) : 0;
+  const verdict = r.flipped ? 'FLIPPED ✓' : '';
   const bigLbl = r.flipped ? 'past parity' : 'to parity';
+  const postLabel = `1:1 · ${p.a.sym} = ${p.b.sym}`;
 
   document.getElementById('pcCard').innerHTML = `
     <div class="pc-title">Wen Parity</div>
@@ -423,9 +453,15 @@ function renderParityCard(id){
       ${verdict?`<div class="pc-verdict">${verdict}</div>`:''}
       <div class="pc-bignum">${r.multStr}</div>
       <div class="pc-biglbl">${bigLbl}</div>
-      <div class="pc-bar-track"><div class="pc-bar-fill" style="width:${barW}%"></div></div>
+      <div class="pc-track">
+        <div class="pc-zone-right"></div>
+        ${r.flipped?`<div class="pc-overshoot" style="width:${overW}%"></div>`:''}
+        <div class="pc-post"></div>
+        <div class="pc-marker" style="left:${mLeft}%"></div>
+      </div>
+      <div class="pc-post-label">${postLabel}</div>
     </div>
-    <div class="pc-cal">${p.myth}</div>
+    <div class="pc-desc">${p.myth}</div>
     <div class="pc-stamp"><span>${dateStr}</span><span>wenflip.com/parity</span></div>
   `;
 }
