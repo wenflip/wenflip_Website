@@ -251,8 +251,8 @@
   .card-bar-wrap { padding: 0 14px 0; }
   .card-bar-track { height: 3px; border-radius: 999px; background: rgba(255,255,255,0.10); overflow: hidden; }
   .card-bar-fill { height: 100%; border-radius: 999px; transition: width 600ms ease-out; min-width: 2px; }
-  .chain-pulsechain .card-bar-fill { background: var(--accent); }
-  .chain-major      .card-bar-fill { background: var(--accent); }
+  .chain-pulsechain .card-bar-fill { background: rgba(46,224,106,0.28); }
+  .chain-major      .card-bar-fill { background: rgba(46,224,106,0.28); }
   .card-caption {
     padding: 2px 14px 8px; font-size: 11px; color: var(--muted); line-height: 1.45;
     display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px;
