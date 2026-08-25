@@ -1275,3 +1275,20 @@
     color: transparent;
   }
 
+  /* ===== ANSWER DOORS — the "questions" grid (calm cousin of the mood doors) =====
+     Reuses .door-btn for identical shape/emoji/label. No per-button colour, so it
+     stays uniform grey — composed, not shouty — while the mood grid stays colourful.
+     Same tray + layout as .emotion-doors so the two read as siblings. */
+  .answer-doors {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 10px 0 10px;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 18px;
+  }
+  @media (max-width: 600px) {
+    .answer-doors { grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px; }
+  }
