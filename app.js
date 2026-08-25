@@ -612,19 +612,18 @@ const LADDER = [
       // Minimum visible sliver for any non-zero progress
       const pctDisplay = pct > 0 ? Math.max(3, pct) : 0;
 
-           let caption = '';
+      let caption = '';
       if (!nextRung) {
         caption = `<span class="cap-pct">Top of the ladder 🏆</span>`;
       } else {
         const pctRounded = pct < 1 ? pct.toFixed(1) : Math.round(pct);
-        caption = `<span class="cap-pct">${pctRounded}% to</span><span class="cap-sep">·</span><span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span><span class="cap-sep">·</span><span class="cap-next">${next ? next.price : ''}</span>`;
-        if (prev) caption += `<span class="cap-sep">·</span><span class="cap-prev">flipped ${prev.name}</span>`;
+        caption = `<span class="cap-pct">${pctRounded}% to</span><span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span>`;
       }
 
       return `
         ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
         <div class="cluster ${chainCls}" data-sym="${t.sym}">
-          <div class="card-top" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="View ${t.sym} on the full ladder">
+          <div class="card-top" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="Make a flip card for ${t.sym}">
             <div class="card-logo"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/></div>
             <div class="card-id">
               <div class="card-sym">${t.sym}</div>
@@ -634,19 +633,18 @@ const LADDER = [
             <div class="card-right">
               <span class="card-price"${(t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS) ? ' style="opacity:.5" title="Last known price — live feed is lagging"' : ''}>${fmtPrice(t.price)}</span>${(t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS) ? '<span style="font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.5;margin-left:5px;text-transform:uppercase;">stale</span>' : ''}
               <span class="card-chg ${chgCls}">${chgStr}</span>
-              <button class="card-share" type="button" aria-label="Status card for ${t.sym}" data-sc-sym="${t.sym}">${X_ICON}</button>
               <span class="card-chevron" aria-hidden="true">›</span>
             </div>
           </div>
+          <div class="card-caption">${caption}</div>
           <div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pctDisplay.toFixed(2)}%"></div></div></div>
           <div class="card-identity">${t.identity || ''}</div>
-          <div class="card-caption">${caption}</div>
         </div>`;
     });
 
     const firstFour = cards.slice(0, 4).join('');
     const rest = cards.slice(4).join('');
-    el.innerHTML = '<p class="cards-hint">Tap any coin to see its full ladder.</p>' + firstFour + (rest
+     el.innerHTML = '<p class="cards-hint">tap a coin for the full receipt.</p>' + firstFour + (rest
       ? `<div id="extraClusters" class="extra-clusters" style="${showAllCoins ? '' : 'display:none'}">${rest}</div><div class="show-all-wrap"><button id="showAllBtn" class="show-all-btn">${showAllCoins ? 'Show fewer ↑' : 'Show all coins ↓'}</button></div>`
       : '');
 
@@ -655,14 +653,8 @@ const LADDER = [
 
     el.querySelectorAll('.card-top[data-zoom]').forEach(row => {
       const sym = row.getAttribute('data-zoom');
-      row.addEventListener('click', e => { if (e.target.closest('.card-share')) return; openModalZoomedTo(sym); });
-      row.addEventListener('keydown', e => { if (e.target.closest('.card-share')) return; if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openModalZoomedTo(sym); } });
-    });
-    el.querySelectorAll('.card-share[data-sc-sym]').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.preventDefault(); e.stopPropagation();
-        openStatusCheckModalForCoin(btn.dataset.scSym);
-      });
+      row.addEventListener('click', () => openStatusCheckModalForCoin(sym));
+      row.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openStatusCheckModalForCoin(sym); } });
     });
   }
 
