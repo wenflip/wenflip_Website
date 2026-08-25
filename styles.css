@@ -251,10 +251,10 @@
   .card-bar-wrap { padding: 0 14px 0; }
   .card-bar-track { height: 3px; border-radius: 999px; background: rgba(255,255,255,0.10); overflow: hidden; }
   .card-bar-fill { height: 100%; border-radius: 999px; transition: width 600ms ease-out; min-width: 2px; }
-  .chain-pulsechain .card-bar-fill { background: #9d174d; }
-  .chain-major      .card-bar-fill { background: #3A8DDE; }
+  .chain-pulsechain .card-bar-fill { background: var(--accent); }
+  .chain-major      .card-bar-fill { background: var(--accent); }
   .card-caption {
-    padding: 5px 14px 11px; font-size: 11px; color: var(--muted); line-height: 1.45;
+    padding: 2px 14px 8px; font-size: 11px; color: var(--muted); line-height: 1.45;
     display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 6px;
   }
   .card-caption .cap-pct  { color: var(--text); font-weight: 700; }
@@ -274,7 +274,7 @@
      Fixed slot on every card;
      empty string for majors keeps height consistent across the mixed list. */
   .card-identity {
-    padding: 2px 14px 0;
+    padding: 6px 14px 12px;
     min-height: 1.3em;
     font-size: 11px;
     color: rgba(245,245,250,0.55);
