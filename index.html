@@ -126,22 +126,14 @@
         <button class="door-btn door-wonder" id="doorWonder"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
       </div>
 
-      <!-- PRIMARY ACTIONS: the twins — both do the same job (type something → get a silent receipt card) -->
-      <div class="flipcard-cta-row">
-        <button class="calc-open-btn flipcard-cta" onclick="openStatusCheckModal()">📸 Make a Flip Card</button>
-      </div>
-      <div class="flipcard-cta-row">
-        <a class="calc-open-btn flipcard-cta" href="/bag">🧾 Bag check</a>
-      </div>
-
-      <!-- QUIET UTILITY: a lookup, not a card-maker — so it goes last -->
-      <div class="util-cta-row">
-        <button class="calc-open-btn calc-open-btn-quiet" id="openCalc">🧮 How far from flipping?</button>
-      </div>
-
-      <!-- QUIET UTILITY: wen parity — moved up from the footer -->
-      <div class="util-cta-row">
-        <a class="calc-open-btn calc-open-btn-quiet" href="/parity">⚖️ wen parity?</a>
+      <!-- ANSWERS: the four question-cards. Same grid as the moods above, calmer palette.
+           Every one still makes a shareable card — these answer a question;
+           the mood doors express a feeling. All eight are peers. -->
+      <div class="answer-doors" id="answerDoors">
+        <button class="door-btn" onclick="openStatusCheckModal()"><span class="door-emoji">📸</span><span class="door-label">Make a Flip Card</span></button>
+        <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
+        <button class="door-btn" id="openCalc"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
+        <a class="door-btn" href="/parity"><span class="door-emoji">⚖️</span><span class="door-label">wen parity?</span></a>
       </div>
 
     </section>
