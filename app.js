@@ -2623,7 +2623,7 @@ const LADDER = [
   // never throw into the page or leave a broken layout if the endpoint hiccups.
   (function initJustFlipped(){
     const FEED_URL = 'https://wenflip-bot-worker.wenflip-ops.workers.dev/api/recent-flips?dir=up';
-    const MAX_ROWS = 10;
+    const MAX_ROWS = 6;
     const feedEl = document.getElementById('jfFeed');
     if (!feedEl) return; // markup missing — nothing to do
 
