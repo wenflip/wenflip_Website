@@ -364,7 +364,7 @@ const LADDER = [
     { price: 7e-05, name: 'a crumb from the bottom of the bag', tier: 'void', category: 'snack' },
     { price: 5e-05, name: "a dropped McDonald's chip", tier: 'void', category: 'snack' },
     { price: 3.5e-05, name: 'a flake of dandruff', tier: 'void', category: 'snack' },
-    { price: 2.5e-05, name: 'a popcorn kernel that didnt pop', tier: 'void', category: 'snack' },
+    { price: 2.5e-05, name: "a popcorn kernel that didn't pop", tier: 'void', category: 'snack' },
     { price: 2e-05, name: 'a squeezed-out lime wedge', tier: 'void', category: 'snack' },
     { price: 1.5e-05, name: "a fingernail clipping", tier: 'void', category: 'snack' },
     { price: 1e-05, name: 'a popped bubble-wrap bubble', tier: 'void', category: 'snack' },
