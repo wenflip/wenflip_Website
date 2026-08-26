@@ -1819,6 +1819,17 @@ const LADDER = [
     return str.length > max ? str.slice(0, max - 1) + '…' : str;
   }
 
+  // Object-size bucket for the pump card hero. Length-based (never measure-and-reflow,
+  // so the on-screen card and the html2canvas export always agree). pump-obj-sm is the
+  // hard floor — still visually heavier than the today-price / stamp lines.
+  function pumpObjSizeClass(name) {
+    const n = (name || '').length;
+    if (n <= 18) return 'pump-obj-xl';
+    if (n <= 32) return 'pump-obj-lg';
+    if (n <= 48) return 'pump-obj-md';
+    return 'pump-obj-sm';
+  }
+
   function updatePumpResult() {
     const placeholder = document.getElementById('pumpPlaceholder');
     const card = document.getElementById('pumpResultCard');
@@ -1873,85 +1884,58 @@ const LADDER = [
     const tk = TOKENS.find(t => t.sym === pumpCoin);
     const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
-    // What does it flip TODAY?
-    const todayIdx = findRungIndex(coinPrice);
-    const todayRung = (todayIdx >= 0 && LADDER[todayIdx] && LADDER[todayIdx].price <= coinPrice) ? LADDER[todayIdx] : null;
+    // The pill ALWAYS shows a multiple now — back-calculated from today's price when the
+    // user typed a raw target price, so a price-mode card is never missing its anchor.
+    const impliedMult = hypPrice / coinPrice;
+    const multLabel = fmtMult(impliedMult) + '×';
 
-    // What would it flip at hypPrice?
+    // What would it flip at the dreamed price?
     const hypIdx = findRungIndex(hypPrice);
     const hypRung = (hypIdx >= 0 && LADDER[hypIdx] && LADDER[hypIdx].price <= hypPrice) ? LADDER[hypIdx] : null;
 
-    // Build the "at $X" hero line
-    const hypPriceStr = fmtPrice(hypPrice);
-
-    // Multiple descriptor for the header
-    let multLabel = '';
-    if (parsed.mode === 'multiple') {
-      const mStr = parsed.value >= 1000 ? Math.round(parsed.value).toLocaleString() : (Number.isInteger(parsed.value) ? parsed.value : parseFloat(parsed.value.toFixed(2)));
-      multLabel = `${mStr}×`;
-    }
-
-    // Dream object block
+    // Dream object block — the single hero. No competing "today" object.
     let dreamHtml = '';
-    if (hypIdx === 0 || (hypRung && hypIdx === 0)) {
-      // Top of ladder / clears entire ladder
+    if (hypIdx === 0 && hypRung) {
+      // Clears the entire ladder
       dreamHtml = `
-        <div class="pump-dream-obj pump-dream-obj-top">
+        <div class="pump-dream-obj pump-dream-obj-top pump-obj-lg">
           <div class="pump-flips-lbl">FLIPS</div>
           <div class="pump-dream-name">the entire ladder.</div>
           <div class="pump-dream-sub">Nothing left to buy.</div>
         </div>`;
     } else if (!hypRung) {
-      // Below ladder
+      // Still below the board
       dreamHtml = `
-        <div class="pump-dream-obj pump-dream-obj-none">
+        <div class="pump-dream-obj pump-dream-obj-none pump-obj-lg">
           <div class="pump-flips-lbl">FLIPS</div>
           <div class="pump-dream-name pump-dream-none">nothing on the ladder yet.</div>
           <div class="pump-dream-sub">Needs more pump.</div>
         </div>`;
     } else {
+      const sizeCls = pumpObjSizeClass(hypRung.name);
       dreamHtml = `
-        <div class="pump-dream-obj">
+        <div class="pump-dream-obj ${sizeCls}">
           <div class="pump-flips-lbl">FLIPS</div>
-          <div class="pump-dream-name">${pumpTrunc(hypRung.name, 52)}</div>
+          <div class="pump-dream-name">${pumpTrunc(hypRung.name, 60)}</div>
           <div class="pump-dream-price">${fmtItemPrice(hypRung.price)}</div>
         </div>`;
     }
 
-    // Grounding line — what it flips today
-    let groundHtml = '';
-    if (!todayRung) {
-      groundHtml = `<div class="pump-ground">Today: ${fmtPrice(coinPrice)} · doesn't flip anything yet</div>`;
-    } else {
-      groundHtml = `<div class="pump-ground">Today: ${fmtPrice(coinPrice)} · flips ${pumpTrunc(todayRung.name, 36)}</div>`;
-    }
-
-    // Observational footer line — strictly conditional, no prediction
-    const disclaimerLines = [
-      'Math, not a promise.',
-      'Hypothetical. The coin decides.',
-      'At $X. Not a prediction.',
-      'If the math works out.',
-    ];
-    const disclaim = disclaimerLines[Math.floor(Math.random() * disclaimerLines.length)];
-
-     card.innerHTML = `
+    card.innerHTML = `
       <div class="pump-top">
         <div class="pump-header-row">
           <img class="pump-logo" src="${tk.logo}" alt="${tk.sym}"/>
           <div class="pump-coin-id">
             <div class="pump-coin-sym">${tk.sym}</div>
-            <div class="pump-coin-name-sm">${pumpTrunc(tk.name, 18)}</div>
+            <div class="pump-coin-name-sm">${pumpTrunc(tk.name, 18)} · ${fmtPrice(coinPrice)}</div>
           </div>
-          ${multLabel ? `<div class="pump-mult-badge">${multLabel}</div>` : ''}
+          <div class="pump-mult-badge">${multLabel}</div>
         </div>
-        <div class="pump-at-line">At&nbsp;<span class="pump-at-price">${hypPriceStr}</span></div>
         ${dreamHtml}
       </div>
       <div class="pump-bottom">
         <div class="pump-divider"></div>
-        ${groundHtml}
-        <div class="pump-disclaim">${disclaim}</div>
+        <div class="pump-disclaim">Hypothetical if ${tk.sym} hits ${fmtPrice(hypPrice)}. The coin decides.</div>
       </div>
       <div class="pump-stamp">
         <span class="pump-date">${dateStr}</span>
