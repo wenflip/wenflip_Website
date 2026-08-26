@@ -1206,6 +1206,22 @@
   transform: translateY(-1px);
 }
 
+
+  /* Standings entry — the one nav button that gets a faint green tint,
+     so it reads as "the way in" and not a third identical grey ghost. */
+  .full-ladder-btn-standings {
+    background: rgba(46,224,106,0.06);
+    border-color: rgba(46,224,106,0.35);
+    color: var(--text);
+  }
+  .full-ladder-btn-standings:hover {
+    background: rgba(46,224,106,0.12);
+    border-color: rgba(46,224,106,0.55);
+    color: var(--text);
+    box-shadow: 0 8px 28px rgba(46,224,106,0.18);
+    transform: translateY(-1px);
+  }
+
 /* "Show all coins" (emitted by app.js — class override only, no JS touched) */
 .show-all-btn {
   background: transparent;
