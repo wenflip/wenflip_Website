@@ -1222,6 +1222,19 @@
     transform: translateY(-1px);
   }
 
+
+  /* Standings CTA in the hero — centered, contained, breathing room above.
+     Sits right under "live prices" as the newcomer's first BTC anchor. */
+  .hero-standings-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+  .hero-standings-cta .full-ladder-btn-standings {
+    width: 100%;
+    max-width: 420px;
+  }
+
 /* "Show all coins" (emitted by app.js — class override only, no JS touched) */
 .show-all-btn {
   background: transparent;
