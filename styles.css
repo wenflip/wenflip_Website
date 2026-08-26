@@ -678,6 +678,48 @@
     text-align: left !important;
   }
 
+  /* ===== PUMP CONTROLS ===== */
+  /* Quick-pick multiple buttons */
+  .pump-quick-row {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px;
+  }
+  .pump-quick-btn {
+    padding: 8px 18px; border-radius: 999px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    color: var(--muted); font-weight: 800; font-size: 14px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+  }
+  .pump-quick-btn:hover { background: rgba(46,224,106,0.10); border-color: rgba(46,224,106,0.40); color: var(--text); }
+  .pump-quick-btn.pump-quick-active {
+    background: var(--grad); border-color: transparent; color: white;
+    box-shadow: 0 4px 18px rgba(46,224,106,0.32);
+  }
+
+  /* Free input row */
+  .pump-input-wrap {
+    display: flex; gap: 8px; align-items: center;
+  }
+  .pump-input {
+    flex: 1; padding: 11px 16px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    border-radius: 12px; color: var(--text); font-size: 15px;
+    font-family: 'Inter', sans-serif; outline: none;
+    transition: border-color .15s;
+  }
+  .pump-input:focus { border-color: rgba(46,224,106,0.45); }
+  .pump-input::placeholder { color: var(--muted); }
+  .pump-go-btn {
+    padding: 11px 20px; border-radius: 12px;
+    background: var(--grad); border: none; color: white;
+    font-weight: 800; font-size: 14px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: transform .15s, box-shadow .15s;
+    white-space: nowrap;
+  }
+  .pump-go-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(46,224,106,0.38); }
+  .pump-input-hint { font-size: 12px; margin-top: 6px; min-height: 18px; }
+
    /* Pump result card */
   .pump-result-card {
     padding: 28px 26px 48px;
