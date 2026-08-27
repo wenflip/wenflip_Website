@@ -1512,6 +1512,20 @@
       return;
     }
 
+        // At or below today's price → no pump happened. Kill the card (nothing to
+    // screenshot) and nudge. Link routes to Status Check pre-loaded on this coin,
+    // which prints the "today" card they were probably after.
+    if (hypPrice <= coinPrice) {
+      card.style.display = 'none'; shareRow.style.display = 'none';
+      placeholder.style.display = '';
+      const nudge = hypPrice < coinPrice
+        ? "That's a dump, not a pump. Aim higher. 👆"
+        : "That's today's price. Now pump it. 👆";
+      placeholder.innerHTML = nudge +
+        '<br><a href="#" class="pump-status-link" onclick="event.preventDefault();closePump();openStatusCheckModalForCoin(pumpCoin);">or grab today\'s card →</a>';
+      return;
+    }
+
     const tk = TOKENS.find(t => t.sym === pumpCoin);
     const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
