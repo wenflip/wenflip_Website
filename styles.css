@@ -811,6 +811,18 @@
     .pump-input { min-width: 0; }
   }
 
+  /* Pump nudge → Status Check link (shown at 1× / dumps, replaces the card) */
+  .pump-status-link {
+    display: inline-block;
+    margin-top: 12px;
+    color: var(--accent);
+    font-size: 13px; font-weight: 700;
+    text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-color: rgba(46,224,106,0.4);
+    cursor: pointer;
+  }
+  .pump-status-link:hover { text-decoration-color: var(--accent); }
+
   /* ===== EMOTION DOORS ===== */
   .emotion-doors {
     display: grid;
