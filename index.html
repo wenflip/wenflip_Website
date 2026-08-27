@@ -112,9 +112,7 @@
             <span>Loading live prices…</span>
           </div>
         </div>
-        <div class="full-ladder-cta-row">
-          <button class="full-ladder-btn" onclick="openModal()">📖 See the full ladder →</button>
-        </div>        
+      
       </div>
 
            <!-- ZONE HEADER: names the interactive block (stays glued to the games) -->
@@ -122,22 +120,21 @@
         <h2 class="zone-header">do your own <span class="grad">math</span></h2>
       </div>
 
-      <!-- TOYS: 4 mood generators (the colourful set) -->
+      <!-- do-your-own-math actions: one grid, 6 visible buttons (3 rows × 2 cols).
+           Cope / Surprise me / How far are hidden this pass — kept in the DOM
+           (style="display:none") so app.js listeners + their modals survive for Phase 2. -->
       <div class="emotion-doors" id="emotionDoors">
-        <button class="door-btn door-dunk"   id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
-        <button class="door-btn door-pump"   id="doorPump"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
-        <button class="door-btn door-cope"   id="doorCope"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
-        <button class="door-btn door-wonder" id="doorWonder"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
-      </div>
-
-      <!-- ANSWERS: the four question-cards. Same grid as the moods above, calmer palette.
-           Every one still makes a shareable card — these answer a question;
-           the mood doors express a feeling. All eight are peers. -->
-      <div class="answer-doors" id="answerDoors">
+        <button class="door-btn door-dunk" id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
+        <button class="door-btn door-pump" id="doorPump"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
         <button class="door-btn" onclick="openStatusCheckModal()"><span class="door-emoji">📸</span><span class="door-label">Make a Flip Card</span></button>
         <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
-        <button class="door-btn" id="openCalc"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
+        <button class="door-btn" onclick="openModal()"><span class="door-emoji">📖</span><span class="door-label">Full ladder</span></button>
         <a class="door-btn" href="/parity"><span class="door-emoji">⚖️</span><span class="door-label">wen parity?</span></a>
+
+        <!-- hidden this pass, kept for Phase 2 rewiring -->
+        <button class="door-btn door-cope" id="doorCope" style="display:none"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
+        <button class="door-btn door-wonder" id="doorWonder" style="display:none"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
+        <button class="door-btn" id="openCalc" style="display:none"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
       </div>
 
     </section>
