@@ -1148,13 +1148,62 @@
 
 /* Tablet → 2 across */
 @media (max-width: 760px) { .hero-grid { grid-template-columns: repeat(2, 1fr); } }
-/* Phone → 1 across */
+
+/* Phone → terminal rows (each coin becomes one tight scoreboard line) */
 @media (max-width: 600px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-box { min-height: 0; padding: 16px 14px; }
-  .hero-box-mult { margin-top: 4px; }
-  .hero-box-flips-lbl { margin-top: 4px; }
-  .hero-box-item { font-size: 15px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 0; }
+
+  .hero-box {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    min-height: 0;
+    padding: 11px 8px;
+    border: none;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+  }
+  .hero-box:hover {
+    transform: none;
+    box-shadow: none;
+    background: rgba(255,255,255,0.02);
+    border-color: var(--line);
+  }
+
+  /* Left cluster: logo + ticker + % ride together, natural width */
+  .hero-box-head { flex: none; gap: 7px; }
+  .hero-box-logo { width: 20px; height: 20px; }
+  .hero-box-sym  { font-size: 15px; }
+  .hero-box-chg  { font-size: 11px; }
+
+  /* "flips" label — dim connective tissue between ticker and item */
+  .hero-box-flips-lbl {
+    flex: none;
+    margin: 0;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+  }
+
+  /* Multiplier tag ("at a 2×") shrinks to an inline chip before "flips" */
+  .hero-box-mult {
+    flex: none;
+    margin: 0;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+  }
+
+  /* The flipped item eats the rest of the row and hugs the right edge,
+     so the punchline column stacks scannably straight down */
+  .hero-box-item {
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.25;
+    text-align: right;
+  }
+  .hero-box-item.none { font-size: 13px; }
 }
 
 /* ===== ZONE PANELS — separate the feed & games from the page column ===== */
