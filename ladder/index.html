@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>wenflip — the full ladder</title>
+<meta name="description" content="Every coin we track, climbing one shared ladder of real-world prices — from a single staple to a gold toilet." />
+<link rel="canonical" href="https://wenflip.com/ladder" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wenflip.com/ladder" />
+<meta property="og:title" content="wenflip — the full ladder" />
+<meta property="og:description" content="Every coin we track, climbing one shared ladder of real-world prices — from a single staple to a gold toilet." />
+<meta property="og:site_name" content="wenflip.com" />
+<meta property="og:image" content="https://wenflip.com/og-image-v2.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:image" content="https://wenflip.com/og-image-v2.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="wenflip — the full ladder" />
+<meta name="twitter:description" content="Every coin we track, climbing one shared ladder of real-world prices." />
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.dexscreener.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  /* Page-local layout + un-nested rung rules.
+     The .frung family lives under .modal-body in styles.css, so it does NOT apply
+     on a standalone page — these are copied here, un-nested, so the rungs render. */
+  .ladder-page { padding: 40px 0 60px; }
+  .ladder-head { text-align: center; margin-bottom: 8px; }
+  .ladder-head .logo { font-size: clamp(36px, 7vw, 68px); margin: 0 auto; }
+  .ladder-intro {
+    max-width: 580px; margin: 12px auto 0; color: var(--muted);
+    font-size: clamp(14px, 1.8vw, 17px); line-height: 1.5; text-wrap: balance;
+  }
+  .ladder-wrap { max-width: 860px; margin: 22px auto 0; }
+  .ladder-list {
+    margin-top: 12px; border: 1px solid var(--line); border-radius: 16px;
+    overflow: hidden; background: var(--bg-2);
+  }
+  .ladder-list .tier-band { margin: 0; border-radius: 0; border-left: none; border-right: none; }
+
+  .frung {
+    display: grid; grid-template-columns: 36px 1fr 130px auto;
+    align-items: center; gap: 12px; padding: 10px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 14px; transition: background .3s ease;
+  }
+  .frung:hover { background: rgba(255,255,255,0.03); }
+  .frung.has { background: linear-gradient(90deg, rgba(46,224,106,0.10), rgba(46,224,106,0.03)); }
+  .frung.featured { background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02)); }
+  .frung.featured.has { background: linear-gradient(90deg, rgba(46,224,106,0.12), rgba(46,224,106,0.04)); border-left: 3px solid rgba(251,191,36,0.6); }
+  .frung .fe { text-align: center; opacity: .7; }
+  .frung .fp { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; }
+  .ftokens { display: flex; gap: 4px; justify-content: flex-end; }
+
+  .ladder-cta-row { display: flex; justify-content: center; margin-top: 24px; }
+
+  @media (max-width: 600px) {
+    .frung { grid-template-columns: 28px 1fr 88px auto; gap: 8px; padding: 10px 14px; font-size: 13px; }
+    .frung .fp { font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container ladder-page">
+
+  <header class="ladder-head">
+    <a href="/"><h1 class="logo">wenflip</h1></a>
+    <p class="ladder-intro">Every coin we track, climbing one shared ladder of real-world prices — from a single staple to a gold toilet. Live coins sit on the rung they've cleared.</p>
+  </header>
+
+  <div class="ladder-wrap">
+    <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
+      <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
+      <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
+      <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">The Rest</button>
+    </div>
+
+    <div class="ladder-list" id="ladderList">
+      <div class="clusters-loading"><span class="skel-dot"></span><span>Loading the ladder…</span></div>
+    </div>
+
+    <div class="ladder-cta-row">
+      <a class="full-ladder-btn full-ladder-btn-standings" href="/">← back to wenflip</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Shared root data files. Leading slash so they resolve from / (not /ladder/).
+     Plain (no defer) and BEFORE the inline script, so TOKENS/LADDER/TIER_META exist when it runs. -->
+<script src="/coins.js"></script>
+<script src="/ladder.js"></script>
+<script>
+(function(){
+  // ===== helpers copied verbatim from app.js (this page can't load app.js) =====
+  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function fmtCoinPrice(p) {
+    if (p == null) return '—';
+    if (p <= 0)    return '$0';
+    if (p >= 1000) { return '$' + Math.floor(p).toLocaleString('en-US'); }
+    if (p >= 1) {
+      const trunc = Math.floor(p * 100) / 100;
+      let s = trunc.toFixed(2);
+      s = s.replace(/\.?0+$/, '');
+      const [int, dec] = s.split('.');
+      const intFmt = parseInt(int,10).toLocaleString('en-US');
+      return '$' + (dec ? intFmt + '.' + dec : intFmt);
+    }
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const factor = Math.pow(10, 3 - mag);
+      const truncated = Math.floor(p * factor) / factor;
+      const decPlaces = -mag + 3;
+      let s = truncated.toFixed(decPlaces);
+      s = s.replace(/0+$/, '').replace(/\.$/, '');
+      return '$' + s;
+    }
+    const mag2 = Math.floor(Math.log10(p));
+    const leadingZeros = -mag2 - 1;
+    const factor2 = Math.pow(10, 3 - mag2);
+    const truncSig = Math.floor(p * factor2) / factor2;
+    const decPlaces2 = leadingZeros + 4;
+    let raw = truncSig.toFixed(decPlaces2);
+    const afterDot = raw.split('.')[1] || '';
+    let zCount = 0;
+    for (let i = 0; i < afterDot.length; i++) {
+      if (afterDot[i] === '0') zCount++; else break;
+    }
+    const sigPart = afterDot.slice(zCount).replace(/0+$/, '');
+    const subDigit = SUB_DIGITS[zCount] || String(zCount);
+    return '$0.0' + subDigit + sigPart;
+  }
+  function fmtPriceText(p) { return fmtCoinPrice(p); }
+
+  function fmtItemPrice(p) {
+    if (p == null) return '—';
+    if (p >= 1000) return '$' + p.toLocaleString('en-US', {maximumFractionDigits: 0});
+    if (p >= 1)    return '$' + p.toFixed(2).replace(/\.?0+$/, '');
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const dec = Math.max(0, -mag + 3);
+      return '$' + p.toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
+    }
+    return '$' + p.toPrecision(2);
+  }
+
+  function findRungIndex(price) {
+    if (price == null) return -1;
+    for (let i = 0; i < LADDER.length; i++) {
+      if (LADDER[i].price <= price) return i;
+    }
+    return LADDER.length - 1;
+  }
+
+  function starHtml(featured) {
+    if (!featured) return '';
+    return '<span class="star" title="Featured flip — these are the bangers">⭐</span>';
+  }
+
+  // ===== live state + price fetch (copied verbatim from app.js) =====
+  const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null, lastGood: null }));
+
+  const FETCH_TIMEOUT_MS = 5000;
+  const BASE_REFRESH_MS  = 60000;
+  const MAX_REFRESH_MS   = 240000;
+  let _refreshTimer   = null;
+  let _refreshDelayMs = BASE_REFRESH_MS;
+  let lastFetch = null;
+
+  function tokensByChain() {
+    const groups = {};
+    for (const t of TOKENS) {
+      const chain = (t.dexChain || '').trim();
+      const addr  = (t.pairAddress || '').trim();
+      if (!chain || !addr) {
+        const i = state.findIndex(s => s.sym === t.sym);
+        if (i >= 0) { state[i].status = 'err'; state[i].error = 'no pair address'; }
+        continue;
+      }
+      (groups[chain] = groups[chain] || []).push(t);
+    }
+    return groups;
+  }
+
+  function _applyPair(t, pair) {
+    const i = state.findIndex(s => s.sym === t.sym);
+    if (i < 0) return false;
+    if (!pair || pair.priceUsd == null) {
+      state[i].status = 'err';
+      state[i].error  = 'no pair data';
+      return false;
+    }
+    state[i].price    = parseFloat(pair.priceUsd);
+    state[i].chg      = pair.priceChange?.h24 ?? 0;
+    state[i].status   = 'ok';
+    state[i].error    = null;
+    state[i].lastGood = Date.now();
+    return true;
+  }
+
+  function _markChainStale(tokens, reason) {
+    for (const t of tokens) {
+      const i = state.findIndex(s => s.sym === t.sym);
+      if (i >= 0) { state[i].status = 'err'; state[i].error = String(reason).slice(0, 60); }
+    }
+  }
+
+  async function fetchChainBatch(chain, tokens) {
+    const addrs = tokens.map(t => t.pairAddress.trim()).join(',');
+    const url   = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${addrs}`;
+    const ctrl  = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+    let json;
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      json = await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+    const pairs  = Array.isArray(json.pairs) ? json.pairs : (json.pair ? [json.pair] : []);
+    const byAddr = {};
+    for (const p of pairs) { if (p && p.pairAddress) byAddr[p.pairAddress.toLowerCase()] = p; }
+    let ok = 0;
+    for (const t of tokens) {
+      if (_applyPair(t, byAddr[t.pairAddress.trim().toLowerCase()])) ok++;
+    }
+    return ok;
+  }
+
+  async function refreshAll() {
+    const groups = tokensByChain();
+    const chains = Object.keys(groups);
+    const jobs = chains.map(chain =>
+      fetchChainBatch(chain, groups[chain])
+        .then(ok => { renderLadderPage(); return ok; })
+        .catch(err => { _markChainStale(groups[chain], err); renderLadderPage(); throw err; })
+    );
+    const results = await Promise.allSettled(jobs);
+    const anyOk = state.some(s => s.status === 'ok');
+    if (anyOk) lastFetch = Date.now();
+    const totalOutage = results.length > 0 && results.every(r => r.status === 'rejected');
+    _refreshDelayMs = totalOutage ? Math.min(MAX_REFRESH_MS, _refreshDelayMs * 2) : BASE_REFRESH_MS;
+    clearTimeout(_refreshTimer);
+    _refreshTimer = setTimeout(refreshAll, _refreshDelayMs);
+    renderLadderPage();
+  }
+
+  // ===== ladder render (adapted from renderFullLadder: writes to #ladderList,
+  //       drops the #modalTop sentinel, and adds chain filtering) =====
+  let chainFilter = 'all';
+
+  function renderLadderPage() {
+    const listEl = document.getElementById('ladderList');
+    const byRung = {};
+    state.forEach(t => {
+      if (t.price == null) return;
+      if (chainFilter !== 'all' && t.chain !== chainFilter) return;
+      const idx = findRungIndex(t.price);
+      (byRung[idx] = byRung[idx] || []).push(t);
+    });
+    const html = [];
+    let lastTier = null;
+    LADDER.forEach((rung, i) => {
+      if (rung.tier !== lastTier) {
+        const meta = TIER_META[rung.tier];
+        if (meta) html.push(`<div class="tier-band ${meta.cls}">${meta.text}</div>`);
+        lastTier = rung.tier;
+      }
+      const placed = byRung[i] || [];
+      const meta = TIER_META[rung.tier] || {};
+      const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPriceText(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
+      html.push(`
+        <div class="frung ${placed.length ? 'has' : ''} ${rung.featured ? 'featured' : ''}" data-rung-index="${i}">
+          <div class="fe">${meta.emoji||'•'}</div>
+          <div>${rung.name}${starHtml(rung.featured)}</div>
+          <div class="fp">${fmtItemPrice(rung.price)}</div>
+          <div class="ftokens">${tokens}</div>
+        </div>`);
+    });
+    listEl.innerHTML = html.join('');
+  }
+
+  // ===== chain filter wiring (mirrors the homepage handler) =====
+  document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = btn.getAttribute('data-chain');
+      if (next === chainFilter) return;
+      chainFilter = next;
+      document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(b => {
+        const active = b.getAttribute('data-chain') === chainFilter;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      renderLadderPage();
+    });
+  });
+
+  // ===== kickoff =====
+  renderLadderPage();   // paints rungs immediately; coins fill in as prices land
+  refreshAll();
+})();
+</script>
+</body>
+</html>
