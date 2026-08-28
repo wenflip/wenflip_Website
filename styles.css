@@ -6,9 +6,10 @@
     --muted: #8a8aa8;
     --line: rgba(255,255,255,0.08);
 
-    /* finance semantic — kept conceptually separate from brand */
-    --green: #22c55e;
-    --red:   #ef4444;
+     /* finance semantic — kept conceptually separate from brand */
+    /* green brightened to advance, red desaturated to recede (dopamine lean) */
+    --green: #2ee06a;
+    --red:   #b5544c;
     --gold:  #fbbf24;
 
     /* === BRAND ACCENT (Layer 3 spark — neon, trim only) === */
@@ -1129,8 +1130,8 @@
   font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums;
   white-space: nowrap; margin-left: 2px;
 }
-.hero-box-chg.up { color: var(--green); }
-.hero-box-chg.down { color: var(--red); }
+.hero-box-chg.up { color: var(--green); font-weight: 900; }
+.hero-box-chg.down { color: var(--red); font-weight: 700; }
     
 .hero-box-mult {
   font-size: 11px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase;
