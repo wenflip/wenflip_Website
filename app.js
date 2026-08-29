@@ -289,58 +289,7 @@
     });
   }
 
-  function renderFullLadder() {
-    const body = document.getElementById('modalBody');
-    const byRung = {};
-    state.forEach(t => {
-      if (t.price == null) return;
-      const idx = findRungIndex(t.price);
-      (byRung[idx] = byRung[idx] || []).push(t);
-    });
-    const html = ['<div id="modalTop"></div>'];
-    let lastTier = null;
-    LADDER.forEach((rung, i) => {
-      if (rung.tier !== lastTier) {
-        const meta = TIER_META[rung.tier];
-        if (meta) html.push(`<div class="tier-band ${meta.cls}">${meta.text}</div>`);
-        lastTier = rung.tier;
-      }
-      const placed = byRung[i] || [];
-      const meta = TIER_META[rung.tier] || {};
-      const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPriceText(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
-      html.push(`
-        <div class="frung ${placed.length ? 'has' : ''} ${rung.featured ? 'featured' : ''}" data-rung-index="${i}">
-          <div class="fe">${meta.emoji||'•'}</div>
-          <div>${rung.name}${starHtml(rung.featured)}</div>
-          <div class="fp">${fmtItemPrice(rung.price)}</div>
-          <div class="ftokens">${tokens}</div>
-        </div>`);
-    });
-    body.innerHTML = html.join('');
-  }
-
-  function openModal() {
-    const LADDER_OPEN_PRICE = 2600;
-    renderFullLadder();
-    document.getElementById('modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    const idx = findRungIndex(LADDER_OPEN_PRICE);
-    const body = document.getElementById('modalBody');
-    const target = body.querySelector(`.frung[data-rung-index="${idx}"]`);
-    if (target) requestAnimationFrame(() => target.scrollIntoView({behavior:'instant', block:'center'}));
-  }
-  function openModalZoomedTo(sym) {
-    const t = state.find(s => s.sym === sym);
-    if (!t || t.price == null) { openModal(); return; }
-    renderFullLadder();
-    document.getElementById('modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    const idx = findRungIndex(t.price);
-    const body = document.getElementById('modalBody');
-    const target = body.querySelector(`.frung[data-rung-index="${idx}"]`);
-    if (target) requestAnimationFrame(() => { target.scrollIntoView({behavior:'instant',block:'center'}); target.classList.remove('zoom-target'); void target.offsetWidth; target.classList.add('zoom-target'); });
-  }
-  function closeModal() { document.getElementById('modal').classList.remove('open'); document.body.style.overflow=''; }
+ 
 
   document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -503,9 +452,7 @@
       return;
     }
 
-    // Existing: #SYMBOL → zoom the ladder to that coin
-    const match = TOKENS.find(t => t.sym.toLowerCase()===raw.toLowerCase());
-    if (match) openModalZoomedTo(match.sym);
+
   }
 
   refreshAll().then(handleDeepLink);
@@ -528,7 +475,7 @@
     document.getElementById('tokenModal').classList.remove('open'); document.body.style.overflow='';
     if (window.location.hash.replace(/^#/,'').toLowerCase()==='notacoin') history.replaceState(null,'',window.location.pathname+window.location.search);
   }
-  document.addEventListener('keydown', e => { if (e.key==='Escape'){closeModal();closeCalcModal();closeTokenModal();} });
+  document.addEventListener('keydown', e => { if (e.key==='Escape'){closeCalcModal();closeTokenModal();} });
 
   function htmlAttr(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
