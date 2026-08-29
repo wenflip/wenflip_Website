@@ -128,7 +128,7 @@
         <button class="door-btn door-pump" id="doorPump"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
         <button class="door-btn" onclick="openStatusCheckModal()"><span class="door-emoji">📸</span><span class="door-label">Make a Flip Card</span></button>
         <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
-        <button class="door-btn" onclick="openModal()"><span class="door-emoji">📖</span><span class="door-label">Full ladder</span></button>
+        <a class="door-btn" href="/ladder"><span class="door-emoji">📖</span><span class="door-label">Full ladder</span></a>
         <a class="door-btn" href="/parity"><span class="door-emoji">⚖️</span><span class="door-label">wen parity?</span></a>
 
         <!-- hidden this pass, kept for Phase 2 rewiring -->
@@ -416,18 +416,7 @@
   </div>
 </div>
 
-<!-- FULL LADDER MODAL -->
-<div class="modal-backdrop" id="modal" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow='';}">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Full ladder">
-    <div class="modal-head">
-        <h3>Full Ladder <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">— from Goldfish to Gold Toilet</span></h3>
-        <div class="sub">All rungs · Your coins highlighted · ⭐ Featured flip</div>
-      <button class="modal-close" aria-label="Close" onclick="document.getElementById('modal').classList.remove('open');document.body.style.overflow='';">✕</button>
-    </div>
-    <div class="modal-body" id="modalBody"></div>
-    <button class="back-top" onclick="document.getElementById('modalBody').scrollTo({top:0,behavior:'smooth'})">↑ Back to top</button>
-  </div>
-</div>
+
 
 <!-- FLIP CALCULATOR MODAL -->
 <div class="modal-backdrop" id="calcModal" onclick="if(event.target===this)closeCalcModal()">
