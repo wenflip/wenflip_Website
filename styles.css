@@ -1368,3 +1368,53 @@
   @media (max-width: 600px) {
     .answer-doors { grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px; }
   }
+
+  /* ===================================================================
+     UNIFIED FLIP CARD (wf-*) — Stage 1 engine output.
+     Reuses the Pump hero (.pump-dream-obj / .pump-obj-* / .pump-flips-lbl /
+     .pump-dream-name / .pump-dream-price / .pump-mult-badge) and the sc
+     progress bar (.sc-bar-track / .sc-bar-fill / .sc-gap-line). Adds only
+     the identity pill, the receipt line, the cope footnote, and an
+     in-flow stamp. Container class is `wf-flip-card flip-card`.
+     =================================================================== */
+  .wf-flip-card { padding: 26px 26px 22px; position: relative; }
+
+  .wf-head {
+    display: flex; align-items: center; gap: 11px;
+    flex-shrink: 0; margin-bottom: 16px;
+  }
+  /* 24h pill — Today (1×). Pumped state uses .pump-mult-badge instead. */
+  .wf-chg-pill {
+    flex: 0 0 auto; padding: 6px 11px; border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 13px; font-weight: 800; letter-spacing: 0.02em;
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .wf-chg-pill.up   { color: var(--green); background: rgba(46,224,106,0.08); }
+  .wf-chg-pill.down { color: var(--red);   background: rgba(181,84,76,0.12); }
+
+  /* CHASING / not-yet eyebrow — greys the reused pump FLIPS label */
+  .pump-flips-lbl.wf-chase { color: var(--muted); }
+
+  /* Foot — receipt + optional cope + stamp, pinned below the hero */
+  .wf-foot { flex-shrink: 0; }
+  .wf-receipt { font-size: 14px; color: var(--muted); line-height: 1.4; }
+  .wf-receipt b { color: var(--text); font-weight: 800; }
+  .wf-to { color: var(--text); font-weight: 600; }
+  .wf-flip-card .sc-bar-track { margin: 12px 0 10px; }
+
+  /* Cope footnote — the one editorial field, opt-in via voice:'cope' */
+  .wf-cope {
+    font-size: 13px; color: var(--muted); font-style: italic;
+    margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+  }
+
+  /* In-flow stamp (this card doesn't use an absolute stamp) */
+  .wf-stamp {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 16px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em;
+    color: rgba(46,224,106,0.7);
+  }
+
+
