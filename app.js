@@ -819,6 +819,132 @@
     }
   })();
 
+  // ===================================================================
+  // UNIFIED FLIP CARD ENGINE — Stage 1.
+  // One renderer for every ladder-read card. Returns an HTML string; the
+  // caller injects it into a `.wf-flip-card.flip-card` container.
+  //
+  //   renderFlipCard({ coin, mult, item, voice })
+  //     coin  : { sym, name, price, chg, logo }   (required)
+  //     mult  : number × coin.price               (default 1 → "Today")
+  //     item  : { name, price } → item-versus body (default null)
+  //             (the old HFFF; dormant until Stage 2 wires the toggle)
+  //     voice : 'straight' | 'cope'               (default 'straight')
+  //
+  // Reuses: findRungIndex, flipProgressPct, fmtItemPrice, fmtPrice, fmtMult,
+  //         pumpObjSizeClass, getGapLine, pickCopeLine, htmlAttr, LADDER.
+  // ===================================================================
+  function renderFlipCard(opts) {
+    opts = opts || {};
+    const coin  = opts.coin || {};
+    const mult  = (opts.mult != null) ? opts.mult : 1;
+    const item  = opts.item || null;
+    const voice = opts.voice || 'straight';
+
+    const sym    = String(coin.sym  || '');
+    const name   = String(coin.name || sym);
+    const logo   = String(coin.logo || '');
+    const chg    = coin.chg || 0;
+    const price  = coin.price;
+    const pumped = mult > 1;
+    const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+    // identity row — 24h pill at Today, mult badge when pumped
+    const chgSign = chg >= 0 ? '▲' : '▼';
+    const chgCls  = chg >= 0 ? 'up' : 'down';
+    const badge = pumped
+      ? `<div class="pump-mult-badge">${fmtMult(mult)}×</div>`
+      : `<div class="wf-chg-pill ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}%</div>`;
+
+    const head = `
+      <div class="wf-head">
+        <img class="pump-logo" src="${htmlAttr(logo)}" alt="${htmlAttr(sym)}"/>
+        <div class="pump-coin-id">
+          <div class="pump-coin-sym">${htmlAttr(sym)}</div>
+          <div class="pump-coin-name-sm">${htmlAttr(name)} · ${fmtPrice(price)}</div>
+        </div>
+        ${badge}
+      </div>`;
+
+    let hero = '', foot = '';
+
+    if (item) {
+      // ---------- BODY 2: item-versus (old HFFF) — dormant until Stage 2 ----------
+      const tPrice  = item.price;
+      const flipped = price >= tPrice;
+      const eyeCls  = flipped ? '' : ' wf-chase';
+      hero = `
+        <div class="pump-dream-obj ${pumpObjSizeClass(item.name)}">
+          <div class="pump-flips-lbl${eyeCls}">${flipped ? 'FLIPS ✓' : 'CHASING'}</div>
+          <div class="pump-dream-name">${htmlAttr(item.name)}</div>
+          <div class="pump-dream-price">${fmtItemPrice(tPrice)}</div>
+        </div>`;
+      if (flipped) {
+        const n = price / tPrice;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt">1 ${htmlAttr(sym)} buys <span class="wf-to">${fmtMult(n)}× ${htmlAttr(item.name)}</span></div>`;
+      } else {
+        const pct = Math.min(99, Math.round((price / tPrice) * 100));
+        const gap = tPrice - price;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt"><b>${fmtMult(tPrice / price)}×</b> to reach <span class="wf-to">${htmlAttr(item.name)}</span></div>
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
+          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+      }
+    } else {
+      // ---------- BODY 1: ladder-read (Status / Pump / Cope / Surprise) ----------
+      const eff = price * mult;
+      const idx = findRungIndex(eff);
+      const cleared = LADDER[idx];
+      const next = LADDER[idx - 1];
+
+      if (idx === 0 || !next) {
+        hero = `
+          <div class="pump-dream-obj pump-obj-md pump-dream-obj-top">
+            <div class="pump-flips-lbl">CLEARED EVERYTHING ✓</div>
+            <div class="pump-dream-name">the entire ladder</div>
+            <div class="pump-dream-sub">There is nothing left to flip.</div>
+          </div>`;
+      } else if (idx === LADDER.length - 1 && eff < LADDER[idx].price) {
+        const first = LADDER[LADDER.length - 1];
+        const pct = Math.min(99, Math.round((eff / first.price) * 100));
+        const gap = first.price - eff;
+        hero = `
+          <div class="pump-dream-obj ${pumpObjSizeClass(first.name)}">
+            <div class="pump-flips-lbl wf-chase">CHASING</div>
+            <div class="pump-dream-name">${htmlAttr(first.name)}</div>
+            <div class="pump-dream-price">${fmtItemPrice(first.price)}</div>
+          </div>`;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt">not on the board yet · <b>${pct}%</b> of the way there</div>
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
+          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+      } else {
+        const pct = flipProgressPct(eff, cleared, next);
+        const gap = next.price - eff;
+        hero = `
+          <div class="pump-dream-obj ${pumpObjSizeClass(cleared.name)}">
+            <div class="pump-flips-lbl">${pumped ? 'WOULD FLIP' : 'FLIPPED ✓'}</div>
+            <div class="pump-dream-name">${htmlAttr(cleared.name)}</div>
+            <div class="pump-dream-price">${fmtItemPrice(cleared.price)}</div>
+          </div>`;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt">${pct}% to <span class="wf-to">${htmlAttr(next.name)}</span></div>
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
+          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+      }
+    }
+
+    const cope  = (voice === 'cope') ? `<div class="wf-cope">${pickCopeLine()}</div>` : '';
+    const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com</span></div>`;
+
+    return head + hero + `<div class="wf-foot">${foot}${cope}${stamp}</div>`;
+  }
+
   // Thin wrapper: look up a built-in coin by symbol, then delegate to the data-driven renderer.
   // Behavior for built-ins is byte-for-byte identical to before (their names/syms/logos contain
   // no HTML-special characters, so the escaping in renderStatusCardFromData is a no-op on them).
@@ -829,91 +955,28 @@
     renderStatusCardFromData({ sym, name: tk.name, price: s.price, chg: s.chg || 0, logo: tk.logo });
   }
 
-  // Data-driven renderer. Takes {sym, name, price, chg, logo} directly — used by both the
-  // built-in picker (via renderStatusCard) and the pasted-CA path (which never touches `state`).
+   // Data-driven renderer → now a thin adapter over the unified renderFlipCard() engine.
+  // Both the built-in picker (renderStatusCard) and the pasted-CA path call this.
+  // Stage 1: renders the new hero card at Today (mult 1), straight voice.
   function renderStatusCardFromData(tokenObj) {
     if (!tokenObj || tokenObj.price == null) return;
     caClearFail();
-    const sym  = String(tokenObj.sym  || '');
-    const name = String(tokenObj.name || sym);
-    const logo = String(tokenObj.logo || '');
 
-    const coinPrice = tokenObj.price;
-    const chg = tokenObj.chg || 0;
-    const chgSign = chg >= 0 ? '▲' : '▼';
-    const chgCls = chg >= 0 ? 'sc-up' : 'sc-down';
-    const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const coin = {
+      sym:   String(tokenObj.sym  || ''),
+      name:  String(tokenObj.name || tokenObj.sym || ''),
+      price: tokenObj.price,
+      chg:   tokenObj.chg || 0,
+      logo:  String(tokenObj.logo || ''),
+    };
 
-    const clearedIdx = findRungIndex(coinPrice);
-    const clearedRung = LADDER[clearedIdx];
-    const nextRung = LADDER[clearedIdx - 1];
-
-    let zone3Html = '';
-    let zone4Html = '';
-    let hasDivider4 = false;
-
-    if (clearedIdx === 0 || !nextRung) {
-      // Top of ladder — no next rung
-      zone3Html = `<div class="sc-zone sc-zone-top-msg">
-        <div class="sc-top-msg-line">There is nothing left to flip.</div>
-        <div class="sc-top-msg-sub">It has cleared the entire ladder.</div>
-      </div>`;
-    } else if (clearedIdx === LADDER.length - 1 && coinPrice < LADDER[clearedIdx].price) {
-      // Below the ladder — no cleared rung
-      const firstRung = LADDER[LADDER.length - 1];
-      const pctRaw = Math.min(99, Math.round((coinPrice / firstRung.price) * 100));
-      const dollarGap = firstRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone">
-        <div class="sc-label">STATUS: not on the board yet</div>
-      </div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${firstRung.name}</span> <span class="sc-item-price">${fmtItemPrice(firstRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    } else {
-      // Normal case
-      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
-      const dollarGap = nextRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone">
-        <div class="sc-label">STATUS: FLIPPED</div>
-        <div class="sc-cleared-name">${clearedRung.name}</div>
-        <div class="sc-cleared-price">${fmtItemPrice(clearedRung.price)}</div>
-      </div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${nextRung.name}</span> <span class="sc-item-price">${fmtItemPrice(nextRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    }
-
-    document.getElementById('scResultCard').innerHTML = `
-      <div class="sc-zone sc-zone-identity">
-        <div class="sc-id-row">
-          <img class="sc-logo" src="${htmlAttr(logo)}" alt="${htmlAttr(sym)}"/>
-          <span class="sc-coin-fullname">${htmlAttr(name)}</span>
-        </div>
-        <div class="sc-price-row">
-          <span class="sc-live-price">${fmtPrice(coinPrice)}</span>
-          <span class="sc-chg ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}% (24h)</span>
-        </div>
-      </div>
-      <div class="sc-divider"></div>
-      ${zone3Html}
-      <div class="sc-divider"></div>
-      ${zone4Html}
-      ${hasDivider4 ? '<div class="sc-divider"></div>' : ''}
-      <div class="sc-stamp">
-        <span class="sc-date">${dateStr}</span>
-        <span class="sc-wm">wenflip.com</span>
-      </div>
-    `;
+    const card = document.getElementById('scResultCard');
+    card.className = 'wf-flip-card flip-card';
+    card.innerHTML = renderFlipCard({ coin: coin, mult: 1, voice: 'straight' });
 
     const wrap = document.getElementById('scCardWrap');
     wrap.style.display = '';
-    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth',block:'nearest'}));
+    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
 
     const icon = document.getElementById('scShareIcon');
     const txt = document.getElementById('scShareText');
