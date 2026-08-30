@@ -620,18 +620,20 @@
     return fmtItemPrice(dollarGap) + ' to go.  ' + tag;
   }
 
-  function openStatusCheckModal() {
+   function openStatusCheckModal() {
+    _flipResetAll();
     renderScCoinList();
     document.getElementById('scCardWrap').style.display = 'none';
     document.getElementById('statusCheckModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
   function openStatusCheckModalForCoin(sym) {
+    _flipResetAll();
     renderScCoinList();
     document.getElementById('scCardWrap').style.display = 'none';
     document.getElementById('statusCheckModal').classList.add('open');
     document.body.style.overflow = 'hidden';
-    // Pre-render the card for this coin immediately
+    // Pre-render the card for this coin immediately (Today / next rung / straight)
     renderStatusCard(sym);
   }
   // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
@@ -939,7 +941,7 @@
       }
     }
 
-    const cope  = (voice === 'cope') ? `<div class="wf-cope">${pickCopeLine()}</div>` : '';
+    const cope  = (voice === 'cope') ? `<div class="wf-cope">${opts.copeLine || pickCopeLine()}</div>` : '';
     const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com</span></div>`;
 
     return head + hero + `<div class="wf-foot">${foot}${cope}${stamp}</div>`;
@@ -961,29 +963,15 @@
   function renderStatusCardFromData(tokenObj) {
     if (!tokenObj || tokenObj.price == null) return;
     caClearFail();
-
-    const coin = {
+    flipCoin = {
       sym:   String(tokenObj.sym  || ''),
       name:  String(tokenObj.name || tokenObj.sym || ''),
       price: tokenObj.price,
       chg:   tokenObj.chg || 0,
       logo:  String(tokenObj.logo || ''),
     };
-
-    const card = document.getElementById('scResultCard');
-    card.className = 'wf-flip-card flip-card';
-    card.innerHTML = renderFlipCard({ coin: coin, mult: 1, voice: 'straight' });
-
-    const wrap = document.getElementById('scCardWrap');
-    wrap.style.display = '';
-    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
-
-    const icon = document.getElementById('scShareIcon');
-    const txt = document.getElementById('scShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
+    renderFlipModalCard();
   }
-
   async function scExport() {
     const btn=document.getElementById('scShareBtn'),icon=document.getElementById('scShareIcon'),txt=document.getElementById('scShareText');
     await exportCardAsImage(document.getElementById('scResultCard'),btn,icon,txt,_isIOS);
@@ -1054,6 +1042,181 @@
       btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
   }
+
+  // ===================================================================
+  // MAKE A FLIP CARD — mega modal controller (Stage 2)
+  // Converts the former Status modal into the four-knob flip-card maker.
+  // State = which coin / price mode / target / voice. Every control mutates
+  // state then calls renderFlipModalCard(), which feeds renderFlipCard().
+  // ===================================================================
+  let flipCoin      = null;         // {sym,name,price,chg,logo} or null
+  let flipMult      = 1;            // 1|2|5|10|100 or 'custom'
+  let flipCustomRaw = '';           // raw custom input ("25x" / "$1.00")
+  let flipTarget    = null;         // null (next rung) | {name, price}
+  let flipVoice     = 'straight';   // 'straight' | 'cope'
+  let flipCopeLine  = null;         // cached cope line (stable across control changes)
+
+  // Reset every control to defaults + resync the control UI. Called on each open.
+  function _flipResetAll() {
+    flipCoin = null; flipMult = 1; flipCustomRaw = '';
+    flipTarget = null; flipVoice = 'straight'; flipCopeLine = null;
+
+    const pr = document.getElementById('flipPriceRow');
+    if (pr) { pr.classList.remove('flip-dim'); pr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.mult === '1')); }
+    const tr = document.getElementById('flipTargetRow');
+    if (tr) tr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.target === 'next'));
+    const vr = document.getElementById('flipVoiceRow');
+    if (vr) vr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.voice === 'straight'));
+
+    const cw = document.getElementById('flipCustomWrap'); if (cw) { cw.style.display = 'none'; cw.classList.remove('flip-dim'); }
+    const iw = document.getElementById('flipItemWrap');   if (iw) iw.style.display = 'none';
+    const ci = document.getElementById('flipCustomInput'); if (ci) ci.value = '';
+    const is = document.getElementById('flipItemSearch');  if (is) is.value = '';
+    const ch = document.getElementById('flipCustomHint');   if (ch) ch.textContent = '';
+  }
+
+  function _flipSetActive(row, btn) {
+    if (!row) return;
+    row.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b === btn));
+  }
+
+  function _flipDimPrice(on) {
+    const pr = document.getElementById('flipPriceRow');
+    const cw = document.getElementById('flipCustomWrap');
+    if (pr) pr.classList.toggle('flip-dim', on);
+    if (cw) cw.classList.toggle('flip-dim', on);
+  }
+
+  // Resolve the effective multiplier. Returns a number, or null when 'custom'
+  // is selected but the input isn't a valid multiple/price yet.
+  function _flipEffectiveMult() {
+    if (flipMult !== 'custom') return flipMult;
+    if (!flipCoin) return null;
+    const parsed = parsePumpInput(flipCustomRaw);
+    if (!parsed) return null;
+    const hyp = computePumpHypPrice(flipCoin.price, parsed);
+    if (!hyp || hyp <= 0) return null;
+    return hyp / flipCoin.price;
+  }
+
+  // The single render path for the mega modal. Reads state → renderFlipCard().
+  function renderFlipModalCard() {
+    const wrap = document.getElementById('scCardWrap');
+    if (!flipCoin) { if (wrap) wrap.style.display = 'none'; return; }
+
+    const item = flipTarget ? { name: flipTarget.name, price: flipTarget.price } : null;
+
+    let mult = 1;
+    const hint = document.getElementById('flipCustomHint');
+    if (!item) {
+      const m = _flipEffectiveMult();
+      if (m === null) { if (hint) hint.textContent = 'Try "25x" for a multiple, or "$1.00" for a price.'; return; }
+      if (hint) hint.textContent = '';
+      mult = m;
+    } else if (hint) { hint.textContent = ''; }
+
+    const card = document.getElementById('scResultCard');
+    card.className = 'wf-flip-card flip-card';
+    card.innerHTML = renderFlipCard({ coin: flipCoin, mult: mult, item: item, voice: flipVoice, copeLine: flipCopeLine });
+
+    if (wrap) {
+      wrap.style.display = '';
+      requestAnimationFrame(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    }
+    const icon = document.getElementById('scShareIcon');
+    const txt  = document.getElementById('scShareText');
+    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (txt)  txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
+  }
+
+  // Ladder search list for "Pick an item" target mode (reuses LADDER + .target-item styling).
+  function renderFlipItemList(filter) {
+    const list = document.getElementById('flipItemList');
+    if (!list) return;
+    const q = (filter || '').toLowerCase().trim();
+    const items = LADDER.filter(r => r.price != null && (!q || r.name.toLowerCase().includes(q)));
+    if (!items.length) { list.innerHTML = `<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`; return; }
+    list.innerHTML = items.map(r =>
+      `<div class="target-item ${flipTarget && flipTarget.name === r.name ? 'selected' : ''}" data-name="${htmlAttr(r.name)}" data-price="${r.price}"><span class="ti-name">${r.name}</span><span class="ti-price">${fmtItemPrice(r.price)}</span></div>`
+    ).join('');
+  }
+
+  // Wire the mega-modal controls once (static elements; deferred script → DOM exists).
+  (function wireFlipControls() {
+    const priceRow = document.getElementById('flipPriceRow');
+    if (priceRow) priceRow.addEventListener('click', e => {
+      const b = e.target.closest('.flip-chip'); if (!b) return;
+      const m = b.dataset.mult;
+      _flipSetActive(priceRow, b);
+      const cw = document.getElementById('flipCustomWrap');
+      if (m === 'custom') {
+        flipMult = 'custom';
+        if (cw) cw.style.display = '';
+        const ci = document.getElementById('flipCustomInput'); if (ci) setTimeout(() => ci.focus(), 60);
+      } else {
+        flipMult = parseFloat(m);
+        if (cw) cw.style.display = 'none';
+        renderFlipModalCard();
+      }
+    });
+
+    const customInput = document.getElementById('flipCustomInput');
+    const customGo    = document.getElementById('flipCustomGo');
+    function applyCustom() { flipMult = 'custom'; flipCustomRaw = customInput ? customInput.value : ''; renderFlipModalCard(); }
+    if (customGo)    customGo.addEventListener('click', applyCustom);
+    if (customInput) {
+      customInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyCustom(); } });
+      let deb = null;
+      customInput.addEventListener('input', () => { clearTimeout(deb); deb = setTimeout(applyCustom, 300); });
+    }
+
+    const targetRow = document.getElementById('flipTargetRow');
+    if (targetRow) targetRow.addEventListener('click', e => {
+      const b = e.target.closest('.flip-chip'); if (!b) return;
+      _flipSetActive(targetRow, b);
+      const iw = document.getElementById('flipItemWrap');
+      if (b.dataset.target === 'item') {
+        if (iw) iw.style.display = '';
+        _flipDimPrice(true);
+        renderFlipItemList('');
+        if (flipTarget) renderFlipModalCard();
+      } else {
+        flipTarget = null;
+        if (iw) iw.style.display = 'none';
+        _flipDimPrice(false);
+        renderFlipModalCard();
+      }
+    });
+
+    const itemList = document.getElementById('flipItemList');
+    if (itemList) itemList.addEventListener('click', e => {
+      const it = e.target.closest('.target-item'); if (!it) return;
+      flipTarget = { name: it.dataset.name, price: parseFloat(it.dataset.price) };
+      const is = document.getElementById('flipItemSearch');
+      renderFlipItemList(is ? is.value : '');
+      renderFlipModalCard();
+    });
+    const itemSearch = document.getElementById('flipItemSearch');
+    if (itemSearch) itemSearch.addEventListener('input', function () { renderFlipItemList(this.value); });
+
+    const voiceRow = document.getElementById('flipVoiceRow');
+    if (voiceRow) voiceRow.addEventListener('click', e => {
+      const b = e.target.closest('.flip-chip'); if (!b) return;
+      flipVoice = b.dataset.voice;
+      _flipSetActive(voiceRow, b);
+      flipCopeLine = (flipVoice === 'cope') ? pickCopeLine() : null;
+      renderFlipModalCard();
+    });
+
+    const randomBtn = document.getElementById('flipRandomBtn');
+    if (randomBtn) randomBtn.addEventListener('click', () => {
+      const ready = state.filter(s => s.price != null);
+      if (!ready.length) return;
+      const pool = (ready.length > 1 && flipCoin) ? ready.filter(s => s.sym !== flipCoin.sym) : ready;
+      const picked = pool[Math.floor(Math.random() * pool.length)];
+      renderStatusCard(picked.sym);   // sets flipCoin + renders at current controls
+    });
+  })();
 
   // ==== FLIPPENING MODAL ====
   // flCoinA / flCoinB each hold a full coin object: {sym, name, price, chg, logo}
