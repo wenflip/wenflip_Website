@@ -1694,8 +1694,10 @@
       const nudge = hypPrice < coinPrice
         ? "That's a dump, not a pump. Aim higher. 👆"
         : "That's today's price. Now pump it. 👆";
-      placeholder.innerHTML = nudge +
+        placeholder.innerHTML = nudge +
         '<br><a href="#" class="pump-status-link" onclick="event.preventDefault();closePump();openStatusCheckModalForCoin(pumpCoin);">or grab today\'s card →</a>';
+      // (Link already routes to openStatusCheckModalForCoin = the mega modal. No change needed;
+      //  the old Pump modal is only reachable if something still calls openPump directly.)
       return;
     }
 
@@ -1867,16 +1869,18 @@
   // Door 1: Dunk → existing Flippening modal
   document.getElementById('doorDunk').addEventListener('click', openFlippen);
 
-  // Door 2: Pump → existing Pump modal
-  document.getElementById('doorPump').addEventListener('click', openPump);
+   // Door 2: Pump → MEGA flip-card modal (Stage 3). Old Pump modal retained but
+  // unreachable; opening the mega modal with Price defaulted, user picks a multiplier.
+  document.getElementById('doorPump').addEventListener('click', openStatusCheckModal);
 
-  // Door 3: Cope → new Cope modal
-  document.getElementById('doorCope').addEventListener('click', openCope);
-
- 
-
-  // Door 5: Wonder → zero-input: open modal + immediately render a random coin
-  document.getElementById('doorWonder').addEventListener('click', openWonder);
+  // Doors 3 & 5 (Cope / Surprise me) are folded into the mega modal (Voice: Cope,
+  // and the 🎲 Surprise-me button). Their buttons are display:none in index.html.
+  // Listeners are guarded so they no-op if the hidden buttons are ever removed —
+  // Cope/Wonder modal code is retained but unreachable (Stage 4 will delete it).
+  const _doorCope = document.getElementById('doorCope');
+  if (_doorCope) _doorCope.addEventListener('click', openCope);
+  const _doorWonder = document.getElementById('doorWonder');
+  if (_doorWonder) _doorWonder.addEventListener('click', openWonder);
 
   // ==== COPE ====
   let _copeLastLine = null;
@@ -2383,18 +2387,19 @@
     });
   }
 
-  // Open the existing Pump modal, pre-loaded to a coin at the given multiplier.
+  // Open the MEGA flip-card modal, pre-loaded to a coin at the given multiplier.
+  // (Was the old Pump modal; re-pointed in Stage 3. Name kept so the hero-grid
+  // click/keydown handlers that call openHeroPump() need no change.)
   function openHeroPump(sym, mult) {
-    openPump();                         // reset + open (defined in the PUMP MODAL section above)
-    pumpCoin = sym;
-    renderPumpCoinBadges();             // reflect the pre-selected coin
-    const multStr = String(mult);
-    const input = document.getElementById('pumpInput');
-    if (input) input.value = multStr + 'x';
-    // Highlight a matching quick-pick if one exists (2/5/10/100); Today (1×) has none.
-    pumpActiveQuick = document.querySelector('.pump-quick-btn[data-mult="' + multStr + '"]') ? multStr : null;
-    updatePumpQuickRow();
-    updatePumpResult();
+    openStatusCheckModal();             // resets controls + opens the mega modal
+    const m = parseFloat(mult);
+    // Reflect the incoming multiplier on the Price row (1/2/5/10/100 map to chips).
+    const priceRow = document.getElementById('flipPriceRow');
+    const chip = priceRow ? priceRow.querySelector('.flip-chip[data-mult="' + m + '"]') : null;
+    if (chip) { _flipSetActive(priceRow, chip); flipMult = m; }
+    else      { flipMult = (isFinite(m) && m > 0) ? m : 1; }  // non-chip mult still honored
+    // Select the coin + render at the resolved multiplier.
+    renderStatusCard(sym);
   }
 
   // Toggle wiring — Today / 2× / 5× / 10×
