@@ -1370,6 +1370,48 @@
   }
 
   /* ===================================================================
+     MAKE A FLIP CARD — mega-modal controls (Stage 2)
+     Price / Target / Voice chip rows + 🎲 random + custom/item reveals.
+     Reuses .pump-input / .pump-go-btn / .calc-search / .target-list.
+     =================================================================== */
+  .flip-random-row { padding: 12px 20px 4px; }
+  .flip-random-btn {
+    width: 100%; padding: 11px 14px; border-radius: 12px;
+    background: rgba(139,92,246,0.10); border: 1px solid rgba(139,92,246,0.35);
+    color: var(--text); font-weight: 800; font-size: 14px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background .15s, border-color .15s, box-shadow .15s, transform .12s;
+  }
+  .flip-random-btn:hover { background: rgba(139,92,246,0.18); border-color: rgba(139,92,246,0.5); box-shadow: 0 6px 22px rgba(139,92,246,0.2); transform: translateY(-1px); }
+
+  .flip-ctrl-row { padding: 14px 20px; border-top: 1px solid var(--line); }
+  .flip-ctrl-row .calc-lbl { margin-bottom: 10px; }
+
+  .flip-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .flip-chip {
+    padding: 8px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+    color: var(--muted); font-weight: 800; font-size: 14px; cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background .15s, border-color .15s, color .15s, box-shadow .15s;
+  }
+  .flip-chip:hover { background: rgba(46,224,106,0.10); border-color: rgba(46,224,106,0.40); color: var(--text); }
+  .flip-chip.active { background: var(--grad); border-color: transparent; color: #fff; box-shadow: 0 4px 18px rgba(46,224,106,0.32); }
+
+  .flip-custom-wrap { display: flex; gap: 8px; margin-top: 10px; }
+  .flip-custom-hint { font-size: 12px; color: var(--red); margin-top: 6px; min-height: 16px; }
+  .flip-item-wrap { margin-top: 12px; }
+  .flip-item-wrap .target-list { max-height: 190px; }
+
+  /* dimmed = control has no effect in the current mode (Price during item-versus) */
+  .flip-dim { opacity: .4; pointer-events: none; }
+
+  @media (max-width: 600px) {
+    .flip-custom-wrap { flex-wrap: wrap; }
+  }
+
+
+  /* ===================================================================
      UNIFIED FLIP CARD (wf-*) — Stage 1 engine output.
      Reuses the Pump hero (.pump-dream-obj / .pump-obj-* / .pump-flips-lbl /
      .pump-dream-name / .pump-dream-price / .pump-mult-badge) and the sc
