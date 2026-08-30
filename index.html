@@ -124,14 +124,26 @@
            Cope / Surprise me / How far are hidden this pass — kept in the DOM
            (style="display:none") so app.js listeners + their modals survive for Phase 2. -->
       <div class="emotion-doors" id="emotionDoors">
+        <!-- HERO: the mega flip-card maker — full-width, primary -->
+        <button class="door-btn door-hero" onclick="openStatusCheckModal()">
+          <span class="door-emoji">📸</span>
+          <span class="door-label">Make a Flip Card</span>
+          <span class="door-sublabel">status · pump · cope · 🎲 · pick any item</span>
+        </button>
+
+        <!-- Row 2 -->
         <button class="door-btn door-dunk" id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
-        <button class="door-btn door-pump" id="doorPump"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
-        <button class="door-btn" onclick="openStatusCheckModal()"><span class="door-emoji">📸</span><span class="door-label">Make a Flip Card</span></button>
-        <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
         <a class="door-btn" href="/ladder"><span class="door-emoji">📖</span><span class="door-label">Full ladder</span></a>
+
+        <!-- Row 3 -->
+        <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
         <a class="door-btn" href="/parity"><span class="door-emoji">⚖️</span><span class="door-label">wen parity?</span></a>
 
-        <!-- hidden this pass, kept for Phase 2 rewiring -->
+        <!-- Pump door retained but hidden — its behaviour now lives inside Make a Flip Card.
+             Kept in the DOM so the app.js #doorPump listener never throws (Stage 4 deletes it). -->
+        <button class="door-btn door-pump" id="doorPump" style="display:none"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
+
+        <!-- hidden earlier passes, kept for Stage 4 janitorial deletion -->
         <button class="door-btn door-cope" id="doorCope" style="display:none"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
         <button class="door-btn door-wonder" id="doorWonder" style="display:none"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
         <button class="door-btn" id="openCalc" style="display:none"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
