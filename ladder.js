@@ -371,5 +371,5 @@ const TIER_META = {
     heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',        emoji: '💎' },
     snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $0.001 to $1,000', emoji: '🏠' },
     absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',  emoji: '🏖️' },
-    void:         { cls: 'tier-dust',   text: '🕳 The Gutter — stuff so worthless it fell through the floor',  emoji: '🕳️' },
+    void:         { cls: 'tier-dust',   text: '🕳 The Gutter — stuff so cheap it fell through the price floor',  emoji: '🕳️' },
 };
