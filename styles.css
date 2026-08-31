@@ -1502,4 +1502,23 @@
     color: rgba(46,224,106,0.7);
   }
 
+  /* ===================================================================
+     MAFC HERO — inline flip-card maker promoted to the homepage hero
+     (TICKET 3, un-modaled from #statusCheckModal). Pass A = containment
+     only; Pass B adds the compact chip picker + BTC pre-fill + polish.
+     =================================================================== */
+  .mafc-hero {
+    max-width: 620px;
+    margin: 22px auto 0;
+    text-align: left;
+    background: var(--bg-2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .mafc-hero-head { text-align: center; padding: 20px 20px 4px; }
+  .mafc-hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  .mafc-hero-sub { color: var(--muted); font-size: 12px; letter-spacing: 0.03em; margin-top: 4px; }
+
+
 
