@@ -213,6 +213,7 @@
 
   function renderLadder() {
     const el = document.getElementById('clusters');
+    if (!el) return;                      // ladder markup removed (TICKET 3) — bail, don't throw
     const ready = state.filter(t => t.price != null && (chainFilter === 'all' || t.chain === chainFilter));
     if (!ready.length) return;
 
@@ -323,7 +324,7 @@
   let _refreshTimer   = null;
   let _refreshDelayMs = BASE_REFRESH_MS;
 
-  const renderAll = () => { renderTicker(); renderLadder(); renderUpdated(); };
+  const renderAll = () => { renderTicker(); renderLadder(); renderScCoinList(); renderUpdated(); };
 
   // Group coins by their DexScreener chain (pulsechain / ethereum / bsc / base).
   function tokensByChain() {
@@ -422,6 +423,7 @@
   }
 
   renderTicker();
+  renderScCoinList();   // paint the inline MAFC picker on load (loading rows until prices land)
 
   function handleDeepLink() {
     const raw = window.location.hash.replace(/^#/,'').trim();
@@ -620,21 +622,26 @@
     return fmtItemPrice(dollarGap) + ' to go.  ' + tag;
   }
 
+   // MAFC is now inline in the hero (TICKET 3). "Open" = refresh the picker + scroll to it.
+   function _scrollToHeroMafc() {
+    const el = document.getElementById('mafcHero');
+    if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
    function openStatusCheckModal() {
     _flipResetAll();
     renderScCoinList();
-    document.getElementById('scCardWrap').style.display = 'none';
-    document.getElementById('statusCheckModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    const w = document.getElementById('scCardWrap');
+    if (w) w.style.display = 'none';
+    _scrollToHeroMafc();
   }
   function openStatusCheckModalForCoin(sym) {
     _flipResetAll();
     renderScCoinList();
-    document.getElementById('scCardWrap').style.display = 'none';
-    document.getElementById('statusCheckModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    const w = document.getElementById('scCardWrap');
+    if (w) w.style.display = 'none';
     // Pre-render the card for this coin immediately (Today / next rung / straight)
     renderStatusCard(sym);
+    _scrollToHeroMafc();
   }
   // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
   // contract address string. Re-uses resolveContractAddress + renderStatusCardFromData + caShowFail
@@ -653,13 +660,11 @@
     else { caShowFail(result.reason); }
   }
 
-  function closeStatusCheckModal() {
-    document.getElementById('statusCheckModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+  function closeStatusCheckModal() { /* modal retired in TICKET 3 — MAFC is inline; no-op */ }
 
   function renderScCoinList() {
     const wrap = document.getElementById('scCoinList');
+    if (!wrap) return;
     wrap.innerHTML = TOKENS.map(t => {
       const s = state.find(x => x.sym===t.sym);
       const loading = !s || s.price==null;
