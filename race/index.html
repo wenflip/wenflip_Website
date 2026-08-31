@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>wenflip — the race</title>
+<meta name="description" content="Live race: which coin flips its next real-world thing first." />
+<!-- Parked / unlinked page for now: keep it out of search until it's polished. -->
+<meta name="robots" content="noindex, nofollow" />
+<link rel="canonical" href="https://wenflip.com/race" />
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.dexscreener.com">
+<link rel="dns-prefetch" href="https://api.dexscreener.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet"></noscript>
+
+<!-- Reuse the site's stylesheet so cards match the homepage exactly and stay in sync. -->
+<link rel="stylesheet" href="/styles.css">
+
+<!-- Race-only overrides: the cards aren't clickable here, so kill the tap affordances. -->
+<style>
+  .race-header { padding: 40px 0 8px; text-align: center; }
+  .race-header .logo { font-size: clamp(38px, 6vw, 64px); margin: 0 auto; }
+  .race-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(20px, 3vw, 28px); font-weight: 700;
+    letter-spacing: -0.01em; margin-top: 10px;
+  }
+  .race-title .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .race-sub { margin: 8px auto 0; max-width: 480px; color: var(--muted); font-size: clamp(13px, 1.6vw, 15px); line-height: 1.5; }
+  .race-back { display: inline-block; margin-top: 16px; color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: 0.02em; }
+  .race-back:hover { color: var(--text); }
+
+  .race-wrap { max-width: 860px; margin: 22px auto 0; }
+
+  /* No coin here opens anything — remove the "clickable" cues from the shared card styles. */
+  .clusters .card-top { cursor: default; }
+  .clusters .card-top:hover { background: transparent; transform: none; }
+
+  footer .disc a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<header class="race-header container">
+  <a href="/" aria-label="wenflip home"><h1 class="logo">wenflip</h1></a>
+  <div class="race-title">the <span class="grad">race</span></div>
+  <p class="race-sub">Every coin, sorted by who's closest to flipping its next real-world thing. Live.</p>
+  <a class="race-back" href="/">← back to wenflip.com</a>
+</header>
+
+<div class="container">
+  <div class="race-wrap">
+    <div class="coin-zone">
+      <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
+        <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
+        <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
+        <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">The Rest</button>
+      </div>
+
+      <div class="clusters" id="clusters">
+        <div class="clusters-loading">
+          <span class="skel-dot"></span>
+          <span>Loading live prices…</span>
+        </div>
+      </div>
+
+      <p class="updated" id="updated" style="text-align:center;">Fetching live prices…</p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="ftag">The race.</div>
+    <div class="disc">Not financial advice. Just memes and math. &nbsp;·&nbsp; <a href="/">wenflip.com</a></div>
+  </footer>
+</div>
+
+<!-- Shared data, loaded from the repo root. NOT duplicated into this file.
+     Plain (non-deferred) + in order so TOKENS and LADDER are defined before the race script runs. -->
+<script src="/coins.js"></script>
+<script src="/ladder.js"></script>
+
+<script>
+(function () {
+  // Guard: if the shared data files didn't load, say so instead of throwing.
+  if (typeof TOKENS === 'undefined' || typeof LADDER === 'undefined') {
+    var c = document.getElementById('clusters');
+    if (c) c.innerHTML = '<div class="clusters-loading"><span>Couldn\u2019t load coin data. Check that /coins.js and /ladder.js exist at the site root.</span></div>';
+    return;
+  }
+
+  // ---- live state, one row per token ----
+  const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null, lastGood: null }));
+
+  // ==== PRICE FORMATTERS (copied verbatim from the homepage app.js) ====
+  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function fmtCoinPrice(p) {
+    if (p == null) return '—';
+    if (p <= 0)    return '$0';
+    if (p >= 1000) return '$' + Math.floor(p).toLocaleString('en-US');
+    if (p >= 1) {
+      const trunc = Math.floor(p * 100) / 100;
+      let s = trunc.toFixed(2).replace(/\.?0+$/, '');
+      const [int, dec] = s.split('.');
+      const intFmt = parseInt(int, 10).toLocaleString('en-US');
+      return '$' + (dec ? intFmt + '.' + dec : intFmt);
+    }
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const factor = Math.pow(10, 3 - mag);
+      const truncated = Math.floor(p * factor) / factor;
+      const decPlaces = -mag + 3;
+      let s = truncated.toFixed(decPlaces).replace(/0+$/, '').replace(/\.$/, '');
+      return '$' + s;
+    }
+    const mag2 = Math.floor(Math.log10(p));
+    const leadingZeros = -mag2 - 1;
+    const factor2 = Math.pow(10, 3 - mag2);
+    const truncSig = Math.floor(p * factor2) / factor2;
+    const decPlaces2 = leadingZeros + 4;
+    let raw = truncSig.toFixed(decPlaces2);
+    const afterDot = raw.split('.')[1] || '';
+    let zCount = 0;
+    for (let i = 0; i < afterDot.length; i++) { if (afterDot[i] === '0') zCount++; else break; }
+    const sigPart = afterDot.slice(zCount).replace(/0+$/, '');
+    const subDigit = SUB_DIGITS[zCount] || String(zCount);
+    return '$0.0' + subDigit + sigPart;
+  }
+  function fmtPrice(p) { return fmtCoinPrice(p); }
+
+  function fmtItemPrice(p) {
+    if (p == null) return '—';
+    if (p >= 1000) return '$' + p.toLocaleString('en-US', { maximumFractionDigits: 0 });
+    if (p >= 1)    return '$' + p.toFixed(2).replace(/\.?0+$/, '');
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const dec = Math.max(0, -mag + 3);
+      return '$' + p.toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
+    }
+    return '$' + p.toPrecision(2);
+  }
+
+  // ==== LADDER MATH (copied verbatim) ====
+  function findRungIndex(price) {
+    if (price == null) return -1;
+    for (let i = 0; i < LADDER.length; i++) {
+      if (LADDER[i].price <= price) return i;
+    }
+    return LADDER.length - 1;
+  }
+
+  // The sort key: how far a coin has climbed from its last-cleared rung toward the next.
+  // 1.0 = top of the ladder. Higher = closer to its next flip.
+  function flipReadiness(t) {
+    if (t.price == null) return -1;
+    const i = findRungIndex(t.price);
+    const nextRung = LADDER[i - 1];
+    const prevRung = LADDER[i];
+    if (!nextRung) return 1.0;
+    const span = nextRung.price - (prevRung ? prevRung.price : 0);
+    if (span <= 0) return 0;
+    return Math.min(1, Math.max(0, (t.price - (prevRung ? prevRung.price : 0)) / span));
+  }
+
+  function rungLabelForToken(rung) {
+    if (!rung) return null;
+    return { name: rung.name, price: fmtItemPrice(rung.price), featured: !!rung.featured };
+  }
+  function starHtml(featured) {
+    if (!featured) return '';
+    return '<span class="star" title="Featured flip — these are the bangers">⭐</span>';
+  }
+
+  // ==== RENDER: the race (renderLadder minus tap-to-modal, chevron, hint, show-all) ====
+  let chainFilter = 'all';
+
+  function renderRace() {
+    const el = document.getElementById('clusters');
+    if (!el) return;
+    const ready = state.filter(t => t.price != null && (chainFilter === 'all' || t.chain === chainFilter));
+    if (!ready.length) return;
+
+    const ordered = [...ready].sort((a, b) => flipReadiness(b) - flipReadiness(a));
+
+    const cards = ordered.map((t, idx) => {
+      const i = findRungIndex(t.price);
+      const nextRung = LADDER[i - 1];
+      const prevRung = LADDER[i];
+      const next = rungLabelForToken(nextRung);
+      const chgCls = t.chg >= 0 ? 'pos' : 'neg';
+      const chgStr = (t.chg >= 0 ? '+' : '') + (t.chg || 0).toFixed(2) + '%';
+      const chainCls = t.chain === 'pulsechain' ? 'chain-pulsechain' : 'chain-major';
+
+      let pct = 0;
+      if (nextRung) {
+        const span = nextRung.price - (prevRung ? prevRung.price : 0);
+        pct = span > 0 ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100)) : 0;
+      } else {
+        const fallback = [...LADDER].reverse().find(r => r.price > t.price);
+        const targetP = fallback ? fallback.price : 0.0001;
+        pct = Math.min(100, Math.max(0, (t.price / targetP) * 100));
+      }
+      const pctDisplay = pct > 0 ? Math.max(3, pct) : 0;
+
+      let caption = '';
+      if (!nextRung) {
+        caption = `<span class="cap-pct">Top of the ladder 🏆</span>`;
+      } else {
+        const pctRounded = pct < 1 ? pct.toFixed(1) : Math.round(pct);
+        caption = `<span class="cap-pct">${pctRounded}% to</span><span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span>`;
+      }
+
+      const isStale = (t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS);
+
+      return `
+        ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
+        <div class="cluster ${chainCls}" data-sym="${t.sym}">
+          <div class="card-top">
+            <div class="card-logo"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/></div>
+            <div class="card-id">
+              <div class="card-sym">${t.sym}</div>
+            </div>
+            <div class="card-spacer"></div>
+            <div class="card-right">
+              <span class="card-price"${isStale ? ' style="opacity:.5" title="Last known price — live feed is lagging"' : ''}>${fmtPrice(t.price)}</span>${isStale ? '<span style="font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.5;margin-left:5px;text-transform:uppercase;">stale</span>' : ''}
+              <span class="card-chg ${chgCls}">${chgStr}</span>
+            </div>
+          </div>
+          <div class="card-caption">${caption}</div>
+          <div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pctDisplay.toFixed(2)}%"></div></div></div>
+          <div class="card-identity">${t.identity || ''}</div>
+        </div>`;
+    });
+
+    el.innerHTML = cards.join('');
+  }
+
+  // Chain filter tabs
+  document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const next = btn.getAttribute('data-chain');
+      if (next === chainFilter) return;
+      chainFilter = next;
+      document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(b => {
+        const active = b.getAttribute('data-chain') === chainFilter;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      renderRace();
+    });
+  });
+
+  // "last updated" line
+  let lastFetch = null;
+  function renderUpdated() {
+    const el = document.getElementById('updated');
+    if (!el) return;
+    if (!lastFetch) { el.innerHTML = 'Fetching live prices…'; return; }
+    const secs = Math.round((Date.now() - lastFetch) / 1000);
+    el.innerHTML = `Live prices · last updated <b>${secs}s ago</b> · refreshes every 60s`;
+  }
+  setInterval(renderUpdated, 1000);
+
+  // ==== LIVE PRICE FETCH (copied verbatim from app.js) ====
+  const FETCH_TIMEOUT_MS = 5000;
+  const BASE_REFRESH_MS  = 60000;
+  const MAX_REFRESH_MS   = 240000;
+  const STALE_AFTER_MS   = 90000;
+
+  let _refreshTimer   = null;
+  let _refreshDelayMs = BASE_REFRESH_MS;
+
+  const renderAll = () => { renderRace(); renderUpdated(); };
+
+  function tokensByChain() {
+    const groups = {};
+    for (const t of TOKENS) {
+      const chain = (t.dexChain || '').trim();
+      const addr  = (t.pairAddress || '').trim();
+      if (!chain || !addr) {
+        const i = state.findIndex(s => s.sym === t.sym);
+        if (i >= 0) { state[i].status = 'err'; state[i].error = 'no pair address'; }
+        continue;
+      }
+      (groups[chain] = groups[chain] || []).push(t);
+    }
+    return groups;
+  }
+
+  function _applyPair(t, pair) {
+    const i = state.findIndex(s => s.sym === t.sym);
+    if (i < 0) return false;
+    if (!pair || pair.priceUsd == null) {
+      state[i].status = 'err';
+      state[i].error  = 'no pair data';
+      return false;
+    }
+    state[i].price    = parseFloat(pair.priceUsd);
+    state[i].chg      = pair.priceChange?.h24 ?? 0;
+    state[i].status   = 'ok';
+    state[i].error    = null;
+    state[i].lastGood = Date.now();
+    return true;
+  }
+
+  function _markChainStale(tokens, reason) {
+    for (const t of tokens) {
+      const i = state.findIndex(s => s.sym === t.sym);
+      if (i >= 0) { state[i].status = 'err'; state[i].error = String(reason).slice(0, 60); }
+    }
+  }
+
+  async function fetchChainBatch(chain, tokens) {
+    const addrs = tokens.map(t => t.pairAddress.trim()).join(',');
+    const url   = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${addrs}`;
+    const ctrl  = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+    let json;
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      json = await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+    const pairs  = Array.isArray(json.pairs) ? json.pairs : (json.pair ? [json.pair] : []);
+    const byAddr = {};
+    for (const p of pairs) { if (p && p.pairAddress) byAddr[p.pairAddress.toLowerCase()] = p; }
+    let ok = 0;
+    for (const t of tokens) {
+      if (_applyPair(t, byAddr[t.pairAddress.trim().toLowerCase()])) ok++;
+    }
+    return ok;
+  }
+
+  async function refreshAll() {
+    const groups = tokensByChain();
+    const chains = Object.keys(groups);
+    const jobs = chains.map(chain =>
+      fetchChainBatch(chain, groups[chain])
+        .then(ok => { renderAll(); return ok; })
+        .catch(err => { _markChainStale(groups[chain], err); renderAll(); throw err; })
+    );
+    const results = await Promise.allSettled(jobs);
+    const anyOk = state.some(s => s.status === 'ok');
+    if (anyOk) lastFetch = Date.now();
+    const totalOutage = results.length > 0 && results.every(r => r.status === 'rejected');
+    _refreshDelayMs = totalOutage ? Math.min(MAX_REFRESH_MS, _refreshDelayMs * 2) : BASE_REFRESH_MS;
+    clearTimeout(_refreshTimer);
+    _refreshTimer = setTimeout(refreshAll, _refreshDelayMs);
+    renderAll();
+  }
+
+  refreshAll();
+})();
+</script>
+</body>
+</html>
