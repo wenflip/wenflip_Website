@@ -48,7 +48,88 @@
   <p class="bridge-line"><span class="bridge-arrow">→</span> <span class="bridge-pulse">PulseChain</span> runs the same math for pennies.</p>
   -->
 
-  <!-- HERO FLIP GRID — 6 core coins + multiplier toggle -->
+  <!-- HERO = MAKE A FLIP CARD (un-modaled from #statusCheckModal in TICKET 3) -->
+  <div class="mafc-hero" id="mafcHero">
+    <div class="mafc-hero-head">
+      <h2 class="mafc-hero-title">Make a Flip Card</h2>
+      <p class="mafc-hero-sub">Pick a coin. Bend the number. See what it flips.</p>
+    </div>
+    <div class="ca-tool">
+      <input id="caInput" class="ca-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="or paste any contract address" />
+      <button id="caGoBtn" class="ca-go-btn" type="button">Check</button>
+    </div>
+    <div id="caFailMsg" class="ca-fail" style="display:none"></div>
+    <div class="flip-random-row">
+      <button id="flipRandomBtn" class="flip-random-btn">🎲 Surprise me — pick a random coin</button>
+    </div>
+    <div class="sc-coin-list" id="scCoinList"></div>
+
+    <!-- MEGA CONTROLS (Stage 2): Price / Target / Voice -->
+    <div class="flip-ctrl-row">
+      <div class="calc-lbl">Price</div>
+      <div class="flip-chip-row" id="flipPriceRow">
+        <button class="flip-chip active" data-mult="1">Today</button>
+        <button class="flip-chip" data-mult="2">2×</button>
+        <button class="flip-chip" data-mult="5">5×</button>
+        <button class="flip-chip" data-mult="10">10×</button>
+        <button class="flip-chip" data-mult="100">100×</button>
+        <button class="flip-chip" data-mult="custom">Custom ▸</button>
+      </div>
+      <div class="flip-custom-wrap" id="flipCustomWrap" style="display:none">
+        <input class="pump-input" id="flipCustomInput" type="text" placeholder='e.g. "25x" or "$1.00"' autocomplete="off" spellcheck="false" inputmode="decimal"/>
+        <button class="pump-go-btn" id="flipCustomGo">Go</button>
+      </div>
+      <div class="flip-custom-hint" id="flipCustomHint"></div>
+    </div>
+
+    <div class="flip-ctrl-row">
+      <div class="calc-lbl">Flip against</div>
+      <div class="flip-chip-row" id="flipTargetRow">
+        <button class="flip-chip active" data-target="next">Next rung</button>
+        <button class="flip-chip" data-target="item">Pick an item ▸</button>
+      </div>
+      <div class="flip-item-wrap" id="flipItemWrap" style="display:none">
+        <div class="calc-search-wrap">
+          <span class="calc-search-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"></circle><line x1="20" y1="20" x2="15.8" y2="15.8"></line></svg></span>
+          <input class="calc-search" id="flipItemSearch" type="text" placeholder="Search items… Harvard, Big Mac, Cheerio" autocomplete="off" spellcheck="false"/>
+        </div>
+        <div class="target-list" id="flipItemList"></div>
+      </div>
+    </div>
+
+    <div class="flip-ctrl-row" id="flipVoiceRowWrap" style="display:none">
+      <div class="calc-lbl">Voice</div>
+      <div class="flip-chip-row" id="flipVoiceRow">
+        <button class="flip-chip active" data-voice="straight">Straight</button>
+        <button class="flip-chip" data-voice="cope">Cope</button>
+      </div>
+    </div>
+
+    <div class="sc-card-wrap" id="scCardWrap" style="display:none">
+      <div id="scResultCard" class="sc-result-card flip-card">
+        <!-- rendered by JS -->
+      </div>
+      <div class="calc-share-row sc-share-row" style="margin-top:14px;">
+        <button class="calc-share-btn" id="scShareBtn" onclick="scExport()">
+          <span id="scShareIcon">📋</span><span id="scShareText">Copy as image</span>
+        </button>
+        <button class="calc-share-btn sc-share-btn-x" id="scShareBtn2" onclick="scShare()">
+          <span id="scShareIcon2">𝕏</span><span id="scShareText2">Share</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TICKER — switched OFF. Element kept in the DOM so app.js renderTicker() still runs
+     without throwing; remove the inline display:none to switch the bar back on. -->
+<div class="ticker-wrap" id="tickerWrap" style="display:none">
+  <div class="ticker" id="ticker"></div>
+</div>
+
+<div class="container">
+
+  <!-- 9-GRID — moved below the MAFC hero in TICKET 3 -->
   <div class="hero-flip">
     <div class="hero-chain" id="heroChain" role="tablist" aria-label="Filter coins by chain">
       <button type="button" class="hero-mult-btn active" data-chain="all"        role="tab" aria-selected="true">All</button>
@@ -73,16 +154,7 @@
       <a class="full-ladder-btn full-ladder-btn-standings" href="/standings">🏁 wen BTC? see the whole board →</a>
     </div>
   </div>
-</header>
-
-<!-- TICKER — switched OFF. Element kept in the DOM so app.js renderTicker() still runs
-     without throwing; remove the inline display:none to switch the bar back on. -->
-<div class="ticker-wrap" id="tickerWrap" style="display:none">
-  <div class="ticker" id="ticker"></div>
-</div>
-
-<div class="container">
-
+  
   <!-- ============================================================
        JUST FLIPPED FEED — promoted directly under the hero.
        Proof-of-life first: timestamped, dynamic, the whole pitch
@@ -101,26 +173,6 @@
   <div class="main-grid">
     <section>
 
-      <!-- ============================================================
-           LADDER — the core mechanic, promoted above the toys.
-           Substance before toys.
-           ============================================================ -->
-        <!-- LADDER / RACE section — HIDDEN. Preserved live at /race (own file).
-           Deleted for real at the start of TICKET 3, which rebuilds this slot. -->
-      <div class="coin-zone" style="display:none">
-        <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
-          <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
-          <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
-          <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">The Rest</button>
-        </div>
-        <div class="clusters" id="clusters">
-          <div class="clusters-loading">
-            <span class="skel-dot"></span>
-            <span>Loading live prices…</span>
-          </div>
-        </div>
-      
-      </div>
 
            <!-- ZONE HEADER: names the interactive block (stays glued to the games) -->
       <div class="ladder-head" id="domath" style="text-align:center;scroll-margin-top:20px;">
@@ -199,88 +251,7 @@
 <script src="ladder.js" defer></script>
 <script src="app.js" defer></script>
 
-<!-- STATUS CHECK MODAL -->
-<div class="modal-backdrop" id="statusCheckModal" onclick="if(event.target===this)closeStatusCheckModal()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Make a Flip Card">
-    <div class="modal-head">
-      <div>
-        <h3>Make a Flip Card</h3>
-        <div class="sub">Pick a coin. Bend the number. See what it flips.</div>
-      </div>
-      <button class="modal-close" aria-label="Close" onclick="closeStatusCheckModal()">✕</button>
-    </div>
-    <div class="modal-body" id="statusCheckBody" style="padding:0 0 24px;overflow-y:auto;">
-      <div class="ca-tool">
-        <input id="caInput" class="ca-input" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="or paste any contract address" />
-        <button id="caGoBtn" class="ca-go-btn" type="button">Check</button>
-      </div>
-      <div id="caFailMsg" class="ca-fail" style="display:none"></div>
-           <div class="flip-random-row">
-        <button id="flipRandomBtn" class="flip-random-btn">🎲 Surprise me — pick a random coin</button>
-      </div>
-      <div class="sc-coin-list" id="scCoinList"></div>
 
-      <!-- MEGA CONTROLS (Stage 2): Price / Target / Voice -->
-      <div class="flip-ctrl-row">
-        <div class="calc-lbl">Price</div>
-        <div class="flip-chip-row" id="flipPriceRow">
-          <button class="flip-chip active" data-mult="1">Today</button>
-          <button class="flip-chip" data-mult="2">2×</button>
-          <button class="flip-chip" data-mult="5">5×</button>
-          <button class="flip-chip" data-mult="10">10×</button>
-          <button class="flip-chip" data-mult="100">100×</button>
-          <button class="flip-chip" data-mult="custom">Custom ▸</button>
-        </div>
-        <div class="flip-custom-wrap" id="flipCustomWrap" style="display:none">
-          <input class="pump-input" id="flipCustomInput" type="text" placeholder='e.g. "25x" or "$1.00"' autocomplete="off" spellcheck="false" inputmode="decimal"/>
-          <button class="pump-go-btn" id="flipCustomGo">Go</button>
-        </div>
-        <div class="flip-custom-hint" id="flipCustomHint"></div>
-      </div>
-
-      <div class="flip-ctrl-row">
-        <div class="calc-lbl">Flip against</div>
-        <div class="flip-chip-row" id="flipTargetRow">
-          <button class="flip-chip active" data-target="next">Next rung</button>
-          <button class="flip-chip" data-target="item">Pick an item ▸</button>
-        </div>
-        <div class="flip-item-wrap" id="flipItemWrap" style="display:none">
-          <div class="calc-search-wrap">
-            <span class="calc-search-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"></circle><line x1="20" y1="20" x2="15.8" y2="15.8"></line></svg></span>
-            <input class="calc-search" id="flipItemSearch" type="text" placeholder="Search items… Harvard, Big Mac, Cheerio" autocomplete="off" spellcheck="false"/>
-          </div>
-          <div class="target-list" id="flipItemList"></div>
-        </div>
-      </div>
-
-       <!-- VOICE (Straight/Cope) pulled from the flow — cope writing was bloat.
-           Hidden, not deleted, so the app.js #flipVoiceRow listener never throws.
-           flipVoice defaults to 'straight' and nothing can change it now → every
-           card renders straight. Stage 4 deletes this row + the voice wiring + cope code. -->
-      <div class="flip-ctrl-row" id="flipVoiceRowWrap" style="display:none">
-        <div class="calc-lbl">Voice</div>
-        <div class="flip-chip-row" id="flipVoiceRow">
-          <button class="flip-chip active" data-voice="straight">Straight</button>
-          <button class="flip-chip" data-voice="cope">Cope</button>
-        </div>
-      </div>
-
-      <div class="sc-card-wrap" id="scCardWrap" style="display:none">
-        <div id="scResultCard" class="sc-result-card flip-card">
-          <!-- rendered by JS -->
-        </div>
-        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
-          <button class="calc-share-btn" id="scShareBtn" onclick="scExport()">
-            <span id="scShareIcon">📋</span><span id="scShareText">Copy as image</span>
-          </button>
-          <button class="calc-share-btn sc-share-btn-x" id="scShareBtn2" onclick="scShare()">
-            <span id="scShareIcon2">𝕏</span><span id="scShareText2">Share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- COPE MODAL -->
 <div class="modal-backdrop" id="copeModal" onclick="if(event.target===this)closeCope()">
