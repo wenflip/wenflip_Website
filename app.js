@@ -620,18 +620,20 @@
     return fmtItemPrice(dollarGap) + ' to go.  ' + tag;
   }
 
-  function openStatusCheckModal() {
+   function openStatusCheckModal() {
+    _flipResetAll();
     renderScCoinList();
     document.getElementById('scCardWrap').style.display = 'none';
     document.getElementById('statusCheckModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
   function openStatusCheckModalForCoin(sym) {
+    _flipResetAll();
     renderScCoinList();
     document.getElementById('scCardWrap').style.display = 'none';
     document.getElementById('statusCheckModal').classList.add('open');
     document.body.style.overflow = 'hidden';
-    // Pre-render the card for this coin immediately
+    // Pre-render the card for this coin immediately (Today / next rung / straight)
     renderStatusCard(sym);
   }
   // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
@@ -819,6 +821,132 @@
     }
   })();
 
+  // ===================================================================
+  // UNIFIED FLIP CARD ENGINE — Stage 1.
+  // One renderer for every ladder-read card. Returns an HTML string; the
+  // caller injects it into a `.wf-flip-card.flip-card` container.
+  //
+  //   renderFlipCard({ coin, mult, item, voice })
+  //     coin  : { sym, name, price, chg, logo }   (required)
+  //     mult  : number × coin.price               (default 1 → "Today")
+  //     item  : { name, price } → item-versus body (default null)
+  //             (the old HFFF; dormant until Stage 2 wires the toggle)
+  //     voice : 'straight' | 'cope'               (default 'straight')
+  //
+  // Reuses: findRungIndex, flipProgressPct, fmtItemPrice, fmtPrice, fmtMult,
+  //         pumpObjSizeClass, getGapLine, pickCopeLine, htmlAttr, LADDER.
+  // ===================================================================
+  function renderFlipCard(opts) {
+    opts = opts || {};
+    const coin  = opts.coin || {};
+    const mult  = (opts.mult != null) ? opts.mult : 1;
+    const item  = opts.item || null;
+    const voice = opts.voice || 'straight';
+
+    const sym    = String(coin.sym  || '');
+    const name   = String(coin.name || sym);
+    const logo   = String(coin.logo || '');
+    const chg    = coin.chg || 0;
+    const price  = coin.price;
+    const pumped = mult > 1;
+    const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+
+    // identity row — 24h pill at Today, mult badge when pumped
+    const chgSign = chg >= 0 ? '▲' : '▼';
+    const chgCls  = chg >= 0 ? 'up' : 'down';
+    const badge = pumped
+      ? `<div class="pump-mult-badge">${fmtMult(mult)}×</div>`
+      : `<div class="wf-chg-pill ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}%</div>`;
+
+    const head = `
+      <div class="wf-head">
+        <img class="pump-logo" src="${htmlAttr(logo)}" alt="${htmlAttr(sym)}"/>
+        <div class="pump-coin-id">
+          <div class="pump-coin-sym">${htmlAttr(sym)}</div>
+          <div class="pump-coin-name-sm">${htmlAttr(name)} · ${fmtPrice(price)}</div>
+        </div>
+        ${badge}
+      </div>`;
+
+    let hero = '', foot = '';
+
+    if (item) {
+      // ---------- BODY 2: item-versus (old HFFF) — dormant until Stage 2 ----------
+      const tPrice  = item.price;
+      const flipped = price >= tPrice;
+      const eyeCls  = flipped ? '' : ' wf-chase';
+      hero = `
+        <div class="pump-dream-obj ${pumpObjSizeClass(item.name)}">
+          <div class="pump-flips-lbl${eyeCls}">${flipped ? 'FLIPS ✓' : 'CHASING'}</div>
+          <div class="pump-dream-name">${htmlAttr(item.name)}</div>
+          <div class="pump-dream-price">${fmtItemPrice(tPrice)}</div>
+        </div>`;
+      if (flipped) {
+        const n = price / tPrice;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt">1 ${htmlAttr(sym)} buys <span class="wf-to">${fmtMult(n)}× ${htmlAttr(item.name)}</span></div>`;
+      } else {
+        const pct = Math.min(99, Math.round((price / tPrice) * 100));
+        const gap = tPrice - price;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt"><b>${fmtMult(tPrice / price)}×</b> to reach <span class="wf-to">${htmlAttr(item.name)}</span></div>
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
+          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+      }
+    } else {
+      // ---------- BODY 1: ladder-read (Status / Pump / Cope / Surprise) ----------
+      const eff = price * mult;
+      const idx = findRungIndex(eff);
+      const cleared = LADDER[idx];
+      const next = LADDER[idx - 1];
+
+      if (idx === 0 || !next) {
+        hero = `
+          <div class="pump-dream-obj pump-obj-md pump-dream-obj-top">
+            <div class="pump-flips-lbl">CLEARED EVERYTHING ✓</div>
+            <div class="pump-dream-name">the entire ladder</div>
+            <div class="pump-dream-sub">There is nothing left to flip.</div>
+          </div>`;
+      } else if (idx === LADDER.length - 1 && eff < LADDER[idx].price) {
+        const first = LADDER[LADDER.length - 1];
+        const pct = Math.min(99, Math.round((eff / first.price) * 100));
+        const gap = first.price - eff;
+        hero = `
+          <div class="pump-dream-obj ${pumpObjSizeClass(first.name)}">
+            <div class="pump-flips-lbl wf-chase">CHASING</div>
+            <div class="pump-dream-name">${htmlAttr(first.name)}</div>
+            <div class="pump-dream-price">${fmtItemPrice(first.price)}</div>
+          </div>`;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt">not on the board yet · <b>${pct}%</b> of the way there</div>
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
+          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+      } else {
+        const pct = flipProgressPct(eff, cleared, next);
+        const gap = next.price - eff;
+        hero = `
+          <div class="pump-dream-obj ${pumpObjSizeClass(cleared.name)}">
+            <div class="pump-flips-lbl">${pumped ? 'WOULD FLIP' : 'FLIPPED ✓'}</div>
+            <div class="pump-dream-name">${htmlAttr(cleared.name)}</div>
+            <div class="pump-dream-price">${fmtItemPrice(cleared.price)}</div>
+          </div>`;
+        foot = `
+          <div class="pump-divider"></div>
+          <div class="wf-receipt">${pct}% to <span class="wf-to">${htmlAttr(next.name)}</span></div>
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
+          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+      }
+    }
+
+    const cope  = (voice === 'cope') ? `<div class="wf-cope">${opts.copeLine || pickCopeLine()}</div>` : '';
+    const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com</span></div>`;
+
+    return head + hero + `<div class="wf-foot">${foot}${cope}${stamp}</div>`;
+  }
+
   // Thin wrapper: look up a built-in coin by symbol, then delegate to the data-driven renderer.
   // Behavior for built-ins is byte-for-byte identical to before (their names/syms/logos contain
   // no HTML-special characters, so the escaping in renderStatusCardFromData is a no-op on them).
@@ -829,98 +957,21 @@
     renderStatusCardFromData({ sym, name: tk.name, price: s.price, chg: s.chg || 0, logo: tk.logo });
   }
 
-  // Data-driven renderer. Takes {sym, name, price, chg, logo} directly — used by both the
-  // built-in picker (via renderStatusCard) and the pasted-CA path (which never touches `state`).
+   // Data-driven renderer → now a thin adapter over the unified renderFlipCard() engine.
+  // Both the built-in picker (renderStatusCard) and the pasted-CA path call this.
+  // Stage 1: renders the new hero card at Today (mult 1), straight voice.
   function renderStatusCardFromData(tokenObj) {
     if (!tokenObj || tokenObj.price == null) return;
     caClearFail();
-    const sym  = String(tokenObj.sym  || '');
-    const name = String(tokenObj.name || sym);
-    const logo = String(tokenObj.logo || '');
-
-    const coinPrice = tokenObj.price;
-    const chg = tokenObj.chg || 0;
-    const chgSign = chg >= 0 ? '▲' : '▼';
-    const chgCls = chg >= 0 ? 'sc-up' : 'sc-down';
-    const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-    const clearedIdx = findRungIndex(coinPrice);
-    const clearedRung = LADDER[clearedIdx];
-    const nextRung = LADDER[clearedIdx - 1];
-
-    let zone3Html = '';
-    let zone4Html = '';
-    let hasDivider4 = false;
-
-    if (clearedIdx === 0 || !nextRung) {
-      // Top of ladder — no next rung
-      zone3Html = `<div class="sc-zone sc-zone-top-msg">
-        <div class="sc-top-msg-line">There is nothing left to flip.</div>
-        <div class="sc-top-msg-sub">It has cleared the entire ladder.</div>
-      </div>`;
-    } else if (clearedIdx === LADDER.length - 1 && coinPrice < LADDER[clearedIdx].price) {
-      // Below the ladder — no cleared rung
-      const firstRung = LADDER[LADDER.length - 1];
-      const pctRaw = Math.min(99, Math.round((coinPrice / firstRung.price) * 100));
-      const dollarGap = firstRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone">
-        <div class="sc-label">STATUS: not on the board yet</div>
-      </div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${firstRung.name}</span> <span class="sc-item-price">${fmtItemPrice(firstRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    } else {
-      // Normal case
-      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
-      const dollarGap = nextRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone">
-        <div class="sc-label">STATUS: FLIPPED</div>
-        <div class="sc-cleared-name">${clearedRung.name}</div>
-        <div class="sc-cleared-price">${fmtItemPrice(clearedRung.price)}</div>
-      </div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${nextRung.name}</span> <span class="sc-item-price">${fmtItemPrice(nextRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    }
-
-    document.getElementById('scResultCard').innerHTML = `
-      <div class="sc-zone sc-zone-identity">
-        <div class="sc-id-row">
-          <img class="sc-logo" src="${htmlAttr(logo)}" alt="${htmlAttr(sym)}"/>
-          <span class="sc-coin-fullname">${htmlAttr(name)}</span>
-        </div>
-        <div class="sc-price-row">
-          <span class="sc-live-price">${fmtPrice(coinPrice)}</span>
-          <span class="sc-chg ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}% (24h)</span>
-        </div>
-      </div>
-      <div class="sc-divider"></div>
-      ${zone3Html}
-      <div class="sc-divider"></div>
-      ${zone4Html}
-      ${hasDivider4 ? '<div class="sc-divider"></div>' : ''}
-      <div class="sc-stamp">
-        <span class="sc-date">${dateStr}</span>
-        <span class="sc-wm">wenflip.com</span>
-      </div>
-    `;
-
-    const wrap = document.getElementById('scCardWrap');
-    wrap.style.display = '';
-    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth',block:'nearest'}));
-
-    const icon = document.getElementById('scShareIcon');
-    const txt = document.getElementById('scShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
+    flipCoin = {
+      sym:   String(tokenObj.sym  || ''),
+      name:  String(tokenObj.name || tokenObj.sym || ''),
+      price: tokenObj.price,
+      chg:   tokenObj.chg || 0,
+      logo:  String(tokenObj.logo || ''),
+    };
+    renderFlipModalCard();
   }
-
   async function scExport() {
     const btn=document.getElementById('scShareBtn'),icon=document.getElementById('scShareIcon'),txt=document.getElementById('scShareText');
     await exportCardAsImage(document.getElementById('scResultCard'),btn,icon,txt,_isIOS);
@@ -991,6 +1042,181 @@
       btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
   }
+
+  // ===================================================================
+  // MAKE A FLIP CARD — mega modal controller (Stage 2)
+  // Converts the former Status modal into the four-knob flip-card maker.
+  // State = which coin / price mode / target / voice. Every control mutates
+  // state then calls renderFlipModalCard(), which feeds renderFlipCard().
+  // ===================================================================
+  let flipCoin      = null;         // {sym,name,price,chg,logo} or null
+  let flipMult      = 1;            // 1|2|5|10|100 or 'custom'
+  let flipCustomRaw = '';           // raw custom input ("25x" / "$1.00")
+  let flipTarget    = null;         // null (next rung) | {name, price}
+  let flipVoice     = 'straight';   // 'straight' | 'cope'
+  let flipCopeLine  = null;         // cached cope line (stable across control changes)
+
+  // Reset every control to defaults + resync the control UI. Called on each open.
+  function _flipResetAll() {
+    flipCoin = null; flipMult = 1; flipCustomRaw = '';
+    flipTarget = null; flipVoice = 'straight'; flipCopeLine = null;
+
+    const pr = document.getElementById('flipPriceRow');
+    if (pr) { pr.classList.remove('flip-dim'); pr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.mult === '1')); }
+    const tr = document.getElementById('flipTargetRow');
+    if (tr) tr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.target === 'next'));
+    const vr = document.getElementById('flipVoiceRow');
+    if (vr) vr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.voice === 'straight'));
+
+    const cw = document.getElementById('flipCustomWrap'); if (cw) { cw.style.display = 'none'; cw.classList.remove('flip-dim'); }
+    const iw = document.getElementById('flipItemWrap');   if (iw) iw.style.display = 'none';
+    const ci = document.getElementById('flipCustomInput'); if (ci) ci.value = '';
+    const is = document.getElementById('flipItemSearch');  if (is) is.value = '';
+    const ch = document.getElementById('flipCustomHint');   if (ch) ch.textContent = '';
+  }
+
+  function _flipSetActive(row, btn) {
+    if (!row) return;
+    row.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b === btn));
+  }
+
+  function _flipDimPrice(on) {
+    const pr = document.getElementById('flipPriceRow');
+    const cw = document.getElementById('flipCustomWrap');
+    if (pr) pr.classList.toggle('flip-dim', on);
+    if (cw) cw.classList.toggle('flip-dim', on);
+  }
+
+  // Resolve the effective multiplier. Returns a number, or null when 'custom'
+  // is selected but the input isn't a valid multiple/price yet.
+  function _flipEffectiveMult() {
+    if (flipMult !== 'custom') return flipMult;
+    if (!flipCoin) return null;
+    const parsed = parsePumpInput(flipCustomRaw);
+    if (!parsed) return null;
+    const hyp = computePumpHypPrice(flipCoin.price, parsed);
+    if (!hyp || hyp <= 0) return null;
+    return hyp / flipCoin.price;
+  }
+
+  // The single render path for the mega modal. Reads state → renderFlipCard().
+  function renderFlipModalCard() {
+    const wrap = document.getElementById('scCardWrap');
+    if (!flipCoin) { if (wrap) wrap.style.display = 'none'; return; }
+
+    const item = flipTarget ? { name: flipTarget.name, price: flipTarget.price } : null;
+
+    let mult = 1;
+    const hint = document.getElementById('flipCustomHint');
+    if (!item) {
+      const m = _flipEffectiveMult();
+      if (m === null) { if (hint) hint.textContent = 'Try "25x" for a multiple, or "$1.00" for a price.'; return; }
+      if (hint) hint.textContent = '';
+      mult = m;
+    } else if (hint) { hint.textContent = ''; }
+
+    const card = document.getElementById('scResultCard');
+    card.className = 'wf-flip-card flip-card';
+    card.innerHTML = renderFlipCard({ coin: flipCoin, mult: mult, item: item, voice: flipVoice, copeLine: flipCopeLine });
+
+    if (wrap) {
+      wrap.style.display = '';
+      requestAnimationFrame(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+    }
+    const icon = document.getElementById('scShareIcon');
+    const txt  = document.getElementById('scShareText');
+    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (txt)  txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
+  }
+
+  // Ladder search list for "Pick an item" target mode (reuses LADDER + .target-item styling).
+  function renderFlipItemList(filter) {
+    const list = document.getElementById('flipItemList');
+    if (!list) return;
+    const q = (filter || '').toLowerCase().trim();
+    const items = LADDER.filter(r => r.price != null && (!q || r.name.toLowerCase().includes(q)));
+    if (!items.length) { list.innerHTML = `<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`; return; }
+    list.innerHTML = items.map(r =>
+      `<div class="target-item ${flipTarget && flipTarget.name === r.name ? 'selected' : ''}" data-name="${htmlAttr(r.name)}" data-price="${r.price}"><span class="ti-name">${r.name}</span><span class="ti-price">${fmtItemPrice(r.price)}</span></div>`
+    ).join('');
+  }
+
+  // Wire the mega-modal controls once (static elements; deferred script → DOM exists).
+  (function wireFlipControls() {
+    const priceRow = document.getElementById('flipPriceRow');
+    if (priceRow) priceRow.addEventListener('click', e => {
+      const b = e.target.closest('.flip-chip'); if (!b) return;
+      const m = b.dataset.mult;
+      _flipSetActive(priceRow, b);
+      const cw = document.getElementById('flipCustomWrap');
+      if (m === 'custom') {
+        flipMult = 'custom';
+        if (cw) cw.style.display = '';
+        const ci = document.getElementById('flipCustomInput'); if (ci) setTimeout(() => ci.focus(), 60);
+      } else {
+        flipMult = parseFloat(m);
+        if (cw) cw.style.display = 'none';
+        renderFlipModalCard();
+      }
+    });
+
+    const customInput = document.getElementById('flipCustomInput');
+    const customGo    = document.getElementById('flipCustomGo');
+    function applyCustom() { flipMult = 'custom'; flipCustomRaw = customInput ? customInput.value : ''; renderFlipModalCard(); }
+    if (customGo)    customGo.addEventListener('click', applyCustom);
+    if (customInput) {
+      customInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyCustom(); } });
+      let deb = null;
+      customInput.addEventListener('input', () => { clearTimeout(deb); deb = setTimeout(applyCustom, 300); });
+    }
+
+    const targetRow = document.getElementById('flipTargetRow');
+    if (targetRow) targetRow.addEventListener('click', e => {
+      const b = e.target.closest('.flip-chip'); if (!b) return;
+      _flipSetActive(targetRow, b);
+      const iw = document.getElementById('flipItemWrap');
+      if (b.dataset.target === 'item') {
+        if (iw) iw.style.display = '';
+        _flipDimPrice(true);
+        renderFlipItemList('');
+        if (flipTarget) renderFlipModalCard();
+      } else {
+        flipTarget = null;
+        if (iw) iw.style.display = 'none';
+        _flipDimPrice(false);
+        renderFlipModalCard();
+      }
+    });
+
+    const itemList = document.getElementById('flipItemList');
+    if (itemList) itemList.addEventListener('click', e => {
+      const it = e.target.closest('.target-item'); if (!it) return;
+      flipTarget = { name: it.dataset.name, price: parseFloat(it.dataset.price) };
+      const is = document.getElementById('flipItemSearch');
+      renderFlipItemList(is ? is.value : '');
+      renderFlipModalCard();
+    });
+    const itemSearch = document.getElementById('flipItemSearch');
+    if (itemSearch) itemSearch.addEventListener('input', function () { renderFlipItemList(this.value); });
+
+    const voiceRow = document.getElementById('flipVoiceRow');
+    if (voiceRow) voiceRow.addEventListener('click', e => {
+      const b = e.target.closest('.flip-chip'); if (!b) return;
+      flipVoice = b.dataset.voice;
+      _flipSetActive(voiceRow, b);
+      flipCopeLine = (flipVoice === 'cope') ? pickCopeLine() : null;
+      renderFlipModalCard();
+    });
+
+    const randomBtn = document.getElementById('flipRandomBtn');
+    if (randomBtn) randomBtn.addEventListener('click', () => {
+      const ready = state.filter(s => s.price != null);
+      if (!ready.length) return;
+      const pool = (ready.length > 1 && flipCoin) ? ready.filter(s => s.sym !== flipCoin.sym) : ready;
+      const picked = pool[Math.floor(Math.random() * pool.length)];
+      renderStatusCard(picked.sym);   // sets flipCoin + renders at current controls
+    });
+  })();
 
   // ==== FLIPPENING MODAL ====
   // flCoinA / flCoinB each hold a full coin object: {sym, name, price, chg, logo}
@@ -1468,8 +1694,10 @@
       const nudge = hypPrice < coinPrice
         ? "That's a dump, not a pump. Aim higher. 👆"
         : "That's today's price. Now pump it. 👆";
-      placeholder.innerHTML = nudge +
+        placeholder.innerHTML = nudge +
         '<br><a href="#" class="pump-status-link" onclick="event.preventDefault();closePump();openStatusCheckModalForCoin(pumpCoin);">or grab today\'s card →</a>';
+      // (Link already routes to openStatusCheckModalForCoin = the mega modal. No change needed;
+      //  the old Pump modal is only reachable if something still calls openPump directly.)
       return;
     }
 
@@ -1641,16 +1869,18 @@
   // Door 1: Dunk → existing Flippening modal
   document.getElementById('doorDunk').addEventListener('click', openFlippen);
 
-  // Door 2: Pump → existing Pump modal
-  document.getElementById('doorPump').addEventListener('click', openPump);
+   // Door 2: Pump → MEGA flip-card modal (Stage 3). Old Pump modal retained but
+  // unreachable; opening the mega modal with Price defaulted, user picks a multiplier.
+  document.getElementById('doorPump').addEventListener('click', openStatusCheckModal);
 
-  // Door 3: Cope → new Cope modal
-  document.getElementById('doorCope').addEventListener('click', openCope);
-
- 
-
-  // Door 5: Wonder → zero-input: open modal + immediately render a random coin
-  document.getElementById('doorWonder').addEventListener('click', openWonder);
+  // Doors 3 & 5 (Cope / Surprise me) are folded into the mega modal (Voice: Cope,
+  // and the 🎲 Surprise-me button). Their buttons are display:none in index.html.
+  // Listeners are guarded so they no-op if the hidden buttons are ever removed —
+  // Cope/Wonder modal code is retained but unreachable (Stage 4 will delete it).
+  const _doorCope = document.getElementById('doorCope');
+  if (_doorCope) _doorCope.addEventListener('click', openCope);
+  const _doorWonder = document.getElementById('doorWonder');
+  if (_doorWonder) _doorWonder.addEventListener('click', openWonder);
 
   // ==== COPE ====
   let _copeLastLine = null;
@@ -2157,18 +2387,19 @@
     });
   }
 
-  // Open the existing Pump modal, pre-loaded to a coin at the given multiplier.
+  // Open the MEGA flip-card modal, pre-loaded to a coin at the given multiplier.
+  // (Was the old Pump modal; re-pointed in Stage 3. Name kept so the hero-grid
+  // click/keydown handlers that call openHeroPump() need no change.)
   function openHeroPump(sym, mult) {
-    openPump();                         // reset + open (defined in the PUMP MODAL section above)
-    pumpCoin = sym;
-    renderPumpCoinBadges();             // reflect the pre-selected coin
-    const multStr = String(mult);
-    const input = document.getElementById('pumpInput');
-    if (input) input.value = multStr + 'x';
-    // Highlight a matching quick-pick if one exists (2/5/10/100); Today (1×) has none.
-    pumpActiveQuick = document.querySelector('.pump-quick-btn[data-mult="' + multStr + '"]') ? multStr : null;
-    updatePumpQuickRow();
-    updatePumpResult();
+    openStatusCheckModal();             // resets controls + opens the mega modal
+    const m = parseFloat(mult);
+    // Reflect the incoming multiplier on the Price row (1/2/5/10/100 map to chips).
+    const priceRow = document.getElementById('flipPriceRow');
+    const chip = priceRow ? priceRow.querySelector('.flip-chip[data-mult="' + m + '"]') : null;
+    if (chip) { _flipSetActive(priceRow, chip); flipMult = m; }
+    else      { flipMult = (isFinite(m) && m > 0) ? m : 1; }  // non-chip mult still honored
+    // Select the coin + render at the resolved multiplier.
+    renderStatusCard(sym);
   }
 
   // Toggle wiring — Today / 2× / 5× / 10×

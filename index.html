@@ -124,14 +124,26 @@
            Cope / Surprise me / How far are hidden this pass — kept in the DOM
            (style="display:none") so app.js listeners + their modals survive for Phase 2. -->
       <div class="emotion-doors" id="emotionDoors">
+        <!-- HERO: the mega flip-card maker — full-width, primary -->
+        <button class="door-btn door-hero" onclick="openStatusCheckModal()">
+          <span class="door-emoji">📸</span>
+          <span class="door-label">Make a Flip Card</span>
+          <span class="door-sublabel">status · pump · cope · 🎲 · pick any item</span>
+        </button>
+
+        <!-- Row 2 -->
         <button class="door-btn door-dunk" id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
-        <button class="door-btn door-pump" id="doorPump"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
-        <button class="door-btn" onclick="openStatusCheckModal()"><span class="door-emoji">📸</span><span class="door-label">Make a Flip Card</span></button>
-        <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
         <a class="door-btn" href="/ladder"><span class="door-emoji">📖</span><span class="door-label">Full ladder</span></a>
+
+        <!-- Row 3 -->
+        <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
         <a class="door-btn" href="/parity"><span class="door-emoji">⚖️</span><span class="door-label">wen parity?</span></a>
 
-        <!-- hidden this pass, kept for Phase 2 rewiring -->
+        <!-- Pump door retained but hidden — its behaviour now lives inside Make a Flip Card.
+             Kept in the DOM so the app.js #doorPump listener never throws (Stage 4 deletes it). -->
+        <button class="door-btn door-pump" id="doorPump" style="display:none"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
+
+        <!-- hidden earlier passes, kept for Stage 4 janitorial deletion -->
         <button class="door-btn door-cope" id="doorCope" style="display:none"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
         <button class="door-btn door-wonder" id="doorWonder" style="display:none"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
         <button class="door-btn" id="openCalc" style="display:none"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
@@ -182,11 +194,11 @@
 
 <!-- STATUS CHECK MODAL -->
 <div class="modal-backdrop" id="statusCheckModal" onclick="if(event.target===this)closeStatusCheckModal()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Status Check">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Make a Flip Card">
     <div class="modal-head">
       <div>
-        <h3>Status Check</h3>
-        <div class="sub">Pick a coin to generate a snapshot card.</div>
+        <h3>Make a Flip Card</h3>
+        <div class="sub">Pick a coin. Bend the number. See what it flips.</div>
       </div>
       <button class="modal-close" aria-label="Close" onclick="closeStatusCheckModal()">✕</button>
     </div>
@@ -196,7 +208,56 @@
         <button id="caGoBtn" class="ca-go-btn" type="button">Check</button>
       </div>
       <div id="caFailMsg" class="ca-fail" style="display:none"></div>
+           <div class="flip-random-row">
+        <button id="flipRandomBtn" class="flip-random-btn">🎲 Surprise me — pick a random coin</button>
+      </div>
       <div class="sc-coin-list" id="scCoinList"></div>
+
+      <!-- MEGA CONTROLS (Stage 2): Price / Target / Voice -->
+      <div class="flip-ctrl-row">
+        <div class="calc-lbl">Price</div>
+        <div class="flip-chip-row" id="flipPriceRow">
+          <button class="flip-chip active" data-mult="1">Today</button>
+          <button class="flip-chip" data-mult="2">2×</button>
+          <button class="flip-chip" data-mult="5">5×</button>
+          <button class="flip-chip" data-mult="10">10×</button>
+          <button class="flip-chip" data-mult="100">100×</button>
+          <button class="flip-chip" data-mult="custom">Custom ▸</button>
+        </div>
+        <div class="flip-custom-wrap" id="flipCustomWrap" style="display:none">
+          <input class="pump-input" id="flipCustomInput" type="text" placeholder='e.g. "25x" or "$1.00"' autocomplete="off" spellcheck="false" inputmode="decimal"/>
+          <button class="pump-go-btn" id="flipCustomGo">Go</button>
+        </div>
+        <div class="flip-custom-hint" id="flipCustomHint"></div>
+      </div>
+
+      <div class="flip-ctrl-row">
+        <div class="calc-lbl">Flip against</div>
+        <div class="flip-chip-row" id="flipTargetRow">
+          <button class="flip-chip active" data-target="next">Next rung</button>
+          <button class="flip-chip" data-target="item">Pick an item ▸</button>
+        </div>
+        <div class="flip-item-wrap" id="flipItemWrap" style="display:none">
+          <div class="calc-search-wrap">
+            <span class="calc-search-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"></circle><line x1="20" y1="20" x2="15.8" y2="15.8"></line></svg></span>
+            <input class="calc-search" id="flipItemSearch" type="text" placeholder="Search items… Harvard, Big Mac, Cheerio" autocomplete="off" spellcheck="false"/>
+          </div>
+          <div class="target-list" id="flipItemList"></div>
+        </div>
+      </div>
+
+       <!-- VOICE (Straight/Cope) pulled from the flow — cope writing was bloat.
+           Hidden, not deleted, so the app.js #flipVoiceRow listener never throws.
+           flipVoice defaults to 'straight' and nothing can change it now → every
+           card renders straight. Stage 4 deletes this row + the voice wiring + cope code. -->
+      <div class="flip-ctrl-row" id="flipVoiceRowWrap" style="display:none">
+        <div class="calc-lbl">Voice</div>
+        <div class="flip-chip-row" id="flipVoiceRow">
+          <button class="flip-chip active" data-voice="straight">Straight</button>
+          <button class="flip-chip" data-voice="cope">Cope</button>
+        </div>
+      </div>
+
       <div class="sc-card-wrap" id="scCardWrap" style="display:none">
         <div id="scResultCard" class="sc-result-card flip-card">
           <!-- rendered by JS -->
