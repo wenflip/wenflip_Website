@@ -246,7 +246,11 @@
         </div>
       </div>
 
-      <div class="flip-ctrl-row">
+       <!-- VOICE (Straight/Cope) pulled from the flow — cope writing was bloat.
+           Hidden, not deleted, so the app.js #flipVoiceRow listener never throws.
+           flipVoice defaults to 'straight' and nothing can change it now → every
+           card renders straight. Stage 4 deletes this row + the voice wiring + cope code. -->
+      <div class="flip-ctrl-row" id="flipVoiceRowWrap" style="display:none">
         <div class="calc-lbl">Voice</div>
         <div class="flip-chip-row" id="flipVoiceRow">
           <button class="flip-chip active" data-voice="straight">Straight</button>
