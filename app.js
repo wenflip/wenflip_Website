@@ -2312,7 +2312,16 @@
   // ==== HERO FLIP GRID ====
   // 6 core coins, each showing what it flips at the active multiplier.
   // Click a box → opens the existing Pump modal pre-loaded to that coin + multiplier.
-  const HERO_COINS = ['PLS','PLSX','INC','HEX','eHEX','PRVX','pDAI','pWBTC','DWB'];  let heroMult = 1;               // default: Today (1×)
+  // Three rosters for the chain toggle (All / PulseChain / The Rest).
+  // Every symbol here already exists in TOKENS (coins.js) — no new coins.
+  const HERO_SETS = {
+    all:        ['BTC','ETH','SOL','PLS','PLSX','HEX','INC','DOGE','pWBTC'],
+    pulsechain: ['PLS','PLSX','INC','HEX','eHEX','PRVX','pDAI','pWBTC','DWB'],
+    major:      ['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','SHIB','GOLD'],
+  };
+  let heroChain = 'all';                  // active chain tab; 'major' = "The Rest"
+  let HERO_COINS = HERO_SETS[heroChain];  // re-pointed by wireHeroChain() on tab click
+  let heroMult = 1;               // default: Today (1×)
   let _heroLastSig = '';          // change-guard so the interval doesn't reset hover/focus
 
   // Coin price × multiplier → ladder item name (or null if below the board).
@@ -2328,7 +2337,7 @@
     if (!el) return;
 
     // Only rebuild the DOM if the rendered content would actually change.
-    const sig = heroMult + '|' + HERO_COINS.map(sym => {
+    const sig = heroChain + '|' + heroMult + '|' + HERO_COINS.map(sym => {
       const s = state.find(x => x.sym === sym);
       if (!s || s.price == null) return sym + ':loading';
       return sym + ':' + (heroFlipItem(s.price, heroMult) || 'none') + ':' + (s.chg || 0).toFixed(2);
@@ -2420,7 +2429,26 @@
       renderHeroGrid();
     });
   })();
-
+  // Toggle wiring — All / PulseChain / The Rest. Mirrors wireHeroMult():
+  // sets heroChain, re-points HERO_COINS at the chosen set, re-renders.
+  (function wireHeroChain() {
+    const wrap = document.getElementById('heroChain');
+    if (!wrap) return;
+    wrap.addEventListener('click', e => {
+      const btn = e.target.closest('.hero-mult-btn');
+      if (!btn) return;
+      const c = btn.getAttribute('data-chain');
+      if (!HERO_SETS[c] || c === heroChain) return;
+      heroChain = c;
+      HERO_COINS = HERO_SETS[heroChain];
+      wrap.querySelectorAll('.hero-mult-btn').forEach(b => {
+        const active = b === btn;
+        b.classList.toggle('active', active);
+        b.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      renderHeroGrid();
+    });
+  })();
   renderHeroGrid();                     // initial paint (loading until first prices land)
   setInterval(renderHeroGrid, 4000);    // fills in + stays live; no-op when nothing changed
 
