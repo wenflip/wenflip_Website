@@ -50,6 +50,11 @@
 
   <!-- HERO FLIP GRID — 6 core coins + multiplier toggle -->
   <div class="hero-flip">
+    <div class="hero-chain" id="heroChain" role="tablist" aria-label="Filter coins by chain">
+      <button type="button" class="hero-mult-btn active" data-chain="all"        role="tab" aria-selected="true">All</button>
+      <button type="button" class="hero-mult-btn"        data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
+      <button type="button" class="hero-mult-btn"        data-chain="major"      role="tab" aria-selected="false">The Rest</button>
+    </div>
     <div class="hero-mult" id="heroMult" role="tablist" aria-label="Flip multiplier">
       <button type="button" class="hero-mult-btn active" data-mult="1"  role="tab" aria-selected="true">Today</button>
       <button type="button" class="hero-mult-btn"        data-mult="2"  role="tab" aria-selected="false">2×</button>
