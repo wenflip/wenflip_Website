@@ -1097,7 +1097,19 @@
   background: var(--grad); border-color: transparent; color: #fff;
   box-shadow: 0 4px 18px rgba(46,224,106,0.32);
 }
-
+/* Chain toggle — All / PulseChain / The Rest. Sits directly above .hero-mult
+   and reuses .hero-mult-btn for identical pills. Tighter bottom margin so the
+   two rows read as one stacked control, not two separate widgets. */
+.hero-chain {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 10px;
+}
+/* PulseChain tab active = magenta, matching the ladder's PulseChain filter.
+   All / The Rest keep the green .active state inherited from .hero-mult-btn. */
+.hero-chain .hero-mult-btn[data-chain="pulsechain"].active {
+  background: var(--pulse-grad);
+  box-shadow: 0 4px 18px rgba(236,72,153,0.35);
+}
 /* Contained, centered 3×2 grid */
 .hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .hero-grid-loading {
