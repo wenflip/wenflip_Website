@@ -1,5 +1,6 @@
 
     const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null, lastGood: null }));
+    var flipCoin = null;   // hoisted guard: renderScCoinList() reads this during the first fetch, before the later declaration executes
 
   // ==== CONTRACT-ADDRESS (CA) RESOLVER CONFIG ====
   const MIN_LIQUIDITY_USD = 10000;
@@ -1065,7 +1066,7 @@
   // State = which coin / price mode / target / voice. Every control mutates
   // state then calls renderFlipModalCard(), which feeds renderFlipCard().
   // ===================================================================
-  let flipCoin      = null;         // {sym,name,price,chg,logo} or null
+  flipCoin          = null;         // {sym,name,price,chg,logo} or null (hoisted via var at top)
   let flipMult      = 1;            // 1|2|5|10|100 or 'custom'
   let flipCustomRaw = '';           // raw custom input ("25x" / "$1.00")
   let flipTarget    = null;         // null (next rung) | {name, price}
