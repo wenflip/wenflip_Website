@@ -1,5 +1,6 @@
 
     const state = TOKENS.map(t => ({ ...t, price: null, chg: 0, status: 'pending', error: null, lastGood: null }));
+    var flipCoin = null;   // hoisted guard: renderScCoinList() reads this during the first fetch, before the later declaration executes
 
   // ==== CONTRACT-ADDRESS (CA) RESOLVER CONFIG ====
   const MIN_LIQUIDITY_USD = 10000;
@@ -213,6 +214,7 @@
 
   function renderLadder() {
     const el = document.getElementById('clusters');
+    if (!el) return;                      // ladder markup removed (TICKET 3) — bail, don't throw
     const ready = state.filter(t => t.price != null && (chainFilter === 'all' || t.chain === chainFilter));
     if (!ready.length) return;
 
@@ -323,7 +325,20 @@
   let _refreshTimer   = null;
   let _refreshDelayMs = BASE_REFRESH_MS;
 
-  const renderAll = () => { renderTicker(); renderLadder(); renderUpdated(); };
+  const renderAll = () => { renderTicker(); renderLadder(); renderScCoinList(); renderUpdated(); tryPrefillMafc(); };
+
+  // Fill the inline MAFC hero with BTC once its price lands — but only once, and
+  // never over a card the user already made or a deep link the page is honoring.
+  let _mafcPrefilled = false;
+  function tryPrefillMafc() {
+    if (_mafcPrefilled || flipCoin) return;                 // already filled, or user/deeplink got there first
+    const hash = (window.location.hash || '').replace(/^#/, '').toLowerCase();
+    if (hash === 'notacoin' || hash === 'flip' || hash.startsWith('flip=')) return; // let the deep link win
+    const btc = state.find(s => s.sym === 'BTC' && s.price != null);
+    if (!btc) return;                                       // BTC price not in yet — try again next refresh
+    _mafcPrefilled = true;
+    renderStatusCard('BTC');
+  }
 
   // Group coins by their DexScreener chain (pulsechain / ethereum / bsc / base).
   function tokensByChain() {
@@ -422,6 +437,7 @@
   }
 
   renderTicker();
+  renderScCoinList();   // paint the inline MAFC picker on load (loading rows until prices land)
 
   function handleDeepLink() {
     const raw = window.location.hash.replace(/^#/,'').trim();
@@ -455,7 +471,7 @@
 
   }
 
-  refreshAll().then(handleDeepLink);
+  refreshAll().then(handleDeepLink).then(() => { _mafcPrefilled = true; });
 
   // ==== FLIP CALCULATOR ====
   let calcCoin = null, calcTarget = null;
@@ -620,21 +636,26 @@
     return fmtItemPrice(dollarGap) + ' to go.  ' + tag;
   }
 
+   // MAFC is now inline in the hero (TICKET 3). "Open" = refresh the picker + scroll to it.
+   function _scrollToHeroMafc() {
+    const el = document.getElementById('mafcHero');
+    if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
    function openStatusCheckModal() {
     _flipResetAll();
     renderScCoinList();
-    document.getElementById('scCardWrap').style.display = 'none';
-    document.getElementById('statusCheckModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    const w = document.getElementById('scCardWrap');
+    if (w) w.style.display = 'none';
+    _scrollToHeroMafc();
   }
   function openStatusCheckModalForCoin(sym) {
     _flipResetAll();
     renderScCoinList();
-    document.getElementById('scCardWrap').style.display = 'none';
-    document.getElementById('statusCheckModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
+    const w = document.getElementById('scCardWrap');
+    if (w) w.style.display = 'none';
     // Pre-render the card for this coin immediately (Today / next rung / straight)
     renderStatusCard(sym);
+    _scrollToHeroMafc();
   }
   // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
   // contract address string. Re-uses resolveContractAddress + renderStatusCardFromData + caShowFail
@@ -653,23 +674,18 @@
     else { caShowFail(result.reason); }
   }
 
-  function closeStatusCheckModal() {
-    document.getElementById('statusCheckModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+  function closeStatusCheckModal() { /* modal retired in TICKET 3 — MAFC is inline; no-op */ }
 
   function renderScCoinList() {
     const wrap = document.getElementById('scCoinList');
+    if (!wrap) return;
+    const selSym = flipCoin ? flipCoin.sym : null;
     wrap.innerHTML = TOKENS.map(t => {
       const s = state.find(x => x.sym===t.sym);
       const loading = !s || s.price==null;
-      return `<button class="sc-coin-row${loading?' loading':''}" data-sym="${t.sym}">
-        <span class="sc-coin-logo-wrap"><img src="${t.logo}" alt="${t.sym}"/></span>
-        <span class="sc-coin-name">${t.name}</span>
-        <span class="sc-coin-sym-tag">${t.sym}</span>
-      </button>`;
+      return `<button class="coin-badge ${selSym===t.sym?'selected':''} ${loading?'loading':''}" data-sym="${t.sym}" title="${t.name}${loading?' (loading…)':''}"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span></button>`;
     }).join('');
-    wrap.querySelectorAll('.sc-coin-row:not(.loading)').forEach(btn => {
+    wrap.querySelectorAll('.coin-badge:not(.loading)').forEach(btn => {
       btn.addEventListener('click', () => renderStatusCard(btn.dataset.sym));
     });
   }
@@ -970,6 +986,7 @@
       chg:   tokenObj.chg || 0,
       logo:  String(tokenObj.logo || ''),
     };
+    renderScCoinList();   // repaint picker so the selected chip highlights immediately
     renderFlipModalCard();
   }
   async function scExport() {
@@ -1049,7 +1066,7 @@
   // State = which coin / price mode / target / voice. Every control mutates
   // state then calls renderFlipModalCard(), which feeds renderFlipCard().
   // ===================================================================
-  let flipCoin      = null;         // {sym,name,price,chg,logo} or null
+  flipCoin          = null;         // {sym,name,price,chg,logo} or null (hoisted via var at top)
   let flipMult      = 1;            // 1|2|5|10|100 or 'custom'
   let flipCustomRaw = '';           // raw custom input ("25x" / "$1.00")
   let flipTarget    = null;         // null (next rung) | {name, price}
