@@ -324,7 +324,20 @@
   let _refreshTimer   = null;
   let _refreshDelayMs = BASE_REFRESH_MS;
 
-  const renderAll = () => { renderTicker(); renderLadder(); renderScCoinList(); renderUpdated(); };
+  const renderAll = () => { renderTicker(); renderLadder(); renderScCoinList(); renderUpdated(); tryPrefillMafc(); };
+
+  // Fill the inline MAFC hero with BTC once its price lands — but only once, and
+  // never over a card the user already made or a deep link the page is honoring.
+  let _mafcPrefilled = false;
+  function tryPrefillMafc() {
+    if (_mafcPrefilled || flipCoin) return;                 // already filled, or user/deeplink got there first
+    const hash = (window.location.hash || '').replace(/^#/, '').toLowerCase();
+    if (hash === 'notacoin' || hash === 'flip' || hash.startsWith('flip=')) return; // let the deep link win
+    const btc = state.find(s => s.sym === 'BTC' && s.price != null);
+    if (!btc) return;                                       // BTC price not in yet — try again next refresh
+    _mafcPrefilled = true;
+    renderStatusCard('BTC');
+  }
 
   // Group coins by their DexScreener chain (pulsechain / ethereum / bsc / base).
   function tokensByChain() {
@@ -457,7 +470,7 @@
 
   }
 
-  refreshAll().then(handleDeepLink);
+  refreshAll().then(handleDeepLink).then(() => { _mafcPrefilled = true; });
 
   // ==== FLIP CALCULATOR ====
   let calcCoin = null, calcTarget = null;
@@ -665,16 +678,13 @@
   function renderScCoinList() {
     const wrap = document.getElementById('scCoinList');
     if (!wrap) return;
+    const selSym = flipCoin ? flipCoin.sym : null;
     wrap.innerHTML = TOKENS.map(t => {
       const s = state.find(x => x.sym===t.sym);
       const loading = !s || s.price==null;
-      return `<button class="sc-coin-row${loading?' loading':''}" data-sym="${t.sym}">
-        <span class="sc-coin-logo-wrap"><img src="${t.logo}" alt="${t.sym}"/></span>
-        <span class="sc-coin-name">${t.name}</span>
-        <span class="sc-coin-sym-tag">${t.sym}</span>
-      </button>`;
+      return `<button class="coin-badge ${selSym===t.sym?'selected':''} ${loading?'loading':''}" data-sym="${t.sym}" title="${t.name}${loading?' (loading…)':''}"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span></button>`;
     }).join('');
-    wrap.querySelectorAll('.sc-coin-row:not(.loading)').forEach(btn => {
+    wrap.querySelectorAll('.coin-badge:not(.loading)').forEach(btn => {
       btn.addEventListener('click', () => renderStatusCard(btn.dataset.sym));
     });
   }
@@ -975,6 +985,7 @@
       chg:   tokenObj.chg || 0,
       logo:  String(tokenObj.logo || ''),
     };
+    renderScCoinList();   // repaint picker so the selected chip highlights immediately
     renderFlipModalCard();
   }
   async function scExport() {
