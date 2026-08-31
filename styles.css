@@ -1503,12 +1503,12 @@
   }
 
   /* ===================================================================
-     MAFC HERO — inline flip-card maker promoted to the homepage hero
-     (TICKET 3, un-modaled from #statusCheckModal). Pass A = containment
-     only; Pass B adds the compact chip picker + BTC pre-fill + polish.
+     MAFC HERO — inline flip-card maker as the homepage hero.
+     Two columns on desktop (controls left / card right); on mobile the
+     card sits on top (column-reverse), controls below. TICKET 3 side-by-side.
      =================================================================== */
   .mafc-hero {
-    max-width: 620px;
+    max-width: 900px;
     margin: 22px auto 0;
     text-align: left;
     background: var(--bg-2);
@@ -1516,11 +1516,51 @@
     border-radius: 20px;
     overflow: hidden;
   }
-  .mafc-hero-head { text-align: center; padding: 20px 20px 4px; }
+  .mafc-hero-head { text-align: center; padding: 20px 20px 10px; }
   .mafc-hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
   .mafc-hero-sub { color: var(--muted); font-size: 12px; letter-spacing: 0.03em; margin-top: 4px; }
-  /* Compact chip picker inside the hero (Pass B) — reuses .coin-badge styles */
+
+  /* Column wrapper. Mobile default: card-first via column-reverse. */
+  .mafc-cols { display: flex; flex-direction: column-reverse; }
+  .mafc-controls { min-width: 0; }
+  .mafc-cardcol  { min-width: 0; }
+
+  /* Compact chip picker inside the hero — reuses .coin-badge styles */
   .mafc-hero #scCoinList { padding: 6px 20px 4px; justify-content: center; }
+
+  /* Surprise me — quiet + small, sits below the chips (was a full-width purple bar) */
+  .mafc-hero .flip-random-row { padding: 4px 20px 10px; text-align: center; }
+  .mafc-hero .flip-random-btn {
+    display: inline-flex; width: auto;
+    padding: 7px 16px; font-size: 12.5px; border-radius: 999px;
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.30);
+  }
+
+  /* Card column padding (mobile) */
+  .mafc-cardcol .sc-card-wrap { padding: 14px 20px 8px; }
+
+  /* CA collapse — hidden behind a reveal link */
+  .mafc-ca-collapse { padding: 14px 20px 18px; border-top: 1px solid var(--line); }
+  .mafc-ca-toggle {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; cursor: pointer;
+    color: var(--muted); font-family: 'Inter', sans-serif;
+    font-size: 12.5px; font-weight: 700; letter-spacing: 0.02em; padding: 2px 0;
+  }
+  .mafc-ca-toggle:hover { color: var(--text); }
+  .mafc-ca-caret { display: inline-block; font-size: 11px; transition: transform .15s ease; }
+  .mafc-ca-toggle.open .mafc-ca-caret { transform: rotate(90deg); }
+  .mafc-ca-collapse .ca-tool { padding: 10px 0 0; max-width: none; margin: 0; }
+  .mafc-ca-collapse .ca-fail { margin: 8px 0 0; max-width: none; text-align: left; }
+
+  /* Desktop: two columns. Card column sizes to its content (0 width when no card yet,
+     so the controls fill the row until BTC prefills). */
+  @media (min-width: 820px) {
+    .mafc-cols { flex-direction: row; align-items: flex-start; gap: 8px; padding: 6px 12px 18px; }
+    .mafc-controls { flex: 1 1 auto; min-width: 0; }
+    .mafc-cardcol  { flex: 0 0 auto; display: flex; justify-content: center; padding-top: 6px; }
+    .mafc-cardcol .sc-card-wrap { padding: 0; width: 360px; }
+  }
 
 
 
