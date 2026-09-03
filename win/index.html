@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>wenflip · win card</title>
+<meta name="robots" content="noindex, nofollow" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.dexscreener.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+<style>
+  /* ===== BRAND TOKENS — copied from the live styles.css so the card matches site cards ===== */
+  :root {
+    --bg: #0a0a14;
+    --bg-2: #11111f;
+    --bg-3: #161629;
+    --text: #f5f5fa;
+    --muted: #8a8aa8;
+    --line: rgba(255,255,255,0.08);
+    --green: #2ee06a;
+    --green-deep: #1f8a4c;
+    --red: #b5544c;
+    --gold: #fbbf24;
+    --accent: #2ee06a;
+    --grad: linear-gradient(135deg, #1f8a4c 0%, #2ee06a 100%);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body {
+    background:
+      radial-gradient(1000px 600px at 80% -10%, rgba(46,224,106,0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(31,138,76,0.08), transparent 60%),
+      var(--bg);
+    min-height: 100vh;
+    display: flex; justify-content: center;
+    padding: 28px 18px 80px;
+  }
+  .wrap { width: 100%; max-width: 960px; }
+
+  /* ===== HEADER ===== */
+  .head { display: flex; align-items: baseline; gap: 12px; }
+  .brand {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 30px;
+    background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    letter-spacing: -0.03em; filter: drop-shadow(0 0 18px rgba(46,224,106,0.18));
+  }
+  .tag { color: var(--muted); font-size: 13px; font-weight: 600; }
+  .private {
+    margin: 8px 0 22px; font-size: 12.5px; color: var(--muted); line-height: 1.5;
+    max-width: 660px;
+  }
+  .private b { color: var(--gold); font-weight: 700; }
+
+  .grid { display: grid; grid-template-columns: 1fr auto; gap: 26px; align-items: start; }
+  @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ===== CONTROLS PANEL ===== */
+  .panel { background: var(--bg-2); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+  .lbl { font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .sect + .sect { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+  /* coin badge picker — same as homepage .coin-badges */
+  .coin-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+  .coin-badge {
+    display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+    font-weight: 800; font-size: 13px; cursor: pointer; color: var(--text);
+    transition: border-color .15s, background .15s, box-shadow .15s; user-select: none;
+  }
+  .coin-badge img { width: 20px; height: 20px; border-radius: 50%; background: #0d0d16; }
+  .coin-badge:hover { border-color: rgba(46,224,106,0.45); background: rgba(46,224,106,0.10); }
+  .coin-badge.selected { border-color: var(--accent); background: rgba(46,224,106,0.14); box-shadow: 0 0 14px rgba(46,224,106,0.35); }
+  .coin-badge.loading { opacity: 0.45; pointer-events: none; }
+
+  .field { margin-top: 12px; }
+  .field label { display: block; font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+  .field input {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--line); border-radius: 11px;
+    color: var(--text); font: inherit; font-size: 14px; padding: 11px 13px; outline: none;
+    transition: border-color .15s;
+  }
+  .field input:focus { border-color: rgba(46,224,106,0.45); }
+  .hint { font-size: 11px; color: var(--muted); opacity: 0.78; margin-top: 5px; line-height: 1.4; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 11px; }
+
+  /* status strip */
+  .status { margin-top: 16px; padding: 12px 14px; border-radius: 11px; font-size: 12.5px; line-height: 1.45; border: 1px solid var(--line); background: rgba(255,255,255,0.03); color: var(--muted); }
+  .status.ok { border-color: rgba(46,224,106,0.35); color: #9fe8bf; background: rgba(46,224,106,0.06); }
+  .status.no { border-color: rgba(181,84,76,0.40); color: #e3a49d; background: rgba(181,84,76,0.08); }
+  .status.warn { border-color: rgba(251,191,36,0.40); color: #f6d488; background: rgba(251,191,36,0.07); }
+
+  /* buttons */
+  .btns { display: flex; gap: 10px; margin-top: 16px; }
+  .dl {
+    flex: 1; padding: 12px 16px; border-radius: 11px; border: none; cursor: pointer;
+    background: var(--grad); color: #06210f; font: inherit; font-weight: 800; font-size: 14px;
+    box-shadow: 0 8px 30px rgba(46,224,106,0.30); transition: transform .15s, box-shadow .2s;
+  }
+  .dl:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(46,224,106,0.42); }
+  .dl:disabled { opacity: 0.5; pointer-events: none; }
+  .ghost {
+    padding: 12px 16px; border-radius: 11px; cursor: pointer;
+    background: transparent; border: 1px solid var(--line); color: var(--muted); font: inherit; font-weight: 700; font-size: 13.5px;
+    transition: color .15s, border-color .15s;
+  }
+  .ghost:hover { color: var(--text); border-color: rgba(255,255,255,0.22); }
+
+  /* ===== PREVIEW COLUMN ===== */
+  .previewCol { position: sticky; top: 24px; }
+  .cap { font-size: 11.5px; color: var(--muted); margin-bottom: 10px; text-align: center; }
+
+  /* ===== THE CARD — mirrors .flip-card / trend card from styles.css ===== */
+  .card {
+    width: 360px; max-width: 100%; aspect-ratio: 1 / 1;
+    background: var(--bg-3); border: 1px solid var(--line); border-radius: 18px;
+    padding: 26px 26px 22px; position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .card::before {
+    content:''; position:absolute; inset:0; pointer-events:none; border-radius: 18px;
+    background: radial-gradient(420px 260px at 50% 0%, rgba(46,224,106,0.07), transparent 70%);
+  }
+
+  /* identity row */
+  .c-head { display: flex; align-items: center; gap: 11px; flex-shrink: 0; margin-bottom: 14px; position: relative; z-index: 1; }
+  .c-logo { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex-shrink: 0; background: #0d0d16; }
+  .c-id { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  .c-sym { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 700; line-height: 1.1; letter-spacing: -0.01em; }
+  .c-name-sm { font-size: 12.5px; color: rgba(245,245,250,0.55); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+  .c-chg { flex: 0 0 auto; padding: 6px 11px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .c-chg.up { color: var(--green); background: rgba(46,224,106,0.08); }
+  .c-chg.down { color: var(--red); background: rgba(181,84,76,0.12); }
+  .c-chg.hide { display: none; }
+
+  /* the hero — verdict + today object */
+  .c-hero { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; margin: 4px 0; position: relative; z-index: 1; }
+  .c-verdict { font-size: 11px; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px; }
+  .c-verdict.down { color: var(--red); }
+  .c-verdict.dead { color: var(--muted); }
+  .c-obj {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; color: var(--text); line-height: 1.14;
+    overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  }
+  .obj-xl .c-obj { font-size: 38px; line-height: 1.06; }
+  .obj-lg .c-obj { font-size: 31px; line-height: 1.12; }
+  .obj-md .c-obj { font-size: 26px; line-height: 1.18; }
+  .obj-sm .c-obj { font-size: 21px; line-height: 1.25; }
+  .c-obj.none { color: rgba(245,245,250,0.4); font-style: italic; }
+  .c-objprice { font-size: 15px; color: rgba(245,245,250,0.42); margin-top: 10px; font-variant-numeric: tabular-nums; }
+
+  /* foot — then-line + climb stat + tagline + stamp */
+  .c-foot { flex-shrink: 0; position: relative; z-index: 1; }
+  .c-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 14px 0 10px; }
+  .c-then { font-size: 13.5px; color: var(--muted); line-height: 1.4; }
+  .c-then b { color: var(--text); font-weight: 800; }
+  /* the one loud element — the trajectory made concrete */
+  .c-climb { font-size: 15px; font-weight: 800; color: var(--accent); margin-top: 9px; letter-spacing: 0.01em; }
+  .c-climb.down { color: var(--red); }
+  /* the locked brand line — deadpan, flat, never performed */
+  .c-tagline { font-size: 13px; color: rgba(245,245,250,0.6); font-style: italic; margin-top: 9px; }
+  .c-flavor { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 10px; }
+  .c-stamp {
+    display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: rgba(46,224,106,0.7);
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head"><span class="brand">wenflip</span><span class="tag">win card · operator only</span></div>
+  <p class="private">
+    Not linked from the site and set to noindex. Access is gated at Cloudflare — keep it that way.
+    Pick a coin (its live price loads automatically). Type when the throwback is and what the coin cost back then.
+    <b>The card only prints a "climb" when today's price actually sits on a higher rung than the old one.</b>
+  </p>
+
+  <div class="grid">
+    <!-- CONTROLS -->
+    <div class="panel">
+      <div class="sect">
+        <div class="lbl">the coin</div>
+        <div class="coin-badges" id="coinBadges"><span style="color:var(--muted);font-size:13px;">Loading live prices…</span></div>
+        <div class="hint" id="coinHint">Today's price is pulled live from the board — same numbers as the homepage. No typing.</div>
+      </div>
+
+      <div class="sect">
+        <div class="lbl">then — the throwback</div>
+        <div class="field">
+          <label>when was it? (free text — shows on the card verbatim)</label>
+          <input id="thenLabel" type="text" placeholder="a year ago" value="a year ago" />
+          <div class="hint">Whatever you type shows exactly: "a year ago", "last halving", "in Sept 2024".</div>
+        </div>
+        <div class="field">
+          <label>the coin's price back then (USD)</label>
+          <input id="thenPrice" type="number" step="any" placeholder="0.0021" />
+          <div class="hint">The one number you look up by hand. Pull it from somewhere real — the card is only as honest as this.</div>
+        </div>
+      </div>
+
+      <div class="sect">
+        <div class="lbl">flavor line — optional, dry</div>
+        <div class="field">
+          <input id="flavor" placeholder="leave blank, or one deadpan line" value="" />
+          <div class="hint">Broadcast card, so one flat line is allowed. Blank is fine — the climb is the flex.</div>
+        </div>
+        <div class="row" style="margin-top:12px;">
+          <div class="field" style="margin-top:0;">
+            <label>date (blank = today)</label>
+            <input id="date" value="" />
+          </div>
+        </div>
+      </div>
+
+      <div id="status" class="status">Pick a coin to start.</div>
+
+      <div class="btns">
+        <button class="dl" id="download">Copy as image</button>
+        <button class="ghost" id="refresh" title="Re-pull live prices">↻ Prices</button>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <div class="previewCol">
+      <div class="cap">live preview — copy or screenshot</div>
+      <div class="card obj-lg" id="card">
+        <div class="c-head">
+          <img class="c-logo" id="b_logo" alt="" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Ccircle cx='17' cy='17' r='17' fill='%230d0d16'/%3E%3C/svg%3E" />
+          <div class="c-id">
+            <div class="c-sym" id="b_sym">—</div>
+            <div class="c-name-sm" id="b_name">pick a coin</div>
+          </div>
+          <div class="c-chg hide" id="b_chg">▲ 0.00%</div>
+        </div>
+
+        <div class="c-hero">
+          <div class="c-verdict" id="b_verdict">TODAY IT FLIPS</div>
+          <div class="c-obj" id="b_obj">—</div>
+          <div class="c-objprice" id="b_objprice"></div>
+        </div>
+
+        <div class="c-foot">
+          <div class="c-divider"></div>
+          <div class="c-then" id="b_then"></div>
+          <div class="c-climb" id="b_climb"></div>
+          <div class="c-tagline" id="b_tagline"></div>
+          <div class="c-flavor" id="b_flavor" style="display:none"></div>
+          <div class="c-stamp">
+            <span id="b_date">—</span>
+            <span>wenflip.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- load the REAL coin roster + ladder from the repo root. ABSOLUTE paths are REQUIRED:
+     a relative "coins.js" / "ladder.js" would resolve to /win/coins.js and silently 404 on Cloudflare. -->
+<script src="/coins.js"></script>
+<script src="/ladder.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  const $ = id => document.getElementById(id);
+
+  // TOKENS comes from /coins.js, LADDER from /ladder.js. Guard in case either failed to load.
+  const HAS_TOKENS = (typeof TOKENS !== 'undefined' && Array.isArray(TOKENS));
+  const HAS_LADDER = (typeof LADDER !== 'undefined' && Array.isArray(LADDER));
+  const ROSTER = HAS_TOKENS ? TOKENS : [];
+
+  // live price state, keyed by symbol
+  const priceState = {};   // sym -> { price, chg, ok }
+  let selectedSym = null;
+
+  // ===== FORMATTERS — ported from app.js so the card matches site cards exactly =====
+  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function fmtCoinPrice(p) {
+    if (p == null) return '—';
+    if (p <= 0)    return '$0';
+    if (p >= 1000) return '$' + Math.floor(p).toLocaleString('en-US');
+    if (p >= 1) {
+      const trunc = Math.floor(p * 100) / 100;
+      let s = trunc.toFixed(2).replace(/\.?0+$/, '');
+      const [int, dec] = s.split('.');
+      const intFmt = parseInt(int,10).toLocaleString('en-US');
+      return '$' + (dec ? intFmt + '.' + dec : intFmt);
+    }
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const factor = Math.pow(10, 3 - mag);
+      const truncated = Math.floor(p * factor) / factor;
+      let s = truncated.toFixed(-mag + 3).replace(/0+$/, '').replace(/\.$/, '');
+      return '$' + s;
+    }
+    const mag2 = Math.floor(Math.log10(p));
+    const leadingZeros = -mag2 - 1;
+    const factor2 = Math.pow(10, 3 - mag2);
+    const truncSig = Math.floor(p * factor2) / factor2;
+    let raw = truncSig.toFixed(leadingZeros + 4);
+    const afterDot = raw.split('.')[1] || '';
+    let zCount = 0;
+    for (let i = 0; i < afterDot.length; i++) { if (afterDot[i] === '0') zCount++; else break; }
+    const sigPart = afterDot.slice(zCount).replace(/0+$/, '');
+    const subDigit = SUB_DIGITS[zCount] || String(zCount);
+    return '$0.0' + subDigit + sigPart;
+  }
+  // real-world object prices — plain, no subscript
+  function fmtItemPrice(p) {
+    if (p == null || isNaN(p)) return '$0';
+    if (p >= 1000) return '$' + Number(p).toLocaleString('en-US', {maximumFractionDigits: 0});
+    if (p >= 1)    return '$' + Number(p).toFixed(2).replace(/\.?0+$/, '');
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const dec = Math.max(0, -mag + 3);
+      return '$' + Number(p).toFixed(dec).replace(/0+$/, '').replace(/\.$/, '');
+    }
+    return '$' + Number(p).toPrecision(2);
+  }
+  // object-name size bucket — length-based (matches trend/pump so screen == export)
+  function objSizeClass(name) {
+    const n = (name || '').length;
+    if (n <= 18) return 'obj-xl';
+    if (n <= 32) return 'obj-lg';
+    if (n <= 48) return 'obj-md';
+    return 'obj-sm';
+  }
+  function todayStr(){
+    return new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  }
+
+  // ===== THE ONE NEW MECHANIC — map a price to the rung it clears =====
+  // LADDER is price-DESCENDING (LADDER[0] = most expensive). Return the highest-priced
+  // rung whose price <= P — the best real-world thing that price can buy — plus its index.
+  // Returns null when P is below the whole board (off the ladder). This is NOT app.js's
+  // findRungIndex (which clamps below-board prices to the cheapest rung); we need to tell
+  // "clears the cheapest rung" apart from "off the board entirely" for the climb-onto-board story.
+  function rungForPrice(p) {
+    if (!HAS_LADDER || p == null || isNaN(p) || p <= 0) return null;
+    for (let i = 0; i < LADDER.length; i++) {
+      if (LADDER[i].price <= p) return { idx: i, entry: LADDER[i] };
+    }
+    return null;
+  }
+  // lower index = higher-priced rung = HIGHER on the ladder.
+
+  // ===== LIVE PRICE FETCH — trimmed from app.js, batched per DexScreener chain =====
+  const FETCH_TIMEOUT_MS = 6000;
+  function tokensByChain() {
+    const groups = {};
+    for (const t of ROSTER) {
+      const chain = (t.dexChain || '').trim();
+      const addr  = (t.pairAddress || '').trim();
+      if (!chain || !addr) continue;
+      (groups[chain] = groups[chain] || []).push(t);
+    }
+    return groups;
+  }
+  async function fetchChainBatch(chain, tokens) {
+    const addrs = tokens.map(t => t.pairAddress.trim()).join(',');
+    const url = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${addrs}`;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
+    let json;
+    try {
+      const res = await fetch(url, { signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      json = await res.json();
+    } finally { clearTimeout(timer); }
+    const pairs = Array.isArray(json.pairs) ? json.pairs : (json.pair ? [json.pair] : []);
+    const byAddr = {};
+    for (const p of pairs) { if (p && p.pairAddress) byAddr[p.pairAddress.toLowerCase()] = p; }
+    for (const t of tokens) {
+      const pair = byAddr[t.pairAddress.trim().toLowerCase()];
+      if (pair && pair.priceUsd != null) {
+        priceState[t.sym] = { price: parseFloat(pair.priceUsd), chg: pair.priceChange?.h24 ?? 0, ok: true };
+      }
+    }
+  }
+  async function refreshAll() {
+    const groups = tokensByChain();
+    await Promise.allSettled(Object.keys(groups).map(c => fetchChainBatch(c, groups[c])));
+    renderBadges();
+    if (selectedSym) render();
+  }
+
+  // ===== COIN PICKER — identity + live price (same as trend) =====
+  function renderBadges() {
+    const wrap = $('coinBadges');
+    if (!ROSTER.length) {
+      wrap.innerHTML = '<span style="color:var(--red);font-size:13px;">Couldn\'t load the coin roster (/coins.js). Check the script path.</span>';
+      return;
+    }
+    wrap.innerHTML = ROSTER.map(t => {
+      const st = priceState[t.sym];
+      const loading = !st || !st.ok;
+      return `<button class="coin-badge ${selectedSym===t.sym?'selected':''} ${loading?'loading':''}" data-sym="${t.sym}" title="${t.name}${loading?' (loading…)':''}"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span></button>`;
+    }).join('');
+    wrap.querySelectorAll('.coin-badge:not(.loading)').forEach(btn => {
+      btn.addEventListener('click', () => { selectedSym = btn.dataset.sym; renderBadges(); render(); });
+    });
+  }
+
+  // ===== RENDER THE CARD =====
+  function render() {
+    const tk = ROSTER.find(t => t.sym === selectedSym);
+    const st = selectedSym ? priceState[selectedSym] : null;
+    const thenPrice = parseFloat($('thenPrice').value);
+    const thenLabel = $('thenLabel').value.trim() || 'back then';
+    const flavor = $('flavor').value.trim();
+    const status = $('status');
+
+    $('b_date').textContent = $('date').value.trim() || todayStr();
+
+    const flavorEl = $('b_flavor');
+    if (flavor) { flavorEl.textContent = flavor; flavorEl.style.display = ''; }
+    else { flavorEl.style.display = 'none'; }
+
+    // small helper to blank the comparison rows
+    const clearBody = () => { $('b_then').textContent = ''; $('b_climb').textContent = ''; $('b_climb').className = 'c-climb'; $('b_tagline').textContent = ''; };
+
+    // ---- no coin / no live price yet ----
+    if (!tk || !st || !st.ok) {
+      $('b_logo').src = tk ? tk.logo : $('b_logo').src;
+      $('b_sym').textContent = tk ? tk.sym : '—';
+      $('b_name').textContent = tk ? tk.name : 'pick a coin';
+      $('b_chg').className = 'c-chg hide';
+      $('b_verdict').textContent = '—'; $('b_verdict').className = 'c-verdict dead';
+      $('b_obj').textContent = '—'; $('b_obj').className = 'c-obj'; $('b_objprice').textContent = '';
+      $('card').className = 'card obj-lg';
+      clearBody();
+      status.className = 'status';
+      status.textContent = tk ? `Waiting on a live price for ${tk.sym}…` : 'Pick a coin to start.';
+      $('download').disabled = true;
+      return;
+    }
+
+    // ---- identity (coin loaded) ----
+    const livePrice = st.price;
+    const chg = st.chg || 0;
+    $('b_logo').src = tk.logo;
+    $('b_sym').textContent = tk.sym;
+    $('b_name').innerHTML = `${tk.name} · ${fmtCoinPrice(livePrice)}`;
+    const chgEl = $('b_chg');
+    chgEl.className = 'c-chg ' + (chg >= 0 ? 'up' : 'down');
+    chgEl.textContent = (chg >= 0 ? '▲ ' : '▼ ') + Math.abs(chg).toFixed(2) + '%';
+
+    // ---- then-price gate ----
+    if (isNaN(thenPrice) || thenPrice <= 0) {
+      $('b_verdict').textContent = 'TODAY IT FLIPS'; $('b_verdict').className = 'c-verdict';
+      const todayRungPending = rungForPrice(livePrice);
+      if (todayRungPending) {
+        $('b_obj').textContent = todayRungPending.entry.name; $('b_obj').className = 'c-obj';
+        $('b_objprice').textContent = fmtItemPrice(todayRungPending.entry.price);
+        $('card').className = 'card ' + objSizeClass(todayRungPending.entry.name);
+      } else {
+        $('b_obj').textContent = 'nothing on the board yet'; $('b_obj').className = 'c-obj none';
+        $('b_objprice').textContent = ''; $('card').className = 'card obj-md';
+      }
+      clearBody();
+      status.className = 'status';
+      status.textContent = `Enter what ${tk.sym} cost "${thenLabel}" to draw the climb.`;
+      $('download').disabled = true;
+      return;
+    }
+
+    // ---- both prices in hand: map to rungs ----
+    const todayRung = rungForPrice(livePrice);
+    const thenRung  = rungForPrice(thenPrice);
+
+    // both off the board → nothing to compare
+    if (!todayRung && !thenRung) {
+      $('b_verdict').textContent = 'OFF THE BOARD'; $('b_verdict').className = 'c-verdict dead';
+      $('b_obj').textContent = 'nothing on the board'; $('b_obj').className = 'c-obj none';
+      $('b_objprice').textContent = ''; $('card').className = 'card obj-md';
+      clearBody();
+      status.className = 'status no';
+      status.textContent = 'Neither price is on the ladder — nothing to compare. Check your numbers.';
+      $('download').disabled = true;
+      return;
+    }
+
+    // classify: climb / same rung / slip
+    // (remember: lower idx = higher rung. climb = today above then.)
+    let mode;
+    if (todayRung && !thenRung)        mode = 'climb-onto';   // was off-board, now on
+    else if (!todayRung && thenRung)   mode = 'slip-off';     // was on-board, now off
+    else if (todayRung.idx <  thenRung.idx) mode = 'climb';   // both on, moved up
+    else if (todayRung.idx >  thenRung.idx) mode = 'slip';    // both on, moved down
+    else                                mode = 'same';        // both on, same rung
+
+    const rungWord = n => `${n} rung${n === 1 ? '' : 's'}`;
+
+    // ---- today hero (shared by every non-refuse state) ----
+    function paintTodayHero() {
+      if (todayRung) {
+        $('b_obj').textContent = todayRung.entry.name; $('b_obj').className = 'c-obj';
+        $('b_objprice').textContent = fmtItemPrice(todayRung.entry.price);
+        $('card').className = 'card ' + objSizeClass(todayRung.entry.name);
+      } else {
+        $('b_obj').textContent = 'nothing on the board'; $('b_obj').className = 'c-obj none';
+        $('b_objprice').textContent = ''; $('card').className = 'card obj-md';
+      }
+    }
+
+    if (mode === 'same') {
+      $('b_verdict').textContent = 'NO CLIMB'; $('b_verdict').className = 'c-verdict dead';
+      paintTodayHero();
+      $('b_then').textContent = ''; $('b_climb').textContent = ''; $('b_climb').className = 'c-climb'; $('b_tagline').textContent = '';
+      status.className = 'status no';
+      status.textContent = `Both prices sit at "${todayRung.entry.name}" — same rung, no climb. Pick an older price with a real gap.`;
+      $('download').disabled = true;
+      return;
+    }
+
+    if (mode === 'climb' || mode === 'climb-onto') {
+      $('b_verdict').textContent = 'TODAY IT FLIPS'; $('b_verdict').className = 'c-verdict';
+      paintTodayHero();
+      if (mode === 'climb') {
+        $('b_then').innerHTML = `${thenLabel} it was stuck at <b>${thenRung.entry.name}</b> · ${fmtItemPrice(thenRung.entry.price)}`;
+        const n = thenRung.idx - todayRung.idx;
+        $('b_climb').textContent = `↑ climbed ${rungWord(n)}`;
+      } else {
+        $('b_then').innerHTML = `${thenLabel} it couldn't clear a single rung.`;
+        $('b_climb').textContent = `↑ onto the board from nothing`;
+      }
+      $('b_climb').className = 'c-climb';
+      $('b_tagline').textContent = 'same coin, higher rung.';
+      status.className = 'status ok';
+      status.textContent = `Real climb. ${tk.sym} moved up the ladder. Ship it.`;
+      $('download').disabled = false;
+      return;
+    }
+
+    // ---- slip (red tape) — honest down copy, warned in the operator strip ----
+    $('b_verdict').textContent = 'SLIPPED'; $('b_verdict').className = 'c-verdict down';
+    paintTodayHero();
+    if (mode === 'slip') {
+      $('b_then').innerHTML = `${thenLabel} it was up at <b>${thenRung.entry.name}</b> · ${fmtItemPrice(thenRung.entry.price)}`;
+      const n = todayRung.idx - thenRung.idx;
+      $('b_climb').textContent = `↓ slipped ${rungWord(n)}`;
+    } else { // slip-off
+      $('b_then').innerHTML = `${thenLabel} it flipped <b>${thenRung.entry.name}</b> · ${fmtItemPrice(thenRung.entry.price)}`;
+      $('b_climb').textContent = `↓ fell off the board`;
+    }
+    $('b_climb').className = 'c-climb down';
+    $('b_tagline').textContent = 'same coin, lower rung.';
+    status.className = 'status warn';
+    status.textContent = `This is a slip, not a climb — broadcaster-only, post sparingly. Win-framing leads on green.`;
+    $('download').disabled = false;
+  }
+
+  // ===== EXPORT — copy the 1080×1080 card to the clipboard (matches the main site); download as fallback =====
+  $('download').addEventListener('click', () => {
+    const btn = $('download');
+    const status = $('status');
+    const card = $('card');
+    const prevLabel = btn.textContent;
+    const prevStatusHTML = status.innerHTML, prevStatusCls = status.className;
+    btn.disabled = true; btn.textContent = 'Generating…';
+    html2canvas(card, { backgroundColor: null, scale: 3, useCORS: true, logging: false }).then(src => {
+      const out = document.createElement('canvas'); out.width = 1080; out.height = 1080;
+      const ctx = out.getContext('2d');
+      const bg = ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14');
+      ctx.fillStyle = bg; ctx.fillRect(0,0,1080,1080);
+      const glow = ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent');
+      ctx.fillStyle = glow; ctx.fillRect(0,0,1080,1080);
+      ctx.drawImage(src, 30, 30, 1020, 1020);
+      out.toBlob(async blob => {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          status.className = 'status ok';
+          status.textContent = 'Copied ✓ — paste straight into your X / Telegram post.';
+        } catch (e) {
+          const a = document.createElement('a');
+          a.download = `wenflip_win_${(selectedSym||'card').toLowerCase()}.png`;
+          a.href = URL.createObjectURL(blob);
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          status.className = 'status ok';
+          status.textContent = 'Clipboard was blocked, so it saved instead — attach the image to your post.';
+        } finally {
+          btn.disabled = false; btn.textContent = prevLabel;
+        }
+      }, 'image/png');
+    }).catch(() => {
+      status.className = prevStatusCls; status.innerHTML = prevStatusHTML;
+      status.className = 'status no'; status.textContent = 'Screenshot failed — try again.';
+      btn.disabled = false; btn.textContent = prevLabel;
+    });
+  });
+
+  // inputs re-render live
+  ['thenLabel','thenPrice','flavor','date'].forEach(id => $(id).addEventListener('input', render));
+  $('refresh').addEventListener('click', refreshAll);
+
+  // boot
+  renderBadges();
+  render();
+  refreshAll();
+  setInterval(refreshAll, 60000);   // keep today's price live while the operator types the old one
+})();
+</script>
+</body>
+</html>
