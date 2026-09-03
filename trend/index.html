@@ -209,7 +209,7 @@
       <div id="status" class="status">Pick a coin to start.</div>
 
       <div class="btns">
-        <button class="dl" id="download">Download card (PNG)</button>
+        <button class="dl" id="download">Copy as image</button>
         <button class="ghost" id="refresh" title="Re-pull live prices">↻ Prices</button>
       </div>
     </div>
@@ -463,9 +463,13 @@
     $('download').disabled = false;
   }
 
-  // ===== EXPORT — 1080×1080 with the site's dark gradient + green glow (matches app.js) =====
+  // ===== EXPORT — copy the 1080×1080 card to the clipboard (matches the main site); download as fallback =====
   $('download').addEventListener('click', () => {
+    const btn = $('download');
+    const status = $('status');
     const card = $('card');
+    const prevLabel = btn.textContent;
+    btn.disabled = true; btn.textContent = 'Generating…';
     html2canvas(card, { backgroundColor: null, scale: 3, useCORS: true, logging: false }).then(src => {
       const out = document.createElement('canvas'); out.width = 1080; out.height = 1080;
       const ctx = out.getContext('2d');
@@ -474,11 +478,29 @@
       const glow = ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent');
       ctx.fillStyle = glow; ctx.fillRect(0,0,1080,1080);
       ctx.drawImage(src, 30, 30, 1020, 1020);
-      const a = document.createElement('a');
-      a.download = `wenflip_trendflip_${(selectedSym||'card').toLowerCase()}.png`;
-      a.href = out.toDataURL('image/png');
-      a.click();
-    }).catch(() => { $('status').className = 'status no'; $('status').textContent = 'Screenshot failed — try again.'; });
+      out.toBlob(async blob => {
+        try {
+          await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+          status.className = 'status ok';
+          status.textContent = 'Copied ✓ — paste straight into your X / Telegram post.';
+        } catch (e) {
+          // clipboard blocked (usually iOS/Safari) — fall back to a download
+          const a = document.createElement('a');
+          a.download = `wenflip_trendflip_${(selectedSym||'card').toLowerCase()}.png`;
+          a.href = URL.createObjectURL(blob);
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+          URL.revokeObjectURL(a.href);
+          status.className = 'status ok';
+          status.textContent = 'Clipboard was blocked, so it saved instead — attach the image to your post.';
+        } finally {
+          btn.disabled = false; btn.textContent = prevLabel;
+        }
+      }, 'image/png');
+    }).catch(() => {
+      status.className = 'status no';
+      status.textContent = 'Screenshot failed — try again.';
+      btn.disabled = false; btn.textContent = prevLabel;
+    });
   });
 
   // inputs re-render live
