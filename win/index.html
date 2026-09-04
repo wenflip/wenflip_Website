@@ -140,7 +140,10 @@
      "it moved up" is read spatially before a single word. */
   .c-faceoff {
     flex: 1; min-height: 0; position: relative; z-index: 1; margin: 4px 0;
-    display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 10px;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: start;      /* both columns top-align in the row → eyebrows sit level */
+    align-content: center;   /* center the whole block in the tall zone → no top-heavy void */
+    gap: 10px;
   }
   .c-col { min-width: 0; display: flex; flex-direction: column; }
   .c-then-col { text-align: left; }
@@ -157,20 +160,19 @@
     font-family: 'Space Grotesk', sans-serif; font-weight: 700; line-height: 1.14;
     overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
   }
-  /* THEN — the setup: small + dimmed, always. */
-  .c-then-col .c-col-obj { font-size: 16px; color: rgba(245,245,250,0.5); }
-  /* NOW — the payoff: full brightness, size driven by JS bucket on .card. */
-  .c-now-col  .c-col-obj { color: var(--text); }
-  .now-xl .c-now-col .c-col-obj { font-size: 30px; line-height: 1.08; }
-  .now-lg .c-now-col .c-col-obj { font-size: 25px; line-height: 1.12; }
-  .now-md .c-now-col .c-col-obj { font-size: 21px; line-height: 1.18; }
-  .now-sm .c-now-col .c-col-obj { font-size: 18px; line-height: 1.24; }
-  .c-col-obj.none { font-style: italic; color: rgba(245,245,250,0.4); }
-  .c-now-col  .c-col-obj.none { font-size: 17px; }
-  .c-then-col .c-col-obj.none { font-size: 14px; }
+  /* Both sides are formatted + sized IDENTICALLY. Colour is the only difference:
+     THEN dull grey, NOW white. Size bucket (.sz-*) is set on .card by JS from the
+     LONGER of the two names, so both columns always match and neither overflows. */
+  .c-then-col .c-col-obj { color: rgba(245,245,250,0.5); }   /* dull grey */
+  .c-now-col  .c-col-obj { color: var(--text); }              /* white     */
+  .sz-xl .c-col-obj { font-size: 30px; line-height: 1.08; }
+  .sz-lg .c-col-obj { font-size: 25px; line-height: 1.12; }
+  .sz-md .c-col-obj { font-size: 21px; line-height: 1.18; }
+  .sz-sm .c-col-obj { font-size: 18px; line-height: 1.24; }
+  .c-col-obj.none { font-size: 16px; font-style: italic; }
   .c-col-price { font-size: 12.5px; font-variant-numeric: tabular-nums; margin-top: 8px; }
   .c-then-col .c-col-price { color: rgba(245,245,250,0.35); }
-  .c-now-col  .c-col-price { color: rgba(245,245,250,0.5); }
+  .c-now-col  .c-col-price { color: rgba(245,245,250,0.55); }
   /* the spine — always a plain horizontal glyph (up/down lives in the multiple pill).
      margin-top clears the eyebrow so it sits on the object line, not floating mid-card. */
   .c-arrow {
@@ -247,7 +249,7 @@
     <!-- PREVIEW -->
     <div class="previewCol">
       <div class="cap">live preview — copy or screenshot</div>
-      <div class="card obj-lg" id="card">
+      <div class="card sz-lg" id="card">
         <div class="c-head">
           <img class="c-logo" id="b_logo" alt="" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Ccircle cx='17' cy='17' r='17' fill='%230d0d16'/%3E%3C/svg%3E" />
           <div class="c-id">
@@ -434,15 +436,15 @@
   }
 
   // ===== RENDER THE CARD =====
-  // NOW-column size bucket — driven by the today object's length (narrower than the
-  // old full-width hero, so the buckets are smaller). Length-based, never measure-and-
-  // reflow, so the on-screen card and the html2canvas export always agree.
-  function nowSizeClass(name) {
-    const n = (name || '').length;
-    if (n <= 14) return 'now-xl';
-    if (n <= 26) return 'now-lg';
-    if (n <= 42) return 'now-md';
-    return 'now-sm';
+  // Shared size bucket for BOTH columns — driven by the LONGER of the two object names,
+  // so the two sides are always the same size and neither overflows the narrow column.
+  // Length-based, never measure-and-reflow, so on-screen and html2canvas export agree.
+  function sharedSizeClass(a, b) {
+    const n = Math.max((a || '').length, (b || '').length);
+    if (n <= 14) return 'sz-xl';
+    if (n <= 26) return 'sz-lg';
+    if (n <= 42) return 'sz-md';
+    return 'sz-sm';
   }
 
   function render() {
@@ -474,7 +476,8 @@
       $('b_nowobj').textContent = objText;
       $('b_nowobj').className = 'c-col-obj' + (isNone ? ' none' : '');
       $('b_nowprice').textContent = priceText || '';
-      $('card').className = 'card ' + (isNone ? 'now-lg' : nowSizeClass(objText));
+      // size from BOTH names (setLeft already ran) so the two columns are always equal.
+      $('card').className = 'card ' + sharedSizeClass($('b_thenobj').textContent, objText);
     }
     function setTagline(text) {
       $('b_tagline').textContent = text || '';
