@@ -409,6 +409,7 @@
   .coin-badge {
     display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
     border: 1px solid var(--line); background: rgba(255,255,255,0.04);
+    color: var(--text);
     font-weight: 800; font-size: 13px; cursor: pointer;
     transition: border-color .15s, background .15s, box-shadow .15s; user-select: none;
   }
@@ -770,7 +771,6 @@
   .pump-dream-name {
     font-family: 'Space Grotesk', sans-serif; font-weight: 700;
     color: var(--text); line-height: 1.14;
-    overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
   }
   /* Responsive size buckets — set on .pump-dream-obj by JS (pumpObjSizeClass).
      pump-obj-sm is the hard floor: still visually heavier than the price/stamp lines. */
