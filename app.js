@@ -1138,7 +1138,12 @@
 
     if (wrap) {
       wrap.style.display = '';
-      requestAnimationFrame(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }));
+      requestAnimationFrame(() => {
+        fitHeroName(card);
+        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    } else {
+      requestAnimationFrame(() => fitHeroName(card));
     }
     const icon = document.getElementById('scShareIcon');
     const txt  = document.getElementById('scShareText');
@@ -1649,6 +1654,27 @@
     if (n <= 32) return 'pump-obj-lg';
     if (n <= 48) return 'pump-obj-md';
     return 'pump-obj-sm';
+  }
+  // Shrink a hero card's item name until it fits its box on BOTH axes — replaces
+  // the old length-bucket guess that let long names clip. Fails safe: if the card
+  // is measured while hidden (0 height), it stays at MAX rather than shrinking to
+  // the floor. Runs on every render + once after the webfont loads (see below).
+  function fitHeroName(cardEl) {
+    if (!cardEl) return;
+    const obj  = cardEl.querySelector('.pump-dream-obj');
+    const name = cardEl.querySelector('.pump-dream-name');
+    if (!obj || !name) return;
+    const MAX = 40, MIN = 15;            // px — MAX matches the old top bucket
+    let size = MAX;
+    name.style.lineHeight = '1.15';      // room for descenders (y, g, p)
+    name.style.fontSize = size + 'px';
+    // Step down until the name + its price line fit the hero box (height and width).
+    while (size > MIN &&
+           (obj.scrollHeight > obj.clientHeight + 1 ||
+            name.scrollWidth  > name.clientWidth  + 1)) {
+      size -= 1;
+      name.style.fontSize = size + 'px';
+    }
   }
 
   function updatePumpResult() {
@@ -2570,3 +2596,11 @@
     setInterval(refreshFeed, 60_000);  // poll, matching the price-ticker cadence
     setInterval(tickTimes, 30_000);    // age timestamps between polls
   })();
+  // Re-fit the visible flip-card once the webfont finishes loading, so the first
+  // render (which may have measured the fallback font) corrects to real metrics.
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      const card = document.getElementById('scResultCard');
+      if (card && flipCoin) fitHeroName(card);
+    });
+  }
