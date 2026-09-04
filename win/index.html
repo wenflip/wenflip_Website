@@ -140,7 +140,7 @@
      "it moved up" is read spatially before a single word. */
   .c-faceoff {
     flex: 1; min-height: 0; position: relative; z-index: 1; margin: 4px 0;
-    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: start; gap: 10px;
   }
   .c-col { min-width: 0; display: flex; flex-direction: column; }
   .c-then-col { text-align: left; }
@@ -171,20 +171,18 @@
   .c-col-price { font-size: 12.5px; font-variant-numeric: tabular-nums; margin-top: 8px; }
   .c-then-col .c-col-price { color: rgba(245,245,250,0.35); }
   .c-now-col  .c-col-price { color: rgba(245,245,250,0.5); }
-  /* the spine — always a plain horizontal glyph (up/down lives in the verdict) */
+  /* the spine — always a plain horizontal glyph (up/down lives in the multiple pill).
+     margin-top clears the eyebrow so it sits on the object line, not floating mid-card. */
   .c-arrow {
     font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700;
-    color: rgba(245,245,250,0.28); flex: 0 0 auto; line-height: 1; align-self: center;
+    color: rgba(245,245,250,0.28); flex: 0 0 auto; line-height: 1; align-self: start; margin-top: 24px;
   }
 
-  /* ===== ZONE 3 — VERDICT: fenced off, carries the trajectory + locked tagline ===== */
+  /* ===== ZONE 3 — VERDICT: fenced off, carries the locked tagline ===== */
   .c-foot { flex-shrink: 0; position: relative; z-index: 1; }
   .c-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 14px 0 10px; }
-  /* the one loud element — the trajectory made concrete */
-  .c-climb { font-size: 16px; font-weight: 800; color: var(--accent); letter-spacing: 0.01em; min-height: 20px; }
-  .c-climb.down { color: var(--red); }
   /* the locked brand line — deadpan, flat, never performed */
-  .c-tagline { font-size: 13px; color: rgba(245,245,250,0.6); font-style: italic; margin-top: 9px; }
+  .c-tagline { font-size: 13px; color: rgba(245,245,250,0.6); font-style: italic; margin-top: 2px; }
   .c-flavor { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 10px; }
   .c-stamp {
     display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px;
@@ -275,7 +273,6 @@
 
         <div class="c-foot">
           <div class="c-divider"></div>
-          <div class="c-climb" id="b_climb"></div>
           <div class="c-tagline" id="b_tagline"></div>
           <div class="c-flavor" id="b_flavor" style="display:none"></div>
           <div class="c-stamp">
@@ -470,10 +467,19 @@
       $('b_nowprice').textContent = priceText || '';
       $('card').className = 'card ' + (isNone ? 'now-lg' : nowSizeClass(objText));
     }
-    function setVerdict(climbText, down, tagline) {
-      $('b_climb').textContent = climbText || '';
-      $('b_climb').className = 'c-climb' + (down ? ' down' : '');
-      $('b_tagline').textContent = tagline || '';
+    function setTagline(text) {
+      $('b_tagline').textContent = text || '';
+    }
+    // top-right pill = the timeframe multiple (live ÷ then), the trajectory over YOUR span.
+    // green ▲ when up (a climb), red ▼ when down (a slip). tight — no space before ×.
+    function hidePill() { $('b_chg').className = 'c-chg hide'; }
+    function setMultPill(live, then) {
+      const m = live / then;
+      const el = $('b_chg');
+      if (!isFinite(m) || m <= 0) { hidePill(); return; }
+      const up = m >= 1;
+      el.className = 'c-chg ' + (up ? 'up' : 'down');
+      el.textContent = (up ? '▲ ' : '▼ ') + fmtMult(m) + '×';
     }
 
     // ---- no coin / no live price yet ----
@@ -484,7 +490,7 @@
       $('b_chg').className = 'c-chg hide';
       setLeft('—', false, '');
       setRight('—', false, '', 'dead');
-      setVerdict('', false, '');
+      setTagline('');
       status.className = 'status';
       status.textContent = tk ? `Waiting on a live price for ${tk.sym}…` : 'Pick a coin to start.';
       $('download').disabled = true;
@@ -493,27 +499,28 @@
 
     // ---- identity (coin loaded) ----
     const livePrice = st.price;
-    const chg = st.chg || 0;
     $('b_logo').src = tk.logo;
     $('b_sym').textContent = tk.sym;
     $('b_name').innerHTML = `${tk.name} · ${fmtCoinPrice(livePrice)}`;
-    const chgEl = $('b_chg');
-    chgEl.className = 'c-chg ' + (chg >= 0 ? 'up' : 'down');
-    chgEl.textContent = (chg >= 0 ? '▲ ' : '▼ ') + Math.abs(chg).toFixed(2) + '%';
 
     const todayRung = rungForPrice(livePrice);
 
-    // ---- then-price gate: show NOW forming, hold LEFT + verdict blank ----
+    // ---- then-price gate: show NOW forming, hold LEFT + pill + tagline blank ----
     if (isNaN(thenPrice) || thenPrice <= 0) {
+      hidePill();
       setLeft('—', false, '');
       if (todayRung) setRight(todayRung.entry.name, false, fmtItemPrice(todayRung.entry.price), 'dead');
       else           setRight('nothing on the board yet', true, '', 'dead');
-      setVerdict('', false, '');
+      setTagline('');
       status.className = 'status';
       status.textContent = `Enter what ${tk.sym} cost "${thenLabel}" to draw the climb.`;
       $('download').disabled = true;
       return;
     }
+
+    // both prices in hand — the pill is the price ratio over your chosen span, same for every state below
+    const mult = livePrice / thenPrice;
+    setMultPill(livePrice, thenPrice);
 
     const thenRung = rungForPrice(thenPrice);
 
@@ -521,7 +528,7 @@
     if (!todayRung && !thenRung) {
       setLeft('not on the board', true, '');
       setRight('nothing on the board', true, '', 'dead');
-      setVerdict('', false, '');
+      setTagline('');
       status.className = 'status no';
       status.textContent = 'Neither price is on the ladder — nothing to compare. Check your numbers.';
       $('download').disabled = true;
@@ -536,7 +543,7 @@
     else if (todayRung.idx > thenRung.idx)  mode = 'slip';       // both on, moved down
     else                                    mode = 'same';       // both on, same rung
 
-    const rungWord = n => `${n} rung${n === 1 ? '' : 's'}`;
+    const multStr = fmtMult(mult) + '×';
 
     // ---- LEFT column (THEN) — same in every non-gate state ----
     if (thenRung) setLeft(thenRung.entry.name, false, fmtItemPrice(thenRung.entry.price));
@@ -548,35 +555,32 @@
     if (todayRung) setRight(todayRung.entry.name, false, fmtItemPrice(todayRung.entry.price), nowStateCls);
     else           setRight('nothing on the board', true, '', 'down'); // slip-off
 
-    // ---- ZONE 3 verdict + operator status, per mode ----
+    // ---- ZONE 3 tagline + operator status, per mode ----
     if (mode === 'same') {
-      setVerdict('', false, '');
+      setTagline('');
       status.className = 'status no';
       status.textContent = `Both prices sit at "${todayRung.entry.name}" — same rung, no climb. Pick an older price with a real gap.`;
       $('download').disabled = true;
       return;
     }
     if (mode === 'climb') {
-      setVerdict(`↑ climbed ${rungWord(thenRung.idx - todayRung.idx)}`, false, 'same coin, higher rung.');
+      setTagline('same coin, higher rung.');
       status.className = 'status ok';
-      status.textContent = `Real climb. ${tk.sym} moved up the ladder. Ship it.`;
+      status.textContent = `Real climb — ${multStr} since "${thenLabel}". ${tk.sym} moved up the ladder. Ship it.`;
       $('download').disabled = false;
       return;
     }
     if (mode === 'climb-onto') {
-      setVerdict('↑ onto the board from nothing', false, 'same coin, higher rung.');
+      setTagline('same coin, higher rung.');
       status.className = 'status ok';
-      status.textContent = `Real climb. ${tk.sym} wasn't on the board "${thenLabel}" — now it is. Ship it.`;
+      status.textContent = `Real climb — ${multStr} since "${thenLabel}". ${tk.sym} wasn't even on the board back then. Ship it.`;
       $('download').disabled = false;
       return;
     }
-    if (mode === 'slip') {
-      setVerdict(`↓ slipped ${rungWord(todayRung.idx - thenRung.idx)}`, true, 'same coin, lower rung.');
-    } else { // slip-off
-      setVerdict('↓ fell off the board', true, 'same coin, lower rung.');
-    }
+    // slip / slip-off — honest down copy, warned in the operator strip
+    setTagline('same coin, lower rung.');
     status.className = 'status warn';
-    status.textContent = `This is a slip, not a climb — broadcaster-only, post sparingly. Win-framing leads on green.`;
+    status.textContent = `This is a slip (${multStr} over your span) — broadcaster-only, post sparingly. Win-framing leads on green.`;
     $('download').disabled = false;
   }
 
