@@ -587,7 +587,7 @@
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      ctx.drawImage(srcCanvas,0,0,1080,1080);
       if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
       else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
     } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
@@ -610,7 +610,7 @@
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      ctx.drawImage(srcCanvas,0,0,1080,1080);
       if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
       else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
     } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
@@ -895,7 +895,6 @@
         <div class="pump-dream-obj ${pumpObjSizeClass(item.name)}">
           <div class="pump-flips-lbl${eyeCls}">${flipped ? 'FLIPS ✓' : 'CHASING'}</div>
           <div class="pump-dream-name">${htmlAttr(item.name)}</div>
-          <div class="pump-dream-price">${fmtItemPrice(tPrice)}</div>
         </div>`;
       if (flipped) {
         const n = price / tPrice;
@@ -908,8 +907,7 @@
         foot = `
           <div class="pump-divider"></div>
           <div class="wf-receipt"><b>${fmtMult(tPrice / price)}×</b> to reach <span class="wf-to">${htmlAttr(item.name)}</span></div>
-          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
-          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>`;
       }
     } else {
       // ---------- BODY 1: ladder-read (Status / Pump / Cope / Surprise) ----------
@@ -933,13 +931,11 @@
           <div class="pump-dream-obj ${pumpObjSizeClass(first.name)}">
             <div class="pump-flips-lbl wf-chase">CHASING</div>
             <div class="pump-dream-name">${htmlAttr(first.name)}</div>
-            <div class="pump-dream-price">${fmtItemPrice(first.price)}</div>
           </div>`;
         foot = `
           <div class="pump-divider"></div>
           <div class="wf-receipt">not on the board yet · <b>${pct}%</b> of the way there</div>
-          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
-          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>`;
       } else {
         const pct = flipProgressPct(eff, cleared, next);
         const gap = next.price - eff;
@@ -947,13 +943,11 @@
           <div class="pump-dream-obj ${pumpObjSizeClass(cleared.name)}">
             <div class="pump-flips-lbl">${pumped ? 'WOULD FLIP' : 'FLIPPED ✓'}</div>
             <div class="pump-dream-name">${htmlAttr(cleared.name)}</div>
-            <div class="pump-dream-price">${fmtItemPrice(cleared.price)}</div>
           </div>`;
         foot = `
           <div class="pump-divider"></div>
           <div class="wf-receipt">${pct}% to <span class="wf-to">${htmlAttr(next.name)}</span></div>
-          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>
-          <div class="sc-gap-line">${getGapLine(pct, gap)}</div>`;
+          <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>`;
       }
     }
 
@@ -997,6 +991,19 @@
   async function scShare() {
     const btn2=document.getElementById('scShareBtn2'),icon2=document.getElementById('scShareIcon2'),txt2=document.getElementById('scShareText2');
     btn2.disabled=true; icon2.textContent='⏳'; txt2.textContent='Preparing…';
+    // Pre-filled X post text, read off the live card so it always matches what's shown.
+    // Card carries the noun; this carries the voice. User can edit before posting.
+    const _card  = document.getElementById('scResultCard');
+    const _sym   = flipCoin ? flipCoin.sym : '';
+    const _objEl = _card ? _card.querySelector('.pump-dream-name') : null;
+    const _lblEl = _card ? _card.querySelector('.pump-flips-lbl')  : null;
+    const _obj   = _objEl ? _objEl.textContent.trim() : '';
+    const _lbl   = _lblEl ? _lblEl.textContent.trim().toLowerCase() : '';
+    let _verb = 'flips';
+    if      (_lbl.indexOf('would')   >= 0) _verb = 'would flip';
+    else if (_lbl.indexOf('chasing') >= 0) _verb = 'is chasing';
+    else if (_lbl.indexOf('flipped') >= 0) _verb = 'just flipped';
+    const wfTweet = (_sym && _obj) ? `${_sym} ${_verb} ${_obj} 👀 wenflip.com` : 'wenflip.com';
     try {
       await loadHtml2Canvas();
       const cardEl=document.getElementById('scResultCard');
@@ -1005,21 +1012,18 @@
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,30,30,1020,1020);
-      // Attempt native file share (works on mobile with share sheets)
+      ctx.drawImage(srcCanvas,0,0,1080,1080);
       const canShareFiles = navigator.canShare && navigator.share;
       if (canShareFiles) {
-        // Build a File from the canvas blob, then test if the browser can share it
         await new Promise((resolve, reject) => {
           out.toBlob(async blob => {
             try {
               const file = new File([blob], 'wenflip-status.png', {type:'image/png'});
-              const shareData = { files:[file], title:'WenFlip Status', text:'Check the status on wenflip.com' };
+              const shareData = { files:[file], title:'wenflip', text: wfTweet };
               if (navigator.canShare(shareData)) {
                 await navigator.share(shareData);
                 resolve();
               } else {
-                // canShare says no — fall through to clipboard+composer
                 reject(new Error('canShare false'));
               }
             } catch(e) { reject(e); }
@@ -1029,7 +1033,6 @@
         throw new Error('no share');
       }
     } catch(err) {
-      // Fallback: copy image to clipboard + open X compose window
       try {
         const cardEl=document.getElementById('scResultCard');
         const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
@@ -1037,18 +1040,17 @@
         const ctx2=out2.getContext('2d');
         const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
         const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas,30,30,1020,1020);
+        ctx2.drawImage(srcCanvas,0,0,1080,1080);
         await new Promise((resolve, reject) => {
           out2.toBlob(async blob => {
             try {
               await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-              window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
+              window.open('https://x.com/intent/post?text=' + encodeURIComponent(wfTweet), '_blank', 'noopener');
               showCalcToast('Image copied — paste it into your post 🔥');
               resolve();
             } catch(e2) {
-              // Clipboard also failed — download + open composer
               const link=document.createElement('a'); link.download='wenflip-status.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
-              window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
+              window.open('https://x.com/intent/post?text=' + encodeURIComponent(wfTweet), '_blank', 'noopener');
               showCalcToast('Saved! Open X and attach the image. 🔥');
               resolve();
             }
@@ -1520,7 +1522,7 @@
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      ctx.drawImage(srcCanvas,0,0,1080,1080);
       const canShareFiles = navigator.canShare && navigator.share;
       if (canShareFiles) {
         await new Promise((resolve, reject) => {
@@ -1542,7 +1544,7 @@
         const ctx2=out2.getContext('2d');
         const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
         const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas,30,30,1020,1020);
+        ctx2.drawImage(srcCanvas,0,0,1080,1080);
         await new Promise((resolve, reject) => {
           out2.toBlob(async blob => {
             try {
@@ -1664,7 +1666,7 @@
     const obj  = cardEl.querySelector('.pump-dream-obj');
     const name = cardEl.querySelector('.pump-dream-name');
     if (!obj || !name) return;
-    const MAX = 40, MIN = 15;            // px — MAX matches the old top bucket
+    const MAX = 64, MIN = 15;            // px — raised so short object names dominate the frame
     let size = MAX;
     name.style.lineHeight = '1.15';      // room for descenders (y, g, p)
     name.style.fontSize = size + 'px';
@@ -1863,7 +1865,7 @@
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      ctx.drawImage(srcCanvas,0,0,1080,1080);
       const canShareFiles = navigator.canShare && navigator.share;
       if (canShareFiles) {
         await new Promise((resolve, reject) => {
@@ -1885,7 +1887,7 @@
         const ctx2=out2.getContext('2d');
         const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
         const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas,30,30,1020,1020);
+        ctx2.drawImage(srcCanvas,0,0,1080,1080);
         await new Promise((resolve, reject) => {
           out2.toBlob(async blob => {
             try {
@@ -2303,7 +2305,7 @@
       const ctx=out.getContext('2d');
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,30,30,1020,1020);
+      ctx.drawImage(srcCanvas,0,0,1080,1080);
       const canShareFiles = navigator.canShare && navigator.share;
       if (canShareFiles) {
         await new Promise((resolve, reject) => {
@@ -2324,7 +2326,7 @@
         const ctx2=out2.getContext('2d');
         const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
         const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas2,30,30,1020,1020);
+        ctx2.drawImage(srcCanvas2,0,0,1080,1080);
         await new Promise((resolve, reject) => {
           out2.toBlob(async blob => {
             try {
