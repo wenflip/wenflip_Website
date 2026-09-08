@@ -145,6 +145,16 @@
 
 <div class="container">
 
+  <!-- Secondary utilities relocated out of "do your own math" (Task 2).
+       Quiet pills under the hero builder; click behaviour/routes unchanged
+       (#doorDunk still wired in app.js, /bag route intact). Deliberately
+       subordinate to the hero's "Copy as image". TEMPORARY home — the next
+       build fuses these into the builder as tabs and deletes them here. -->
+  <div class="hero-subnav">
+    <button class="hero-sub-pill" id="doorDunk">🔥 Dunk on a coin</button>
+    <a class="hero-sub-pill" href="/bag">🧾 Bag check</a>
+  </div>
+
   <!-- 9-GRID — moved below the MAFC hero in TICKET 3 -->
   <div class="hero-flip">
     <div class="jf-head">
@@ -188,45 +198,6 @@
       <div class="jf-loading"><span class="skel-dot"></span><span>Loading flips…</span></div>
     </div>
   </section>
-
-  <div class="main-grid">
-    <section>
-
-
-           <!-- ZONE HEADER: names the interactive block (stays glued to the games) -->
-      <div class="ladder-head" id="domath" style="text-align:center;scroll-margin-top:20px;">
-        <h2 class="zone-header">do your own <span class="grad">math</span></h2>
-      </div>
-
-      <!-- do-your-own-math actions: one grid, 6 visible buttons (3 rows × 2 cols).
-           Cope / Surprise me / How far are hidden this pass — kept in the DOM
-           (style="display:none") so app.js listeners + their modals survive for Phase 2. -->
-      <div class="emotion-doors" id="emotionDoors">
-        <!-- HERO: the mega flip-card maker — full-width, primary -->
-        <button class="door-btn door-hero" onclick="openStatusCheckModal()">
-          <span class="door-emoji">📸</span>
-          <span class="door-label">make a flip card</span>
-          <span class="door-sublabel">choose your coin · pick your flip · share your card</span>
-        </button>
-
-        <!-- Row 2 -->
-        <button class="door-btn door-dunk" id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
-
-        <!-- Row 3 -->
-        <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
-
-        <!-- Pump door retained but hidden — its behaviour now lives inside Make a Flip Card.
-             Kept in the DOM so the app.js #doorPump listener never throws (Stage 4 deletes it). -->
-        <button class="door-btn door-pump" id="doorPump" style="display:none"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
-
-        <!-- hidden earlier passes, kept for Stage 4 janitorial deletion -->
-        <button class="door-btn door-cope" id="doorCope" style="display:none"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
-        <button class="door-btn door-wonder" id="doorWonder" style="display:none"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
-        <button class="door-btn" id="openCalc" style="display:none"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
-      </div>
-
-    </section>
-  </div>
 
   <!-- ============================================================
        TRUST STRIP — "there is no token".
