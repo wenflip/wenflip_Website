@@ -481,7 +481,8 @@
     const s = document.getElementById('calcSearch'); s.value=''; setTimeout(()=>s.focus(),120);
   }
   function closeCalcModal() { document.getElementById('calcModal').classList.remove('open'); document.body.style.overflow=''; }
-  document.getElementById('openCalc').addEventListener('click', openCalcModal);
+  const _openCalc = document.getElementById('openCalc');
+  if (_openCalc) _openCalc.addEventListener('click', openCalcModal);
 
   function openTokenModal() {
     document.getElementById('tokenModal').classList.add('open'); document.body.style.overflow='hidden';
@@ -1916,7 +1917,8 @@
 
    // Door 2: Pump → MEGA flip-card modal (Stage 3). Old Pump modal retained but
   // unreachable; opening the mega modal with Price defaulted, user picks a multiplier.
-  document.getElementById('doorPump').addEventListener('click', openStatusCheckModal);
+  const _doorPump = document.getElementById('doorPump');
+  if (_doorPump) _doorPump.addEventListener('click', openStatusCheckModal);
 
   // Doors 3 & 5 (Cope / Surprise me) are folded into the mega modal (Voice: Cope,
   // and the 🎲 Surprise-me button). Their buttons are display:none in index.html.
