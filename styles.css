@@ -1080,6 +1080,32 @@
     .jf-kicker { font-size: 10.5px; }
     .jf-time { font-size: 10px; }
   }
+
+  /* ===== TRUST STRIP — "there is no token" (promoted from footer) =====
+     Mirrors the .just-flipped tray so it reads as a sibling panel.
+     Lead style borrows .jf-sub; link borrows .pump-status-link. */
+  .trust-strip {
+    max-width: 860px; margin: 28px auto 0;
+    background: var(--bg-2); border: 1px solid var(--line);
+    border-radius: 20px; padding: 28px 24px; text-align: center;
+  }
+  .trust-strip-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(22px, 3.4vw, 32px); font-weight: 700;
+    letter-spacing: -0.01em; line-height: 1.1;
+  }
+  .trust-strip-lead {
+    margin: 12px auto 0; max-width: 620px; color: var(--muted);
+    font-size: clamp(13px, 1.5vw, 15px); line-height: 1.6;
+  }
+  .trust-strip-link {
+    display: inline-block; margin-top: 16px;
+    color: var(--accent); font-size: 13px; font-weight: 700;
+    text-decoration: underline; text-underline-offset: 3px;
+    text-decoration-color: rgba(46,224,106,0.4);
+  }
+  .trust-strip-link:hover { text-decoration-color: var(--accent); }
+  @media (max-width: 600px) { .trust-strip { padding: 20px 14px; } }
 /* ===================================================================
    HERO FLIP GRID (redesign) — 6 core coins, multiplier toggle
    =================================================================== */
