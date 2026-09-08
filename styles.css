@@ -1127,6 +1127,29 @@
 
 .hero-flip { max-width: 780px; margin: 22px auto 0; }
 
+/* Secondary hero pills — Dunk / Bag check relocated from the do-your-own-math
+   grid (Task 2). Standalone: .door-btn's grid sizing does NOT follow them here.
+   Mirrors the existing .flip-chip / .hero-mult-btn pill language so they read
+   as quiet nav, never as glowing panels. TEMPORARY — fused into the builder
+   next build. */
+.hero-subnav {
+  display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
+  max-width: 780px; margin: 14px auto 0;
+}
+.hero-sub-pill {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--line);
+  color: var(--muted); font-family: 'Inter', sans-serif;
+  font-weight: 700; font-size: 13px; cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.hero-sub-pill:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.22);
+  color: var(--text);
+}
+
 /* Multiplier toggle — mirrors the Pump quick-pick styling */
 .hero-mult {
   display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
