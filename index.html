@@ -211,11 +211,9 @@
 
         <!-- Row 2 -->
         <button class="door-btn door-dunk" id="doorDunk"><span class="door-emoji">🔥</span><span class="door-label">Dunk on a coin</span></button>
-        <a class="door-btn" href="/ladder"><span class="door-emoji">📖</span><span class="door-label">Full ladder</span></a>
 
         <!-- Row 3 -->
         <a class="door-btn" href="/bag"><span class="door-emoji">🧾</span><span class="door-label">Bag check</span></a>
-        <a class="door-btn" href="/parity"><span class="door-emoji">⚖️</span><span class="door-label">wen parity?</span></a>
 
         <!-- Pump door retained but hidden — its behaviour now lives inside Make a Flip Card.
              Kept in the DOM so the app.js #doorPump listener never throws (Stage 4 deletes it). -->
@@ -230,9 +228,24 @@
     </section>
   </div>
 
+  <!-- ============================================================
+       TRUST STRIP — "there is no token".
+       Promoted from the buried footer link into the body (V2 wireframe
+       §4), sitting between the games and the Buy PLS CTA so the trust
+       beat lands right before the ask. Copy is reused verbatim from
+       #tokenModal, which stays the canonical full version — the
+       "read the whole thing" link opens it via the existing
+       openTokenModal(). Footer "wen token?" link left alone (Task 8).
+       ============================================================ -->
+  <section class="trust-strip" id="trustStrip">
+    <h2 class="trust-strip-title">There is no wenflip token.</h2>
+    <p class="trust-strip-lead">No $WENFLIP, no $FLIP, no presale, no contract address. Every other crypto meme is a token launch in a costume — we're the one that isn't.</p>
+    <a href="#notacoin" class="trust-strip-link" onclick="event.preventDefault();openTokenModal();">read the whole thing →</a>
+  </section>
+
   <section class="cta">
     <h2>Ready to actually flip?</h2>
-    <p class="cta-sub">PulseChain was built for this — fast and cheap.</p>
+    <p class="cta-sub">PulseChain was built for this — fast and cheap. PLS is PulseChain's coin, not ours. We still don't have a token.</p>
     <div class="cta-buttons">
       <a class="btn btn-pulsex btn-pulsex-large" href="https://app.pulsex.com" target="_blank" rel="noopener">Buy PLS on PulseX →</a>
     </div>
@@ -259,11 +272,16 @@
       </a>
     </div>
 
+    <!-- Footer nav — demoted body entrances (parity Task 4, ladder Task 5). Task 8 reorganizes this shelf. -->
+    <div class="disc footer-nav" style="margin-top:14px;">
+      <a href="/parity">wen parity</a> &nbsp;·&nbsp; <a href="/ladder">nerd out on the full ladder →</a>
+    </div>
+
     <div class="flinks" style="margin-top:16px;">
       <a href="https://x.com/wenflip_cal" target="_blank" rel="noopener">follow @wenflip_cal on X</a>
     </div>
-    <div class="disc" style="margin-top:10px;opacity:0.45;">wenflip · powered by PulseChain &nbsp;·&nbsp; <a href="#notacoin" onclick="event.preventDefault();openTokenModal();" style="color:inherit;">wen token?</a></div>
-  </footer>
+    <div class="disc" style="margin-top:10px;opacity:0.45;">wenflip · powered by PulseChain</div>
+      </footer>
 </div>
 
 <script src="coins.js" defer></script>
