@@ -199,32 +199,6 @@
     </div>
   </section>
 
-  <div class="main-grid">
-    <section>
-
-
-           <!-- ZONE HEADER: names the interactive block (stays glued to the games) -->
-      <div class="ladder-head" id="domath" style="text-align:center;scroll-margin-top:20px;">
-        <h2 class="zone-header">do your own <span class="grad">math</span></h2>
-      </div>
-
-      <!-- do-your-own-math actions: one grid, 6 visible buttons (3 rows × 2 cols).
-           Cope / Surprise me / How far are hidden this pass — kept in the DOM
-           (style="display:none") so app.js listeners + their modals survive for Phase 2. -->
-      <div class="emotion-doors" id="emotionDoors">
-        <!-- Pump door retained but hidden — its behaviour now lives inside Make a Flip Card.
-             Kept in the DOM so the app.js #doorPump listener never throws (Stage 4 deletes it). -->
-        <button class="door-btn door-pump" id="doorPump" style="display:none"><span class="door-emoji">🚀</span><span class="door-label">Pump your bag</span></button>
-
-        <!-- hidden earlier passes, kept for Stage 4 janitorial deletion -->
-        <button class="door-btn door-cope" id="doorCope" style="display:none"><span class="door-emoji">💀</span><span class="door-label">Cope</span></button>
-        <button class="door-btn door-wonder" id="doorWonder" style="display:none"><span class="door-emoji">🤯</span><span class="door-label">Surprise me</span></button>
-        <button class="door-btn" id="openCalc" style="display:none"><span class="door-emoji">🧮</span><span class="door-label">How far from flipping?</span></button>
-      </div>
-
-    </section>
-  </div>
-
   <!-- ============================================================
        TRUST STRIP — "there is no token".
        Promoted from the buried footer link into the body (V2 wireframe
