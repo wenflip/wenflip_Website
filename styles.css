@@ -1254,11 +1254,11 @@
     border-color: var(--line);
   }
 
-  /* Left cluster: logo + ticker + % ride together, natural width */
+  /* Left cluster: logo + ticker ride together, natural width (% hidden on mobile) */
   .hero-box-head { flex: none; gap: 7px; }
   .hero-box-logo { width: 20px; height: 20px; }
   .hero-box-sym  { font-size: 15px; }
-  .hero-box-chg  { font-size: 11px; }
+  .hero-box-chg  { display: none; }   /* % hidden on the stacked row layout; grid keeps it */
 
   /* "flips" label — dim connective tissue between ticker and item */
   .hero-box-flips-lbl {
