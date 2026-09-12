@@ -1632,5 +1632,86 @@
     .mafc-cardcol .sc-card-wrap { padding: 0; width: 360px; }
   }
 
+/* ===================================================================
+   MAFC HERO v2 — single centered column (card → actions → builder).
+   Supersedes the .mafc-cols two-column layout (now unused). One card,
+   centered and dominant; Surprise-me + Copy in an always-visible row;
+   builder collapsed behind "make your own".
+   =================================================================== */
 
+/* Card block: centered, dominant, generous top room. */
+.mafc-hero .mafc-cardcol { padding: 20px 20px 4px; display: flex; flex-direction: column; align-items: center; }
+.mafc-hero .mafc-cardcol .sc-card-wrap { padding: 0; width: 100%; max-width: 360px; margin: 0 auto; }
+
+/* Timing cue (State 1) → held hint (State 2). app.js sets .is-playing / .is-held
+   and fills the text; empty + collapsed until then so it never leaves a gap. */
+.mafc-cue {
+  min-height: 20px; margin-top: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  color: var(--muted);
+}
+/* Dot-timer: three dots that fill left-to-right over one ~4s cycle. Purely a
+   playing indicator — not tied frame-exact to the JS timer, just "it's rolling". */
+.mafc-cue .cue-dots { display: inline-flex; gap: 5px; }
+.mafc-cue .cue-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: rgba(255,255,255,0.18);
+}
+.mafc-cue.is-playing .cue-dot { animation: mafcCueDot 4s linear infinite; }
+.mafc-cue.is-playing .cue-dot:nth-child(2) { animation-delay: 1.33s; }
+.mafc-cue.is-playing .cue-dot:nth-child(3) { animation-delay: 2.66s; }
+@keyframes mafcCueDot {
+  0%, 100% { background: rgba(255,255,255,0.18); }
+  40%      { background: var(--accent); }
+}
+/* Held state — quiet nudge where the timer was. */
+.mafc-cue.is-held { color: rgba(245,245,250,0.42); font-style: italic; }
+
+/* Action row: Surprise-me + Copy, always visible, centered, directly under card. */
+.mafc-actions {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 8px 20px 18px;
+}
+/* Surprise-me back to a compact standalone pill (overrides the wide bar base). */
+.mafc-actions .flip-random-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: auto; padding: 10px 22px; border-radius: 999px; font-size: 14px;
+  background: rgba(139,92,246,0.10); border: 1px solid rgba(139,92,246,0.35);
+}
+.mafc-actions .sc-share-row { margin-top: 0; width: 100%; }
+
+/* Builder disclosure — collapsed by default, revealed on toggle. */
+.mafc-builder { border-top: 1px solid var(--line); }
+.mafc-builder-toggle {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 15px 20px;
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); font-family: 'Inter', sans-serif;
+  font-weight: 800; font-size: 13.5px; letter-spacing: 0.02em;
+  transition: color .15s, background .15s;
+}
+.mafc-builder-toggle:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.mafc-builder-caret { display: inline-block; transition: transform .18s ease; }
+.mafc-builder-toggle[aria-expanded="true"] .mafc-builder-caret { transform: rotate(180deg); }
+.mafc-builder-toggle[aria-expanded="true"] { color: var(--text); }
+
+/* The controls block. [hidden] handles the collapsed state; when shown it gets
+   its own top divider so it reads as a revealed drawer under the toggle. */
+#mafcControls { border-top: 1px solid var(--line); }
+#mafcControls[hidden] { display: none; }
+.mafc-hero #mafcControls #scCoinList { padding: 14px 20px 4px; justify-content: center; }
+
+/* First control row inside the drawer shouldn't double its top border. */
+#mafcControls .flip-ctrl-row:first-of-type { border-top: 1px solid var(--line); }
+
+/* Reduced-motion: kill the cue animation (rotation itself is disabled in app.js). */
+@media (prefers-reduced-motion: reduce) {
+  .mafc-cue.is-playing .cue-dot { animation: none; }
+}
+
+@media (max-width: 600px) {
+  .mafc-hero .mafc-cardcol { padding: 16px 14px 4px; }
+  .mafc-actions { padding: 8px 14px 16px; }
+}
 
