@@ -1119,6 +1119,11 @@
     return hyp / flipCoin.price;
   }
 
+  // When true, renders skip the auto-scroll below. The hero rotation controller
+  // sets this around its own renders so attract mode never yanks the viewport
+  // every 4s; user-initiated renders leave it false and still scroll into view.
+  let _heroSuppressScroll = false;
+
   // The single render path for the mega modal. Reads state → renderFlipCard().
   function renderFlipModalCard() {
     const wrap = document.getElementById('scCardWrap');
@@ -1141,9 +1146,10 @@
 
     if (wrap) {
       wrap.style.display = '';
+      const _suppress = _heroSuppressScroll;
       requestAnimationFrame(() => {
         fitHeroName(card);
-        wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (!_suppress) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     } else {
       requestAnimationFrame(() => fitHeroName(card));
