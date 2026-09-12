@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>wenflip / side quests — the toys that didn't make the front page</title>
+<meta name="description" content="Games, tools, and channels. All free. Still no token." />
+<link rel="canonical" href="https://wenflip.com/side-quests" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wenflip.com/side-quests" />
+<meta property="og:title" content="wenflip / side quests — the toys that didn't make the front page" />
+<meta property="og:description" content="Games, tools, and channels. All free. Still no token." />
+<meta property="og:site_name" content="wenflip.com" />
+<meta property="og:image" content="https://wenflip.com/og-image-v2.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="wenflip / side quests — the toys that didn't make the front page" />
+<meta name="twitter:description" content="Games, tools, and channels. All free. Still no token." />
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#2ee06a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#0a0a14; --bg-2:#11111f; --bg-3:#161629;
+    --text:#f5f5fa; --muted:#8a8aa8; --line:rgba(255,255,255,0.08);
+    --green:#22c55e; --red:#ef4444; --gold:#fbbf24;
+    --accent:#2ee06a; --accent-deep:#1f8a4c; --accent-glow:rgba(46,224,106,0.25);
+    --grad:linear-gradient(135deg,#1f8a4c 0%,#2ee06a 100%);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+  body{
+    background:
+      radial-gradient(1000px 600px at 80% -10%, rgba(46,224,106,0.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, rgba(31,138,76,0.08), transparent 60%),
+      var(--bg);
+    min-height:100vh; overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  .container{max-width:640px;margin:0 auto;padding:0 20px;}
+
+  /* ===== HERO ===== */
+  .hero{padding:44px 0 8px;text-align:center;}
+  .brand{
+    display:inline-flex;align-items:baseline;gap:10px;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-0.03em;
+    font-size:clamp(30px,6vw,50px);line-height:1;
+  }
+  .brand .wf{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 24px rgba(46,224,106,0.18));}
+  .brand .slash{color:rgba(255,255,255,0.20);font-weight:400;}
+  .brand .sec{color:var(--text);}
+  .backlink{display:inline-block;margin-top:14px;font-size:12px;font-weight:700;letter-spacing:0.06em;color:var(--muted);}
+  .backlink:hover{color:var(--text);}
+
+  /* ===== PAGE TITLE ===== */
+  .sq-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(28px,6vw,42px);letter-spacing:0.04em;text-align:center;margin-top:30px;text-transform:uppercase;}
+  .sq-sub{text-align:center;color:var(--muted);font-size:15px;margin:12px auto 0;max-width:440px;line-height:1.55;text-wrap:balance;}
+
+  /* ===== SECTIONS ===== */
+  .sq-section{margin:36px 0 0;}
+  .sq-section-lbl{font-size:11px;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin:0 4px 12px;}
+
+  .sq-cards{display:flex;flex-direction:column;gap:10px;}
+  .sq-card{
+    display:flex;align-items:center;gap:16px;padding:18px 20px;
+    background:var(--bg-2);border:1px solid var(--line);border-radius:16px;
+    transition:border-color .15s,background .15s,transform .15s,box-shadow .15s;
+  }
+  .sq-card:hover{border-color:rgba(46,224,106,0.45);background:rgba(46,224,106,0.06);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.25);}
+  .sq-icon{font-size:24px;line-height:1;flex-shrink:0;width:32px;text-align:center;}
+  .sq-cbody{flex:1;min-width:0;}
+  .sq-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.01em;color:var(--text);}
+  .sq-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);vertical-align:middle;}
+  .sq-desc{color:var(--muted);font-size:14px;line-height:1.45;margin-top:3px;}
+  .sq-arrow{color:var(--muted);font-size:20px;flex-shrink:0;transition:transform .15s,color .15s;}
+  .sq-card:hover .sq-arrow{color:var(--accent);transform:translateX(3px);}
+
+  /* ===== CHANNELS INTRO ===== */
+  .sq-channels-intro{color:var(--muted);font-size:14px;line-height:1.6;margin:0 4px 14px;max-width:540px;}
+  .sq-channels-intro b{color:var(--text);font-weight:800;}
+
+  /* ===== BOTTOM CTA ===== */
+  .sq-cta{
+    display:block;text-align:center;margin:40px auto 0;max-width:340px;
+    padding:16px 24px;border-radius:14px;background:var(--grad);color:#fff;
+    font-weight:800;font-size:16px;box-shadow:0 8px 30px rgba(46,224,106,0.32);
+    transition:transform .15s,box-shadow .2s;
+  }
+  .sq-cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(46,224,106,0.45);}
+
+  /* ===== FOOTER ===== */
+  footer{margin-top:44px;padding:28px 0 44px;border-top:1px solid var(--line);text-align:center;color:var(--muted);font-size:13px;}
+  footer .ftag{font-family:'Space Grotesk',sans-serif;font-size:17px;font-weight:600;color:var(--text);margin-bottom:12px;}
+  footer .flinks{display:flex;gap:18px;justify-content:center;margin:12px 0;flex-wrap:wrap;}
+  footer .flinks a:hover{color:var(--text);}
+  footer .disc{margin-top:14px;font-size:12px;opacity:0.7;}
+
+  @media (max-width:600px){
+    .sq-card{padding:16px;gap:13px;}
+    .sq-name{font-size:16px;}
+    .sq-desc{font-size:13px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero container">
+  <div class="brand"><span class="wf">wenflip</span><span class="slash">/</span><span class="sec">side quests</span></div>
+  <a class="backlink" href="/">← back to wenflip</a>
+</header>
+
+<div class="container">
+
+  <h1 class="sq-title">Side Quests</h1>
+  <p class="sq-sub">the stuff that didn't make the front page. all free. still no token.</p>
+
+  <!-- ===== GAMES ===== -->
+  <section class="sq-section">
+    <div class="sq-section-lbl">Games</div>
+    <div class="sq-cards">
+      <a class="sq-card" href="https://wenpeg.wenflip.com" target="_blank" rel="noopener">
+        <span class="sq-icon">🕹️</span>
+        <span class="sq-cbody">
+          <span class="sq-name">wenpeg</span>
+          <span class="sq-desc">Tap to send pDAI to $1. Peg it or get rugged.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== TOOLS & PAGES ===== -->
+  <section class="sq-section">
+    <div class="sq-section-lbl">Tools &amp; Pages</div>
+    <div class="sq-cards">
+      <a class="sq-card" href="/bag">
+        <span class="sq-icon">🧾</span>
+        <span class="sq-cbody">
+          <span class="sq-name">bag check</span>
+          <span class="sq-desc">type your bag. see what it actually buys — today, not at ATH.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+      <a class="sq-card" href="/parity">
+        <span class="sq-icon">⚖️</span>
+        <span class="sq-cbody">
+          <span class="sq-name">wen parity</span>
+          <span class="sq-desc">your coin vs a bigger coin. how far, how long, how much cope.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+      <a class="sq-card" href="/standings">
+        <span class="sq-icon">🏁</span>
+        <span class="sq-cbody">
+          <span class="sq-name">standings</span>
+          <span class="sq-desc">every coin ranked by what it's flipping right now. the whole board.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ===== THE CHANNELS ===== -->
+  <section class="sq-section">
+    <div class="sq-section-lbl">The Channels</div>
+    <p class="sq-channels-intro"><b>no token. no shilling. no calls.</b> nobody's sliding into your DMs. these are just feeds you can mute.</p>
+    <div class="sq-cards">
+      <a class="sq-card" href="https://t.me/wen_flip" target="_blank" rel="noopener">
+        <span class="sq-icon">📡</span>
+        <span class="sq-cbody">
+          <span class="sq-name">wenflip<span class="sq-tag">Telegram</span></span>
+          <span class="sq-desc">what your bags just flipped. daily scoreboard.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+      <a class="sq-card" href="https://t.me/Wen_Pulse" target="_blank" rel="noopener">
+        <span class="sq-icon">📡</span>
+        <span class="sq-cbody">
+          <span class="sq-name">wenpulse<span class="sq-tag">Telegram</span></span>
+          <span class="sq-desc">the pack, red or green, every morning. just numbers.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+      <a class="sq-card" href="https://t.me/Wen_Tide" target="_blank" rel="noopener">
+        <span class="sq-icon">📡</span>
+        <span class="sq-cbody">
+          <span class="sq-name">wentide<span class="sq-tag">Telegram</span></span>
+          <span class="sq-desc">is the tide coming in or going out. macro, deadpan.</span>
+        </span>
+        <span class="sq-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+  <a class="sq-cta" href="/">← make a flip card</a>
+
+  <footer>
+    <div class="ftag">Real prices. Real flips. Real receipts.</div>
+    <div class="disc">Not financial advice. Just memes and math.</div>
+    <div class="flinks" style="margin-top:16px;">
+      <a href="/ladder">nerd out on the full ladder →</a>
+      <a href="https://x.com/wenflips" target="_blank" rel="noopener">follow @wenflips on X</a>
+    </div>
+    <div class="disc" style="margin-top:10px;opacity:0.45;">wenflip · powered by PulseChain</div>
+  </footer>
+</div>
+
+</body>
+</html>
