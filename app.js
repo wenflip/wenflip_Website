@@ -2710,7 +2710,7 @@
     tries = tries || 0;
     if (_heroFrozen) return;                       // user touched something during the wait
     if (state.some(s => s.price != null)) {
-      if (_heroReduceMotion) { _heroRoll(); _heroSetCue('off'); }
+      if (_heroReduceMotion) { _heroRoll(); _heroSetCue('off'); _heroFrozen = true; }
       else _heroStartRotation();
       return;
     }
