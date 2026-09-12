@@ -2614,3 +2614,106 @@
       if (card && flipCoin) fitHeroName(card);
     });
   }
+
+  // ===================================================================
+  // HERO ATTRACT-MODE ROTATION CONTROLLER
+  // Owns the single hero card in State 1. Auto-rotates coin+item combos
+  // through the EXISTING renderStatusCard() path (no new renderer), leans
+  // PulseChain for the opening rolls, never repeats the current coin, and
+  // suppresses the render's auto-scroll so the page never jumps every 4s.
+  // Respects prefers-reduced-motion (one static card, no rotation) and
+  // pauses while the tab is backgrounded. The freeze (next edit) flips
+  // _heroFrozen + clears the timer permanently on first interaction.
+  // ===================================================================
+  let _heroFrozen  = false;   // set true by the freeze listeners (next edit)
+  let _heroTimer   = null;
+  let _heroRolls   = 0;       // count of auto-rolls fired (drives the PulseChain bias)
+  let _heroLastSym = null;    // no-immediate-repeat guard
+
+  const _heroCueEl      = document.getElementById('mafcCue');
+  const _heroReduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const _HERO_ROTATE_MS = 4000;
+  const _HERO_BIAS_ROLLS = 3;                                    // first N rolls lean PulseChain
+  const _HERO_BIAS_SYMS  = ['PLS','PLSX','INC','HEX','pDAI'];    // on-mission opening jokes
+
+  // Cue: dot-timer while playing → quiet "tap ⟳" hint once held/frozen.
+  // Shared by the freeze listener in the next edit (calls _heroSetCue('held')).
+  function _heroSetCue(mode) {
+    if (!_heroCueEl) return;
+    if (mode === 'playing') {
+      _heroCueEl.className = 'mafc-cue is-playing';
+      _heroCueEl.innerHTML = '<span class="cue-dots"><span class="cue-dot"></span><span class="cue-dot"></span><span class="cue-dot"></span></span>';
+    } else if (mode === 'held') {
+      _heroCueEl.className = 'mafc-cue is-held';
+      _heroCueEl.textContent = 'tap ⟳ for another';
+    } else {
+      _heroCueEl.className = 'mafc-cue';
+      _heroCueEl.textContent = '';
+    }
+  }
+
+  // Build the pick pool: opening rolls prefer ready PulseChain coins; always
+  // drop the coin currently shown (unless it's the only one ready).
+  function _heroPool() {
+    const ready = state.filter(s => s.price != null);
+    if (!ready.length) return [];
+    let pool = ready;
+    if (_heroRolls < _HERO_BIAS_ROLLS) {
+      const pc = ready.filter(s => _HERO_BIAS_SYMS.indexOf(s.sym) >= 0);
+      if (pc.length) pool = pc;
+    }
+    if (pool.length > 1 && _heroLastSym) {
+      const filtered = pool.filter(s => s.sym !== _heroLastSym);
+      if (filtered.length) pool = filtered;
+    }
+    return pool;
+  }
+
+  // One auto-roll: pick, render through the existing path with scroll suppressed.
+  function _heroRoll() {
+    if (_heroFrozen) return;
+    const pool = _heroPool();
+    if (!pool.length) return;
+    const picked = pool[Math.floor(Math.random() * pool.length)];
+    _heroLastSym = picked.sym;
+    _heroRolls++;
+    _heroSuppressScroll = true;
+    renderStatusCard(picked.sym);   // sets flipCoin + renders (edit 1 gates the scroll)
+    _heroSuppressScroll = false;
+  }
+
+  // Permanent stop on first interaction. Idempotent. Called by the next edit's
+  // listeners; defined here so the whole machine lives in one place.
+  function _heroFreeze() {
+    if (_heroFrozen) return;
+    _heroFrozen = true;
+    if (_heroTimer) { clearInterval(_heroTimer); _heroTimer = null; }
+    _heroSetCue('held');
+  }
+
+  function _heroStartRotation() {
+    _heroRoll();                    // first joke immediately, no 4s wait
+    _heroSetCue('playing');
+    _heroTimer = setInterval(() => {
+      if (document.hidden || _heroFrozen) return;   // pause while backgrounded
+      _heroRoll();
+    }, _HERO_ROTATE_MS);
+  }
+
+  // Take the card off the BTC auto-prefill — the controller owns first paint,
+  // so there's no "BTC flashes then jumps" double-init.
+  _mafcPrefilled = true;
+
+  // Wait briefly for the first live price, then start (or, under reduced-motion,
+  // paint one static card and let ⟳ drive).
+  (function _heroBegin(tries){
+    tries = tries || 0;
+    if (_heroFrozen) return;                       // user touched something during the wait
+    if (state.some(s => s.price != null)) {
+      if (_heroReduceMotion) { _heroRoll(); _heroSetCue('off'); }
+      else _heroStartRotation();
+      return;
+    }
+    if (tries > 40) return;                        // ~10s with no prices: leave the loading state
+    setTimeout(() => _heroBegin(tries + 1), 250);
+  })();
