@@ -50,19 +50,38 @@
 
   <!-- HERO = MAKE A FLIP CARD — two-column (controls left / card right on desktop; card-first on mobile). TICKET 3 side-by-side pass -->
   <div class="mafc-hero" id="mafcHero">
-    <div class="mafc-hero-head">
-      <h2 class="mafc-hero-title">make a flip card</h2>
-      <p class="mafc-hero-sub">Pick a coin. Bend the number. See what it flips.</p>
+    <!-- CARD — the hero object. Always on screen; driven by auto-rotation,
+         ⟳ Surprise me, and the builder controls below. One card, ever. -->
+    <div class="mafc-cardcol">
+      <div class="sc-card-wrap" id="scCardWrap" style="display:none">
+        <div id="scResultCard" class="sc-result-card flip-card">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+      <!-- auto-play timing cue (State 1) → held hint (State 2). Managed by app.js. -->
+      <div class="mafc-cue" id="mafcCue" aria-hidden="true"></div>
     </div>
 
-    <div class="mafc-cols">
-      <!-- LEFT COLUMN: controls -->
-      <div class="mafc-controls">
-        <div class="coin-badges" id="scCoinList"></div>
+    <!-- ACTION ROW — always visible, directly under the card. -->
+    <div class="mafc-actions">
+      <button id="flipRandomBtn" class="flip-random-btn">⟳ Surprise me</button>
+      <div class="calc-share-row sc-share-row">
+        <button class="calc-share-btn sc-copy-btn" id="scShareBtn" onclick="scExport()">
+          <span class="sc-copy-main"><span id="scShareIcon">📋</span><span id="scShareText">Copy as image</span></span>
+          <span class="sc-copy-sub">Copies the image — paste it into your post and add your own words.</span>
+        </button>
+      </div>
+    </div>
 
-        <div class="flip-random-row">
-          <button id="flipRandomBtn" class="flip-random-btn">🎲 Surprise me</button>
-        </div>
+    <!-- MAKE YOUR OWN — collapsed builder. Its controls drive the card above;
+         opening it counts as a control interaction and freezes rotation (app.js). -->
+    <div class="mafc-builder" id="mafcBuilder">
+      <button type="button" class="mafc-builder-toggle" id="mafcBuilderToggle" aria-expanded="false" aria-controls="mafcControls">
+        <span class="mafc-builder-caret" aria-hidden="true">↓</span> make your own — pick a coin &amp; amount
+      </button>
+
+      <div class="mafc-controls" id="mafcControls" hidden>
+        <div class="coin-badges" id="scCoinList"></div>
 
         <!-- Price -->
         <div class="flip-ctrl-row">
@@ -118,25 +137,7 @@
           <div id="caFailMsg" class="ca-fail" style="display:none"></div>
         </div>
       </div>
-
-      <!-- RIGHT COLUMN: the live card + share -->
-      <div class="mafc-cardcol">
-        <div class="sc-card-wrap" id="scCardWrap" style="display:none">
-          <div id="scResultCard" class="sc-result-card flip-card">
-            <!-- rendered by JS -->
-          </div>
-          <div class="calc-share-row sc-share-row" style="margin-top:14px;">
-            <button class="calc-share-btn sc-copy-btn" id="scShareBtn" onclick="scExport()">
-              <span class="sc-copy-main"><span id="scShareIcon">📋</span><span id="scShareText">Copy as image</span></span>
-              <span class="sc-copy-sub">Copies the image — paste it into your post and add your own words.</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>
-</header>
-
 <!-- TICKER — switched OFF. Element kept in the DOM so app.js renderTicker() still runs
      without throwing; remove the inline display:none to switch the bar back on. -->
 <div class="ticker-wrap" id="tickerWrap" style="display:none">
