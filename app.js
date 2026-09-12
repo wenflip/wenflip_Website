@@ -2717,3 +2717,58 @@
     if (tries > 40) return;                        // ~10s with no prices: leave the loading state
     setTimeout(() => _heroBegin(tries + 1), 250);
   })();
+
+  // ===================================================================
+  // HERO FREEZE + BUILDER DISCLOSURE — the interaction layer.
+  // First interaction of ANY kind (tap/click the card, desktop hover onto
+  // the card, tap any control, open the builder) calls _heroFreeze() from
+  // the previous edit: rotation stops permanently on the shown card, the
+  // cue swaps to the "tap ⟳" hint. ⟳ Surprise me then becomes the resume
+  // gesture (it re-rolls once via its existing handler and holds, because
+  // _heroFrozen short-circuits the interval). The card never wakes on its
+  // own — frozen is permanent (your call in Phase 1).
+  // ===================================================================
+  (function _heroWireFreeze() {
+    const card    = document.getElementById('scResultCard');
+    const hero     = document.getElementById('mafcHero');
+    const actions  = document.querySelector('.mafc-actions');
+    const builder  = document.getElementById('mafcBuilder');
+
+    // One-shot: first qualifying interaction freezes, then this unbinds itself.
+    function freezeOnce() {
+      _heroFreeze();
+      if (card)    card.removeEventListener('click', freezeOnce);
+      if (card)    card.removeEventListener('mouseenter', freezeOnce);
+      if (actions) actions.removeEventListener('click', freezeOnce, true);
+      if (builder) builder.removeEventListener('click', freezeOnce, true);
+    }
+
+    // Card: tap (all devices) + hover-onto (desktop only — scoped to the card
+    // element, so a mouse crossing to the scrollbar elsewhere doesn't trip it).
+    if (card) {
+      card.addEventListener('click', freezeOnce);
+      card.addEventListener('mouseenter', freezeOnce);
+    }
+    // Controls: capture-phase so the freeze fires BEFORE the control's own
+    // handler runs — but freezeOnce never preventDefaults, so ⟳/chips/toggle
+    // still do their real jobs on this same click.
+    if (actions) actions.addEventListener('click', freezeOnce, true);
+    if (builder) builder.addEventListener('click', freezeOnce, true);
+  })();
+
+  // "↓ make your own" — in-place disclosure. Reveals the existing controls
+  // beneath the card (no scroll, no navigation, no second card). The controls
+  // drive the same #scResultCard. Opening also freezes (via the builder-scoped
+  // capture listener above), so by the time the builder can touch the card,
+  // rotation is already dead — no timer-vs-builder conflict to manage.
+  (function _heroWireBuilderToggle() {
+    const toggle   = document.getElementById('mafcBuilderToggle');
+    const controls = document.getElementById('mafcControls');
+    if (!toggle || !controls) return;
+    toggle.addEventListener('click', () => {
+      const open = controls.hasAttribute('hidden');
+      if (open) controls.removeAttribute('hidden');
+      else      controls.setAttribute('hidden', '');
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  })();
