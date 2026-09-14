@@ -331,7 +331,12 @@ function scopeLabel(){
 function renderShot(rows){
   const shot = document.getElementById('stShot');
   if(!rows) rows = orderedRows();
-  const dateStr = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  const now = new Date();
+  const WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const hh = String(now.getUTCHours()).padStart(2,'0');
+  const mm = String(now.getUTCMinutes()).padStart(2,'0');
+  const dateStr = `${WD[now.getUTCDay()]} · ${MO[now.getUTCMonth()]} ${now.getUTCDate()}, ${now.getUTCFullYear()} · ${hh}:${mm} UTC`;
   const body = rows.map(s => `
     <div class="shot-row">
       <img class="shot-logo" src="${esc(s.logo)}" alt="${esc(s.sym)}" crossorigin="anonymous"/>
