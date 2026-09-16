@@ -2633,8 +2633,17 @@
   const _heroCueEl      = document.getElementById('mafcCue');
   const _heroReduceMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const _HERO_ROTATE_MS = 4000;
-  const _HERO_BIAS_ROLLS = 3;                                    // first N rolls lean PulseChain
-  const _HERO_BIAS_SYMS  = ['PLS','PLSX','INC','HEX','pDAI'];    // on-mission opening jokes
+
+  // Fresh-load attract order — a FIXED playlist, not random. Deterministic so every
+  // cold visitor sees the same opening: BTC anchor first, PulseChain threaded in
+  // early (PLS by card 3), majors and cores braided, DWB deep-cut as the closer.
+  // ⟳ Surprise me stays random (its own handler). Loops back to BTC after the last.
+  // Symbols must match coins.js exactly (case-sensitive).
+  const _HERO_PLAYLIST = [
+    'BTC','ETH','PLS','GOLD','HEX','DOGE','PLSX','SOL','INC',
+    'pWBTC','XRP','pDAI','BNB','eHEX','ADA','PRVX','SHIB','DWB'
+  ];
+  let _heroPlaylistIdx = 0;   // next playlist slot to show
 
   // Cue: dot-timer while playing → quiet "tap ⟳" hint once held/frozen.
   // Shared by the freeze listener in the next edit (calls _heroSetCue('held')).
@@ -2652,33 +2661,30 @@
     }
   }
 
-  // Build the pick pool: opening rolls prefer ready PulseChain coins; always
-  // drop the coin currently shown (unless it's the only one ready).
-  function _heroPool() {
-    const ready = state.filter(s => s.price != null);
-    if (!ready.length) return [];
-    let pool = ready;
-    if (_heroRolls < _HERO_BIAS_ROLLS) {
-      const pc = ready.filter(s => _HERO_BIAS_SYMS.indexOf(s.sym) >= 0);
-      if (pc.length) pool = pc;
+  // Next playlist symbol whose price is actually in. Walks forward from the
+  // current slot, skipping not-yet-loaded coins, and wraps back to BTC after
+  // the last. Returns null only if NO coin has a price yet (nothing to show).
+  // Scans at most the full list once, so a fully-unloaded roster can't loop forever.
+  function _heroNextSym() {
+    const n = _HERO_PLAYLIST.length;
+    for (let i = 0; i < n; i++) {
+      const sym = _HERO_PLAYLIST[_heroPlaylistIdx % n];
+      _heroPlaylistIdx = (_heroPlaylistIdx + 1) % n;
+      const s = state.find(x => x.sym === sym && x.price != null);
+      if (s) return sym;
     }
-    if (pool.length > 1 && _heroLastSym) {
-      const filtered = pool.filter(s => s.sym !== _heroLastSym);
-      if (filtered.length) pool = filtered;
-    }
-    return pool;
+    return null;   // no prices in yet — caller does nothing, tries again next tick
   }
 
-  // One auto-roll: pick, render through the existing path with scroll suppressed.
+  // One auto-roll: advance the playlist, render through the existing path with
+  // scroll suppressed. Deterministic order; no randomness here (that's ⟳ only).
   function _heroRoll() {
     if (_heroFrozen) return;
-    const pool = _heroPool();
-    if (!pool.length) return;
-    const picked = pool[Math.floor(Math.random() * pool.length)];
-    _heroLastSym = picked.sym;
-    _heroRolls++;
+    const sym = _heroNextSym();
+    if (!sym) return;
+    _heroLastSym = sym;
     _heroSuppressScroll = true;
-    renderStatusCard(picked.sym);   // sets flipCoin + renders (edit 1 gates the scroll)
+    renderStatusCard(sym);   // sets flipCoin + renders (edit 1 gates the scroll)
     _heroSuppressScroll = false;
   }
 
