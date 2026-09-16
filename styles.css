@@ -1546,7 +1546,11 @@
     font-variant-numeric: tabular-nums; white-space: nowrap;
   }
   .wf-chg-pill.up   { color: var(--green); background: rgba(46,224,106,0.08); }
-  .wf-chg-pill.down { color: var(--red);   background: rgba(181,84,76,0.12); }
+  /* Down days: a whisper of red — desaturated near-neutral, warm cast only, so a
+     red day never fights the green FLIPPED ✓ or steals the joke's punch. Arrow +
+     number kept; only the colour recedes. Deliberately NOT var(--red) (fire-engine)
+     and NOT its own bg tint (which would re-loud it) — flattened to a neutral wash. */
+  .wf-chg-pill.down { color: #9a8783;      background: rgba(154,135,131,0.10); }
 
   /* CHASING / not-yet eyebrow — greys the reused pump FLIPS label */
   .pump-flips-lbl.wf-chase { color: var(--muted); }
