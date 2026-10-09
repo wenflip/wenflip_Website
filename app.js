@@ -2590,7 +2590,14 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const json = await res.json();
         if (!json || json.ok === false || !Array.isArray(json.flips)) throw new Error('bad payload');
-        latestFlips = json.flips.slice(0, MAX_ROWS);
+        // Same coin flipping the same item again (bouncing across one rung) adds
+        // nothing and reads as a glitch — keep only the newest of each coin+item.
+        const seen = new Set();
+        latestFlips = json.flips.filter(f => {
+          const key = String(f.sym).toLowerCase() + '|' + String(f.item).toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key); return true;
+        }).slice(0, MAX_ROWS);
         hasLoaded = true;
         render();
       } catch (e) {

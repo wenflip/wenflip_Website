@@ -249,32 +249,10 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="/coins.js"></script>
 <script src="/ladder.js"></script>
 <script>
-/* ============================================================
-   COIN ROSTER — 18 coins (DAI dropped; it just sits at ~$1).
-   chain: 'major' → the "The Rest" tab · 'pulsechain' → PulseChain tab.
-   ============================================================ */
-const TOKENS = [
-  { sym:'BTC',   name:'Bitcoin',    chain:'major',      dexChain:'ethereum',   pair:'0x4585fe77225b41b697c938b018e2ac67ac5a20c0', logo:'/logos/BTC_logo.png'    },
-  { sym:'GOLD',  name:'Gold',       chain:'major',      dexChain:'ethereum',   pair:'0x9c4fe5ffd9a9fc5678cfbd93aa2d4fd684b67c4c', logo:'/logos/GOLD_logo.png'   },
-  { sym:'ETH',   name:'Ethereum',   chain:'major',      dexChain:'bsc',        pair:'0x531febfeb9a61d948c384acfbe6dcc51057aea7e', logo:'/logos/ETH_logo.png'    },
-  { sym:'SOL',   name:'Solana',     chain:'major',      dexChain:'bsc',        pair:'0xbffec96e8f3b5058b1817c14e4380758fada01ef', logo:'/logos/SOL_logo.png'    },
-  { sym:'BNB',   name:'BNB',        chain:'major',      dexChain:'bsc',        pair:'0x16b9a82891338f9ba80e2d6970fdda79d1eb0dae', logo:'/logos/BNB_logo.png'    },
-  { sym:'XRP',   name:'XRP',        chain:'major',      dexChain:'base',       pair:'0xb90fe999be6869af0afc557dccfbe169ea3403d6', logo:'/logos/XRP_logo.png'    },
-  { sym:'DOGE',  name:'Dogecoin',   chain:'major',      dexChain:'bsc',        pair:'0x89da4102853c6cf3f4e9979cbb1dc4a166f38e84', logo:'/logos/DOGE_logo.png'   },
-  { sym:'ADA',   name:'Cardano',    chain:'major',      dexChain:'bsc',        pair:'0x28415ff2c35b65b9e5c7de82126b4015ab9d031f', logo:'/logos/ADA_logo.png'    },
-  { sym:'SHIB',  name:'Shiba Inu',  chain:'major',      dexChain:'ethereum',   pair:'0x811beed0119b4afce20d2583eb608c6f7af1954f', logo:'/logos/SHIB_logo.png'   },
-  { sym:'pWBTC', name:'pWBTC',      chain:'pulsechain', dexChain:'pulsechain', pair:'0x46E27Ea3A035FfC9e6d6D56702CE3D208FF1e58c', logo:'/logos/pwBTC_Logo.png'  },
-  { sym:'INC',   name:'Incentive',  chain:'pulsechain', dexChain:'pulsechain', pair:'0xf808bb6265e9ca27002c0a04562bf50d4fe37eaa', logo:'/logos/INC_logo.png'    },
-  { sym:'pDAI',  name:'pDAI',       chain:'pulsechain', dexChain:'pulsechain', pair:'0xfc64556faa683e6087f425819c7ca3c558e13ac1', logo:'/logos/pDAI_logo.png'   },
-  { sym:'HEX',   name:'HEX',        chain:'pulsechain', dexChain:'pulsechain', pair:'0xf1f4ee610b2babb05c635f726ef8b0c568c8dc65', logo:'/logos/HEX_Logo.png'    },
-  { sym:'eHEX',  name:'eHEX',       chain:'pulsechain', dexChain:'pulsechain', pair:'0xf0ea3efe42c11c8819948ec2d3179f4084863d3f', logo:'/logos/HEX_Logo.png'    },
-  { sym:'PLSX',  name:'PulseX',     chain:'pulsechain', dexChain:'pulsechain', pair:'0x1b45b9148791d3a104184cd5dfe5ce57193a3ee9', logo:'/logos/PulseX_logo.png' },
-  { sym:'PLS',   name:'Pulse',      chain:'pulsechain', dexChain:'pulsechain', pair:'0xe56043671df55de5cdf8459710433c10324de0ae', logo:'/logos/PLS_Logo.png'    },
-  { sym:'PRVX',  name:'PRVX',       chain:'pulsechain', dexChain:'pulsechain', pair:'0x7f681a5ad615238357ba148c281e2eaefd2de55a', logo:'/logos/PRVX_logo.png'   },
-  { sym:'DWB',   name:'dickwifbutt',chain:'pulsechain', dexChain:'pulsechain', pair:'0xe644f9b23375d07f5fe11cc223716c6db7ea356b', logo:'/logos/DWB_logo.png'    },
-];
+/* Coin roster comes from /coins.js (the homepage's list) — one source of truth. */
 
 const state = TOKENS.map(t => ({ ...t, price:null, chg:0, lastGood:null }));
 
@@ -390,7 +368,7 @@ const FETCH_TIMEOUT_MS = 5000;
 let lastFetch = null;
 
 async function fetchChainBatch(chain, tokens){
-  const addrs = tokens.map(t => t.pair.trim()).join(',');
+  const addrs = tokens.map(t => t.pairAddress.trim()).join(',');
   const url = `https://api.dexscreener.com/latest/dex/pairs/${chain}/${addrs}`;
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), FETCH_TIMEOUT_MS);
@@ -404,7 +382,7 @@ async function fetchChainBatch(chain, tokens){
   const byAddr = {};
   for(const p of pairs){ if(p && p.pairAddress) byAddr[p.pairAddress.toLowerCase()] = p; }
   for(const t of tokens){
-    const p = byAddr[t.pair.trim().toLowerCase()];
+    const p = byAddr[t.pairAddress.trim().toLowerCase()];
     if(p && p.priceUsd != null){
       const s = state.find(x => x.sym===t.sym);
       s.price = parseFloat(p.priceUsd);

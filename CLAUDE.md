@@ -41,6 +41,12 @@ The site's premise: compare crypto coin prices against real-world prices ("what 
 
 When adding a new toy, match this existing open/close/render/export/share pattern rather than introducing a new one.
 
+### Voice & casing (do not "fix")
+
+- The site's copy is deliberately lowercase and deadpan — headings, labels, taglines, footers, links. That casing is the joke, not a typo.
+- Never change lowercase text to uppercase or Title Case. If unsure, leave the casing exactly as it is.
+- The brand is always `wenflip` — one word, lowercase. "wen flip?" (two words) is only the in-world meme question.
+
 ### Content notes
 
 Some HTML sections are intentionally commented out rather than deleted (e.g. the live-pill and hero copy in `index.html`, marked `switched OFF`) — treat these as deliberate, reversible toggles, not dead code to clean up, unless asked to remove them.
