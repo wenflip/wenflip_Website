@@ -880,7 +880,7 @@
         <img class="pump-logo" src="${htmlAttr(logo)}" alt="${htmlAttr(sym)}"/>
         <div class="pump-coin-id">
           <div class="pump-coin-sym">${htmlAttr(sym)}</div>
-          <div class="pump-coin-name-sm">${htmlAttr(name)} · ${fmtPrice(price)}</div>
+          <div class="pump-coin-name-sm"><span class="wf-coin-name">${htmlAttr(name)} · </span>${fmtPrice(price)}</div>
         </div>
         ${badge}
       </div>`;

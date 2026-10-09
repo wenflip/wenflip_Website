@@ -9,7 +9,7 @@
      /* finance semantic — kept conceptually separate from brand */
     /* green brightened to advance, red desaturated to recede (dopamine lean) */
     --green: #2ee06a;
-    --red:   #b5544c;
+    --red:   #c9655c;
 
     /* text on any var(--grad) / bright-green surface — white fails contrast there */
     --on-accent: #0a0a14;
@@ -158,7 +158,7 @@
   }
   .chain-filter-btn {
     display: inline-flex; align-items: center; justify-content: center;
-    padding: 8px 18px; border-radius: 999px;
+    min-height: 44px; padding: 8px 18px; border-radius: 999px;
     background: rgba(255,255,255,0.04);
     border: 1px solid var(--line);
     color: var(--muted); font-weight: 700; font-size: 14px; cursor: pointer;
@@ -402,6 +402,7 @@
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
   footer .flinks a:hover { color: var(--text); }
+  footer a { display: inline-block; padding: 14px 6px; margin: -14px -6px; }
   footer .disc { margin-top: 16px; font-size: 12px; opacity: 0.7; }
 
   /* ===== FLIP CALCULATOR ===== */
@@ -1145,7 +1146,7 @@
 }
 .hero-sub-pill {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border-radius: 999px;
+  min-height: 44px; padding: 8px 16px; border-radius: 999px;
   background: rgba(255,255,255,0.04); border: 1px solid var(--line);
   color: var(--muted); font-family: 'Inter', sans-serif;
   font-weight: 700; font-size: 13px; cursor: pointer;
@@ -1163,7 +1164,7 @@
   margin-bottom: 18px;
 }
 .hero-mult-btn {
-  padding: 8px 18px; border-radius: 999px;
+  min-height: 44px; padding: 8px 18px; border-radius: 999px;
   background: rgba(255,255,255,0.04); border: 1px solid var(--line);
   color: var(--muted); font-weight: 800; font-size: 14px; cursor: pointer;
   font-family: 'Inter', sans-serif;
@@ -1465,7 +1466,7 @@
      =================================================================== */
   .flip-random-row { padding: 12px 20px 4px; }
   .flip-random-btn {
-    width: 100%; padding: 11px 14px; border-radius: 12px;
+    width: 100%; min-height: 44px; padding: 11px 14px; border-radius: 12px;
     background: rgba(139,92,246,0.10); border: 1px solid rgba(139,92,246,0.35);
     color: var(--text); font-weight: 800; font-size: 14px; cursor: pointer;
     font-family: 'Inter', sans-serif;
@@ -1478,7 +1479,7 @@
 
   .flip-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
   .flip-chip {
-    padding: 8px 16px; border-radius: 999px;
+    min-height: 44px; padding: 8px 16px; border-radius: 999px;
     background: rgba(255,255,255,0.04); border: 1px solid var(--line);
     color: var(--muted); font-weight: 800; font-size: 14px; cursor: pointer;
     font-family: 'Inter', sans-serif;
@@ -1719,6 +1720,10 @@
 /* Reduced-motion: kill the cue animation (rotation itself is disabled in app.js). */
 @media (prefers-reduced-motion: reduce) {
   .mafc-cue.is-playing .cue-dot { animation: none; }
+}
+
+@media (max-width: 360px) {
+  .wf-head .wf-coin-name { display: none; }
 }
 
 @media (max-width: 600px) {
