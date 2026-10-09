@@ -1,0 +1,114 @@
+/* ===================================================================
+   site.css — shared by every page. Load it FIRST, before any page CSS.
+   Holds the design tokens, base reset, focus ring, the subpage header,
+   the footer, and the "make your own" call-to-action.
+   Page-specific styling stays in each page (or styles.css for the homepage).
+   =================================================================== */
+:root {
+  --bg: #0a0a14;
+  --bg-2: #11111f;
+  --bg-3: #161629;
+  --text: #f5f5fa;
+  --muted: #8a8aa8;
+  --line: rgba(255,255,255,0.08);
+
+  /* finance semantic — kept conceptually separate from brand.
+     green brightened to advance, red desaturated to recede (still passes contrast) */
+  --green: #2ee06a;
+  --red:   #c9655c;
+  --gold:  #fbbf24;
+
+  /* brand accent (neon, trim only) */
+  --accent:      #2ee06a;
+  --accent-deep: #1f8a4c;
+  --accent-glow: rgba(46,224,106,0.25);
+  /* text on any var(--grad) / bright-green surface — white fails contrast there */
+  --on-accent:   #0a0a14;
+
+  /* brand gradient (deep -> neon) */
+  --grad:      linear-gradient(135deg, #1f8a4c 0%, #2ee06a 100%);
+  --grad-soft: linear-gradient(135deg, rgba(46,224,106,0.12), rgba(31,138,76,0.06));
+
+  /* PulseChain identity (magenta — chain-identity trim only) */
+  --pulse-magenta:      #ec4899;
+  --pulse-magenta-soft: rgba(236,72,153,0.15);
+  --pulse-grad:         linear-gradient(135deg, #db2777 0%, #ec4899 100%);
+
+  /* retired — kept defined for backward safety, do not use */
+  --purple: #8b5cf6;
+  --pink:   #ec4899;
+
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+/* form controls don't inherit type by default — without this they fall back to Arial */
+button, input, select, textarea { font: inherit; color: inherit; }
+html, body { background: var(--bg); color: var(--text); font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+body {
+  background:
+    radial-gradient(1000px 600px at 80% -10%, rgba(46,224,106,0.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(31,138,76,0.08), transparent 60%),
+    var(--bg);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* One visible, on-brand focus ring for keyboard users (mouse clicks don't show it). */
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ===== SUBPAGE HEADER — "wenflip / page" ===== */
+/* header.site-head (not just .site-head) so it beats each page's own .container padding */
+header.site-head { padding: 44px 20px 8px; text-align: center; }
+.site-head .brand {
+  display: inline-flex; align-items: baseline; gap: 10px;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; letter-spacing: -0.03em;
+  font-size: clamp(32px, 6.5vw, 54px); line-height: 1;
+}
+.site-head .wf {
+  background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 24px rgba(46,224,106,0.18));
+}
+.site-head .slash { color: rgba(255,255,255,0.20); font-weight: 400; }
+.site-head .sec { color: var(--text); font: inherit; }
+.site-head .tag {
+  margin: 16px auto 0; max-width: 520px; color: var(--muted);
+  font-size: clamp(14px, 2vw, 17px); font-weight: 600; line-height: 1.5; text-wrap: balance;
+}
+.site-head .backlink {
+  display: inline-block; margin-top: 6px; padding: 12px 6px;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--muted);
+}
+.site-head .backlink:hover { color: var(--text); }
+
+/* ===== FOOTER — same on every page ===== */
+footer {
+  max-width: 860px; margin: 48px auto 0; padding: 28px 0 40px;
+  border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px;
+}
+footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+footer .disc { margin-top: 14px; font-size: 12px; opacity: 0.7; }
+footer .flinks { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; margin: 14px 0 0; }
+footer .flinks a:hover { color: var(--text); }
+footer .fsig { margin-top: 10px; }
+/* larger invisible tap area — padding cancelled by negative margin, so the look is unchanged */
+footer a { display: inline-block; padding: 14px 6px; margin: -14px -6px; }
+
+/* ===== "MAKE YOUR OWN" CALL-TO-ACTION (bottom of subpages) ===== */
+.page-cta {
+  margin: 40px auto 0; text-align: center; padding: 36px 22px; border-radius: 22px;
+  background: radial-gradient(600px 300px at 50% 0%, rgba(46,224,106,0.14), transparent 70%), var(--bg-2);
+  border: 1px solid var(--line);
+}
+.page-cta h2 { font-family: 'Space Grotesk', sans-serif; font-size: clamp(24px, 4.5vw, 34px); font-weight: 700; letter-spacing: -0.02em; }
+.page-cta p { margin: 10px auto 0; max-width: 420px; color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5; }
+.page-cta-btn {
+  display: inline-flex; align-items: center; justify-content: center; min-height: 48px;
+  margin-top: 22px; padding: 14px 30px; border-radius: 12px;
+  background: var(--grad); color: var(--on-accent); font-weight: 800; font-size: 16px;
+  box-shadow: 0 8px 30px rgba(46,224,106,0.32); transition: transform .15s, box-shadow .2s;
+}
+@media (hover: hover) {
+  .page-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(46,224,106,0.45); }
+}
