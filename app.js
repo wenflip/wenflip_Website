@@ -1487,7 +1487,7 @@
     }
 
     document.getElementById('flResultCard').innerHTML = `
-      <div class="fl-title-strip">THE FLIPPENING</div>
+      <div class="fl-title-strip">DUNK ON A COIN</div>
       <div class="fl-arena">
         ${sideBlock(coinA, rungA, 'left')}
         <div class="fl-vs">VS</div>
@@ -1535,8 +1535,8 @@
         await new Promise((resolve, reject) => {
           out.toBlob(async blob => {
             try {
-              const file = new File([blob], 'wenflip-flippening.png', {type:'image/png'});
-              const shareData = { files:[file], title:'The Flippening', text:'wenflip.com' };
+              const file = new File([blob], 'wenflip-dunk.png', {type:'image/png'});
+              const shareData = { files:[file], title:'Dunk on a coin', text:'wenflip.com' };
               if (navigator.canShare(shareData)) { await navigator.share(shareData); resolve(); }
               else { reject(new Error('canShare false')); }
             } catch(e) { reject(e); }
@@ -1560,7 +1560,7 @@
               showCalcToast('Image copied — paste it into your post 🔥');
               resolve();
             } catch(e2) {
-              const link=document.createElement('a'); link.download='wenflip-flippening.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
+              const link=document.createElement('a'); link.download='wenflip-dunk.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
               showCalcToast('Saved! Open X and attach the image. 🔥');
               resolve();
