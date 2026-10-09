@@ -228,7 +228,7 @@
       <div id="pcCard" class="flip-card"><!-- rendered by JS --></div>
       <div class="pc-share-row">
         <button class="pc-share-btn" id="pcShareBtn" onclick="pcExport()">
-          <span id="pcShareIcon">📋</span><span id="pcShareText">Copy as image</span>
+          <span id="pcShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="pcShareText">Copy as image</span>
         </button>
       </div>
     </div>
@@ -443,7 +443,7 @@ function openParity(id){
   Array.from(document.body.children).forEach(el=>{ if(el.id!=='parityModal' && el.tagName!=='SCRIPT') el.inert=true; });
   const c=document.querySelector('#parityModal .modal-close'); if(c) c.focus({preventScroll:true});
   const ic=document.getElementById('pcShareIcon'), tx=document.getElementById('pcShareText');
-  if(ic) ic.textContent=_isIOS?'💾':'📋';
+  if(ic) ic.className=_isIOS?'ico ico-download':'ico ico-clipboard';
   if(tx) tx.textContent=_isIOS?'Save image':'Copy as image';
 }
 function closeParity(){
@@ -496,7 +496,7 @@ async function loadHtml2Canvas(){
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 async function pcExport(){
   const btn=document.getElementById('pcShareBtn'), ic=document.getElementById('pcShareIcon'), tx=document.getElementById('pcShareText');
-  btn.disabled=true; ic.textContent='⏳'; tx.textContent='Generating…';
+  btn.disabled=true; ic.className='ico ico-spin'; tx.textContent='Generating…';
   try{
     await loadHtml2Canvas();
     const card=document.getElementById('pcCard');
@@ -518,7 +518,7 @@ async function pcExport(){
       }}, 'image/png');
     }
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
-  finally{ btn.disabled=false; ic.textContent=_isIOS?'💾':'📋'; tx.textContent=_isIOS?'Save image':'Copy as image'; }
+  finally{ btn.disabled=false; ic.className=_isIOS?'ico ico-download':'ico ico-clipboard'; tx.textContent=_isIOS?'Save image':'Copy as image'; }
 }
 
 /* ---------- boot ---------- */

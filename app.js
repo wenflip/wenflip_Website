@@ -596,10 +596,10 @@
     if (window.html2canvas) return;
     await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';s.crossOrigin='anonymous';s.onload=resolve;s.onerror=()=>reject(new Error('html2canvas failed'));document.head.appendChild(s);});
   }
-  (function(){if(_isIOS){const icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');if(icon)icon.textContent='💾';if(txt)txt.textContent='Save image';}})();
+  (function(){if(_isIOS){const icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');if(icon)icon.className='ico ico-download';if(txt)txt.textContent='Save image';}})();
   async function calcCopyImage() {
     const btn=document.getElementById('calcShareBtn'),icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');
-    btn.disabled=true; icon.textContent='⏳'; txt.textContent='Generating…';
+    btn.disabled=true; icon.className='ico ico-spin'; icon.textContent=''; txt.textContent='Generating…';
     try {
       await loadHtml2Canvas();
       const card=document.getElementById('calcResultCard');
@@ -612,7 +612,7 @@
       if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
       else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
     } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
-    finally { btn.disabled=false; icon.textContent=_isIOS?'💾':'📋'; txt.textContent=_isIOS?'Save image':'Copy as image'; }
+    finally { btn.disabled=false; icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txt.textContent=_isIOS?'Save image':'Copy as image'; }
   }
   function showCalcToast(msg) { const t=document.getElementById('calcToast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 
@@ -623,7 +623,7 @@
   // (We define exportCardAsImage first, then shadow calcCopyImage below.)
 
   async function exportCardAsImage(cardEl, shareBtn, iconEl, txtEl, isIOS) {
-    shareBtn.disabled=true; iconEl.textContent='⏳'; txtEl.textContent='Generating…';
+    shareBtn.disabled=true; iconEl.className='ico ico-spin'; iconEl.textContent=''; txtEl.textContent='Generating…';
     try {
       await loadHtml2Canvas();
       const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
@@ -635,7 +635,7 @@
       if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
       else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
     } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
-    finally { shareBtn.disabled=false; iconEl.textContent=isIOS?'💾':'📋'; txtEl.textContent=isIOS?'Save image':'Copy as image'; }
+    finally { shareBtn.disabled=false; iconEl.className = isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txtEl.textContent=isIOS?'Save image':'Copy as image'; }
   }
 
   // ==== STATUS CHECK MODAL ====
@@ -1011,7 +1011,7 @@
 
   async function scShare() {
     const btn2=document.getElementById('scShareBtn2'),icon2=document.getElementById('scShareIcon2'),txt2=document.getElementById('scShareText2');
-    btn2.disabled=true; icon2.textContent='⏳'; txt2.textContent='Preparing…';
+    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
     // Pre-filled X post text, read off the live card so it always matches what's shown.
     // Card carries the noun; this carries the voice. User can edit before posting.
     const _card  = document.getElementById('scResultCard');
@@ -1079,7 +1079,7 @@
         });
       } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
     } finally {
-      btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
+      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
   }
 
@@ -1176,7 +1176,7 @@
     }
     const icon = document.getElementById('scShareIcon');
     const txt  = document.getElementById('scShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
     if (txt)  txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
   }
 
@@ -1531,7 +1531,7 @@
     // Reset share button labels
     const icon = document.getElementById('flShareIcon');
     const txt  = document.getElementById('flShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
     if (txt)  txt.textContent  = _isIOS ? 'Save image' : 'Copy as image';
     requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
   }
@@ -1543,7 +1543,7 @@
 
   async function flippenShare() {
     const btn2=document.getElementById('flShareBtn2'),icon2=document.getElementById('flShareIcon2'),txt2=document.getElementById('flShareText2');
-    btn2.disabled=true; icon2.textContent='⏳'; txt2.textContent='Preparing…';
+    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
     try {
       await loadHtml2Canvas();
       const cardEl=document.getElementById('flResultCard');
@@ -1592,7 +1592,7 @@
         });
       } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
     } finally {
-      btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
+      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
   }
 
@@ -1845,7 +1845,7 @@
     // Reset share icon labels
     const icon = document.getElementById('pumpShareIcon');
     const txt = document.getElementById('pumpShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
     if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
 
     requestAnimationFrame(() => card.scrollIntoView({behavior:'smooth', block:'nearest'}));
@@ -1886,7 +1886,7 @@
 
   async function pumpShare() {
     const btn2=document.getElementById('pumpShareBtn2'),icon2=document.getElementById('pumpShareIcon2'),txt2=document.getElementById('pumpShareText2');
-    btn2.disabled=true; icon2.textContent='⏳'; txt2.textContent='Preparing…';
+    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
     try {
       await loadHtml2Canvas();
       const cardEl=document.getElementById('pumpResultCard');
@@ -1935,7 +1935,7 @@
         });
       } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
     } finally {
-      btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
+      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
   }
 
@@ -2077,7 +2077,7 @@
     wrap.style.display = '';
     const icon = document.getElementById('copeShareIcon');
     const txt = document.getElementById('copeShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
     if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
     requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
   }
@@ -2202,7 +2202,7 @@
     wrap.style.display = '';
     const icon = document.getElementById('outrageShareIcon');
     const txt = document.getElementById('outrageShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
     if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
     requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
   }
@@ -2312,7 +2312,7 @@
 
     const icon = document.getElementById('wonderShareIcon');
     const txt = document.getElementById('wonderShareText');
-    if (icon) icon.textContent = _isIOS ? '💾' : '📋';
+    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
     if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
   }
 
@@ -2328,7 +2328,7 @@
   // ==== SHARED NATIVE SHARE HELPER ====
   // Reuses exportCardAsImage pipeline for the canvas; same navigator.share + clipboard fallback.
   async function _shareCardFile(cardEl, filename, btn2, icon2, txt2) {
-    btn2.disabled=true; icon2.textContent='⏳'; txt2.textContent='Preparing…';
+    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
     try {
       await loadHtml2Canvas();
       const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
@@ -2373,7 +2373,7 @@
         });
       } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
     } finally {
-      btn2.disabled=false; icon2.textContent='𝕏'; txt2.textContent='Share';
+      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
   }
 
@@ -2684,7 +2684,7 @@
       _heroCueEl.innerHTML = '<span class="cue-dots"><span class="cue-dot"></span><span class="cue-dot"></span><span class="cue-dot"></span></span>';
     } else if (mode === 'held') {
       _heroCueEl.className = 'mafc-cue is-held';
-      _heroCueEl.textContent = 'tap ⟳ for another';
+      _heroCueEl.innerHTML = 'tap <span class="ico ico-shuffle" aria-hidden="true"></span><span class="sr-only">surprise me</span> for another';
     } else {
       _heroCueEl.className = 'mafc-cue';
       _heroCueEl.textContent = '';
