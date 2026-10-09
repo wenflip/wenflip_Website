@@ -2428,7 +2428,7 @@
         ? `<div class="hero-box-item">${itemName}</div>`
         : `<div class="hero-box-item none">nothing yet</div>`;
 
-      return `<div class="hero-box" data-sym="${sym}" role="button" tabindex="0" aria-label="Open ${sym} in Pump">
+      return `<div class="hero-box" data-sym="${sym}" role="button" tabindex="0" aria-label="Make a flip card for ${sym}">
         <div class="hero-box-head">
           <img class="hero-box-logo" src="${tk.logo}" alt="${sym}"/>
           <span class="hero-box-sym">${sym}</span>

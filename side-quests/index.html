@@ -19,10 +19,11 @@
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="shortcut icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<meta name="theme-color" content="#2ee06a">
+<meta name="theme-color" content="#0a0a14">
+<meta name="color-scheme" content="dark">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
   :root{
@@ -31,8 +32,11 @@
     --green:#22c55e; --red:#ef4444; --gold:#fbbf24;
     --accent:#2ee06a; --accent-deep:#1f8a4c; --accent-glow:rgba(46,224,106,0.25);
     --grad:linear-gradient(135deg,#1f8a4c 0%,#2ee06a 100%);
+    --on-accent:#0a0a14;
+    color-scheme:dark;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
+  button,input,select,textarea{font:inherit;color:inherit;}
   html,body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
   body{
     background:
@@ -74,6 +78,7 @@
   .sq-card:hover{border-color:rgba(46,224,106,0.45);background:rgba(46,224,106,0.06);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.25);}
   .sq-icon{font-size:24px;line-height:1;flex-shrink:0;width:32px;text-align:center;}
   .sq-cbody{flex:1;min-width:0;}
+  .sq-name,.sq-desc{display:block;}
   .sq-name{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.01em;color:var(--text);}
   .sq-tag{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);vertical-align:middle;}
   .sq-desc{color:var(--muted);font-size:14px;line-height:1.45;margin-top:3px;}
@@ -87,7 +92,7 @@
   /* ===== BOTTOM CTA ===== */
   .sq-cta{
     display:block;text-align:center;margin:40px auto 0;max-width:340px;
-    padding:16px 24px;border-radius:14px;background:var(--grad);color:#fff;
+    padding:16px 24px;border-radius:14px;background:var(--grad);color:var(--on-accent);
     font-weight:800;font-size:16px;box-shadow:0 8px 30px rgba(46,224,106,0.32);
     transition:transform .15s,box-shadow .2s;
   }
@@ -222,7 +227,7 @@
       <a href="/ladder">nerd out on the full ladder →</a>
       <a href="https://x.com/wenflips" target="_blank" rel="noopener">follow @wenflips on X</a>
     </div>
-    <div class="disc" style="margin-top:10px;opacity:0.45;">wenflip · powered by PulseChain</div>
+    <div class="disc" style="margin-top:10px;">wenflip · powered by PulseChain</div>
   </footer>
 </div>
 
