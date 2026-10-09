@@ -48,7 +48,7 @@
   }
   a { color: inherit; text-decoration: none; }
   .container { max-width: 1240px; margin: 0 auto; padding: 0 20px; }
-  .hero { padding: 48px 0 28px; text-align: center; position: relative; }
+  .hero { padding: 48px 20px 28px; text-align: center; position: relative; }
   .logo {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
@@ -85,7 +85,7 @@
     font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
   }
   .updated {
-    margin-top: 14px; color: var(--muted); font-size: 12px; letter-spacing: 0.06em;
+    margin-top: 14px; color: var(--muted); font-size: 12px; letter-spacing: 0.06em; text-align: center;
     min-height: 18px;
   }
   .updated b { color: var(--text); font-weight: 700; }
@@ -124,7 +124,7 @@
   .tier-absurd  { background: linear-gradient(90deg, rgba(148,163,184,0.16), rgba(148,163,184,0.02)); color: #cbd5e1; border-color: rgba(148,163,184,0.30); }
   .tier-dust    { background: linear-gradient(90deg, rgba(100,116,139,0.14), rgba(100,116,139,0.02)); color: #94a3b8; border-color: rgba(100,116,139,0.25); }
   .cta {
-    margin-top: 36px; text-align: center;
+    max-width: 860px; margin: 36px auto 0; text-align: center;
     padding: 40px 20px; border-radius: 24px;
     background: radial-gradient(600px 300px at 50% 0%, rgba(236,72,153,0.14), transparent 70%), var(--bg-2);
     border: 1px solid var(--line);
@@ -398,7 +398,7 @@
   .bridge-arrow { color: var(--accent); margin-right: 4px; }
   .bridge-pulse { background: var(--pulse-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
   .cta-sub { margin: 10px auto 0; max-width: 420px; color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5; }
-  footer { margin-top: 48px; padding: 28px 0 40px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
+  footer { max-width: 860px; margin: 48px auto 0; padding: 28px 0 40px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: 13px; }
   footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 14px; }
   footer .flinks { display: flex; gap: 18px; justify-content: center; margin: 12px 0; }
   footer .flinks a:hover { color: var(--text); }
@@ -1132,7 +1132,7 @@
 /* Shrink the logo, keep it centered. Original .logo gradient/glow still applies. */
 .hero .logo { font-size: clamp(40px, 6.5vw, 72px); margin: 0 auto; }
 
-.hero-flip { max-width: 780px; margin: 22px auto 0; }
+.hero-flip { max-width: 860px; margin: 22px auto 0; }
 
 /* Secondary hero pills — Dunk / Bag check relocated from the do-your-own-math
    grid (Task 2). Standalone: .door-btn's grid sizing does NOT follow them here.
@@ -1141,7 +1141,7 @@
    next build. */
 .hero-subnav {
   display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
-  max-width: 780px; margin: 14px auto 0;
+  max-width: 860px; margin: 14px auto 0;
 }
 .hero-sub-pill {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1201,7 +1201,7 @@
   display: flex; flex-direction: column; gap: 4px;
   padding: 18px 16px 20px; border-radius: 14px;
   background: var(--bg-2); border: 1px solid var(--line);
-  cursor: pointer; text-align: left; min-height: 150px;
+  cursor: pointer; text-align: left;
   transition: transform .12s ease, border-color .15s ease, box-shadow .2s ease, background .15s ease;
 }
 .hero-box:hover {
@@ -1589,13 +1589,9 @@
      card sits on top (column-reverse), controls below. TICKET 3 side-by-side.
      =================================================================== */
   .mafc-hero {
-    max-width: 900px;
+    max-width: 640px;
     margin: 22px auto 0;
     text-align: left;
-    background: var(--bg-2);
-    border: 1px solid var(--line);
-    border-radius: 20px;
-    overflow: hidden;
   }
   .mafc-hero-head { text-align: center; padding: 20px 20px 10px; }
   .mafc-hero-title { font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
@@ -1651,7 +1647,8 @@
    =================================================================== */
 
 /* Card block: centered, dominant, generous top room. */
-.mafc-hero .mafc-cardcol { padding: 20px 20px 4px; display: flex; flex-direction: column; align-items: center; }
+.mafc-hero .mafc-cardcol { padding: 20px 0 4px; display: flex; flex-direction: column; align-items: center;
+  min-height: calc(min(360px, 100vw - 40px) + 56px); }
 .mafc-hero .mafc-cardcol .sc-card-wrap { padding: 0; width: 100%; max-width: 360px; margin: 0 auto; }
 
 /* Timing cue (State 1) → held hint (State 2). app.js sets .is-playing / .is-held
@@ -1682,7 +1679,7 @@
 /* Action row: Surprise-me + Copy, always visible, centered, directly under card. */
 .mafc-actions {
   display: flex; flex-direction: column; align-items: center; gap: 12px;
-  padding: 8px 20px 18px;
+  padding: 8px 0 18px;
 }
 /* Surprise-me back to a compact standalone pill (overrides the wide bar base). */
 .mafc-actions .flip-random-btn {
@@ -1693,23 +1690,26 @@
 .mafc-actions .sc-share-row { margin-top: 0; width: 100%; }
 
 /* Builder disclosure — collapsed by default, revealed on toggle. */
-.mafc-builder { border-top: 1px solid var(--line); }
+.mafc-builder { text-align: center; }
 .mafc-builder-toggle {
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; padding: 15px 20px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 20px; min-height: 44px;
   background: none; border: none; cursor: pointer;
   color: var(--muted); font-family: 'Inter', sans-serif;
   font-weight: 800; font-size: 13.5px; letter-spacing: 0.02em;
   transition: color .15s, background .15s;
 }
-.mafc-builder-toggle:hover { color: var(--text); background: rgba(255,255,255,0.02); }
+.mafc-builder-toggle:hover { color: var(--text); }
 .mafc-builder-caret { display: inline-block; transition: transform .18s ease; }
 .mafc-builder-toggle[aria-expanded="true"] .mafc-builder-caret { transform: rotate(180deg); }
 .mafc-builder-toggle[aria-expanded="true"] { color: var(--text); }
 
 /* The controls block. [hidden] handles the collapsed state; when shown it gets
    its own top divider so it reads as a revealed drawer under the toggle. */
-#mafcControls { border-top: 1px solid var(--line); }
+#mafcControls {
+  margin: 6px auto 0; text-align: left;
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 20px; overflow: hidden;
+}
 #mafcControls[hidden] { display: none; }
 .mafc-hero #mafcControls #scCoinList { padding: 14px 20px 4px; justify-content: center; }
 
@@ -1722,7 +1722,7 @@
 }
 
 @media (max-width: 600px) {
-  .mafc-hero .mafc-cardcol { padding: 16px 14px 4px; }
-  .mafc-actions { padding: 8px 14px 16px; }
+  .mafc-hero .mafc-cardcol { padding: 16px 0 4px; min-height: calc(min(360px, 100vw - 40px) + 52px); }
+  .mafc-actions { padding: 8px 0 16px; }
 }
 
