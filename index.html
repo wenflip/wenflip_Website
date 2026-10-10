@@ -67,10 +67,10 @@
 
     <!-- ACTION ROW — always visible, directly under the card. -->
     <div class="mafc-actions">
-      <button id="flipRandomBtn" class="flip-random-btn">⟳ Surprise me</button>
+      <button id="flipRandomBtn" class="flip-random-btn"><span class="ico ico-shuffle" aria-hidden="true"></span> Surprise me</button>
       <div class="calc-share-row sc-share-row">
         <button class="calc-share-btn sc-copy-btn" id="scShareBtn" onclick="scExport()">
-          <span class="sc-copy-main"><span id="scShareIcon">📋</span><span id="scShareText">Copy as image</span></span>
+          <span class="sc-copy-main"><span id="scShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="scShareText">Copy as image</span></span>
           <span class="sc-copy-sub">Copies the image — paste it into your post and add your own words.</span>
         </button>
       </div>
@@ -159,8 +159,8 @@
        subordinate to the hero's "Copy as image". TEMPORARY home — the next
        build fuses these into the builder as tabs and deletes them here. -->
   <div class="hero-subnav">
-    <button class="hero-sub-pill" id="doorDunk">🔥 Dunk on a coin</button>
-    <a class="hero-sub-pill" href="/bag">🧾 Bag check</a>
+    <button class="hero-sub-pill" id="doorDunk"><span class="ico ico-flame" aria-hidden="true"></span> Dunk on a coin</button>
+    <a class="hero-sub-pill" href="/bag"><span class="ico ico-receipt" aria-hidden="true"></span> Bag check</a>
   </div>
 
   <!-- 9-GRID — moved below the MAFC hero in TICKET 3 -->
@@ -188,7 +188,7 @@
       <p class="updated" id="updated">Fetching live prices…</p>
 
     <div class="hero-standings-cta">
-      <a class="full-ladder-btn full-ladder-btn-standings" href="/standings">🏁 see the whole board →</a>
+      <a class="full-ladder-btn full-ladder-btn-standings" href="/standings"><span class="ico ico-trophy" aria-hidden="true"></span> see the whole board →</a>
     </div>
   </div>
   
@@ -272,10 +272,10 @@
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
           <button class="calc-share-btn" id="copeShareBtn" onclick="copeExport()">
-            <span id="copeShareIcon">📋</span><span id="copeShareText">Copy as image</span>
+            <span id="copeShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="copeShareText">Copy as image</span>
           </button>
           <button class="calc-share-btn sc-share-btn-x" id="copeShareBtn2" onclick="copeShare()">
-            <span id="copeShareIcon2">𝕏</span><span id="copeShareText2">Share</span>
+            <span id="copeShareIcon2" aria-hidden="true">𝕏</span><span id="copeShareText2">Share</span>
           </button>
         </div>
       </div>
@@ -301,10 +301,10 @@
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
           <button class="calc-share-btn" id="outrageShareBtn" onclick="outrageExport()">
-            <span id="outrageShareIcon">📋</span><span id="outrageShareText">Copy as image</span>
+            <span id="outrageShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="outrageShareText">Copy as image</span>
           </button>
           <button class="calc-share-btn sc-share-btn-x" id="outrageShareBtn2" onclick="outrageShare()">
-            <span id="outrageShareIcon2">𝕏</span><span id="outrageShareText2">Share</span>
+            <span id="outrageShareIcon2" aria-hidden="true">𝕏</span><span id="outrageShareText2">Share</span>
           </button>
         </div>
       </div>
@@ -329,13 +329,13 @@
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
           <button class="calc-share-btn wonder-reroll-btn" id="wonderRerollBtn" onclick="wonderReroll()">
-            🎲 Again
+            <span class="ico ico-shuffle" aria-hidden="true"></span> Again
           </button>
           <button class="calc-share-btn" id="wonderShareBtn" onclick="wonderExport()">
-            <span id="wonderShareIcon">📋</span><span id="wonderShareText">Copy as image</span>
+            <span id="wonderShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="wonderShareText">Copy as image</span>
           </button>
           <button class="calc-share-btn sc-share-btn-x" id="wonderShareBtn2" onclick="wonderShare()">
-            <span id="wonderShareIcon2">𝕏</span><span id="wonderShareText2">Share</span>
+            <span id="wonderShareIcon2" aria-hidden="true">𝕏</span><span id="wonderShareText2">Share</span>
           </button>
         </div>
       </div>
@@ -389,10 +389,10 @@
         </div>
         <div class="calc-share-row sc-share-row" id="pumpShareRow" style="display:none">
           <button class="calc-share-btn" id="pumpShareBtn" onclick="pumpExport()">
-            <span id="pumpShareIcon">📋</span><span id="pumpShareText">Copy as image</span>
+            <span id="pumpShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="pumpShareText">Copy as image</span>
           </button>
           <button class="calc-share-btn sc-share-btn-x" id="pumpShareBtn2" onclick="pumpShare()">
-            <span id="pumpShareIcon2">𝕏</span><span id="pumpShareText2">Share</span>
+            <span id="pumpShareIcon2" aria-hidden="true">𝕏</span><span id="pumpShareText2">Share</span>
           </button>
         </div>
       </div>
@@ -443,10 +443,10 @@
         </div>
         <div class="calc-share-row sc-share-row" style="margin-top:14px;">
           <button class="calc-share-btn" id="flShareBtn" onclick="flippenExport()">
-            <span id="flShareIcon">📋</span><span id="flShareText">Copy as image</span>
+            <span id="flShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="flShareText">Copy as image</span>
           </button>
           <button class="calc-share-btn sc-share-btn-x" id="flShareBtn2" onclick="flippenShare()">
-            <span id="flShareIcon2">𝕏</span><span id="flShareText2">Share</span>
+            <span id="flShareIcon2" aria-hidden="true">𝕏</span><span id="flShareText2">Share</span>
           </button>
         </div>
       </div>
@@ -503,7 +503,7 @@
         </div>
         <div class="calc-share-row" id="calcShareRow" style="display:none">
           <button class="calc-share-btn" id="calcShareBtn" onclick="calcCopyImage()">
-            <span id="calcShareIcon">📋</span><span id="calcShareText">Copy as image</span>
+            <span id="calcShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="calcShareText">Copy as image</span>
           </button>
         </div>
       </div>

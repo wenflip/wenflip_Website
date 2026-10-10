@@ -184,7 +184,7 @@
 
   <div class="share-row">
     <button class="share-btn" id="shareBtn" onclick="stExport()">
-      <span id="shareIcon">📋</span><span id="shareText">Copy the standings as image</span>
+      <span id="shareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="shareText">Copy the standings as image</span>
     </button>
   </div>
    <p class="share-hint">The screenshot renders the whole board in one clean frame — even the coins you had to scroll to.</p>
@@ -387,7 +387,7 @@ function showToast(msg){ const t=document.getElementById('toast'); t.textContent
 async function stExport(){
   const btn=document.getElementById('shareBtn'), ic=document.getElementById('shareIcon'), tx=document.getElementById('shareText');
   if(!orderedRows().length){ showToast('No prices yet — give it a second 😬'); return; }
-  btn.disabled=true; ic.textContent='⏳'; tx.textContent='Generating…';
+  btn.disabled=true; ic.className='ico ico-spin'; tx.textContent='Generating…';
   try{
     renderShot();                         // make sure the card is current
     await loadHtml2Canvas();
@@ -405,11 +405,11 @@ async function stExport(){
       }}, 'image/png');
     }
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
-  finally{ btn.disabled=false; ic.textContent=_isIOS?'💾':'📋'; tx.textContent=_isIOS?'Save the standings as image':'Copy the standings as image'; }
+  finally{ btn.disabled=false; ic.className=_isIOS?'ico ico-download':'ico ico-clipboard'; tx.textContent=_isIOS?'Save the standings as image':'Copy the standings as image'; }
 }
 
 /* ---------- boot ---------- */
-if(_isIOS){ document.getElementById('shareIcon').textContent='💾'; document.getElementById('shareText').textContent='Save the standings as image'; }
+if(_isIOS){ document.getElementById('shareIcon').className='ico ico-download'; document.getElementById('shareText').textContent='Save the standings as image'; }
 renderStandings();
 refreshAll();
 setInterval(refreshAll, 60000);

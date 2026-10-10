@@ -155,8 +155,8 @@
   <p class="updated" id="updated"></p>
 
   <div class="share-row" id="shareRow" style="display:none">
-    <button class="share-btn" id="pngBtn" onclick="bcExport()"><span id="pngIcon">📋</span><span id="pngText">Copy as image</span></button>
-    <button class="share-btn ghost" id="linkBtn" onclick="copyLink()">🔗 Copy link</button>
+    <button class="share-btn" id="pngBtn" onclick="bcExport()"><span id="pngIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="pngText">Copy as image</span></button>
+    <button class="share-btn ghost" id="linkBtn" onclick="copyLink()"><span class="ico ico-link" aria-hidden="true"></span> Copy link</button>
   </div>
 
   <section class="page-cta">
@@ -316,7 +316,7 @@ function render(){
   `;
   shareRow.style.display='';
   const ic=document.getElementById('pngIcon'), tx=document.getElementById('pngText');
-  if(ic) ic.textContent=_isIOS?'💾':'📋';
+  if(ic) ic.className=_isIOS?'ico ico-download':'ico ico-clipboard';
   if(tx) tx.textContent=_isIOS?'Save image':'Copy as image';
 }
 
@@ -356,7 +356,7 @@ async function loadHtml2Canvas(){
 function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 async function bcExport(){
   const btn=document.getElementById('pngBtn'), ic=document.getElementById('pngIcon'), tx=document.getElementById('pngText');
-  btn.disabled=true; ic.textContent='⏳'; tx.textContent='Generating…';
+  btn.disabled=true; ic.className='ico ico-spin'; tx.textContent='Generating…';
   try{
     await loadHtml2Canvas();
     const card=document.getElementById('bcCard');
@@ -378,7 +378,7 @@ async function bcExport(){
       }}, 'image/png');
     }
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
-  finally{ btn.disabled=false; ic.textContent=_isIOS?'💾':'📋'; tx.textContent=_isIOS?'Save image':'Copy as image'; }
+  finally{ btn.disabled=false; ic.className=_isIOS?'ico ico-download':'ico ico-clipboard'; tx.textContent=_isIOS?'Save image':'Copy as image'; }
 }
 async function copyLink(){
   syncURL(false);

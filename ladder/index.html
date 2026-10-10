@@ -44,7 +44,7 @@
   .ladder-list .tier-band { margin: 0; border-radius: 0; border-left: none; border-right: none; }
 
   .frung {
-    display: grid; grid-template-columns: 36px 1fr 130px auto;
+    display: grid; grid-template-columns: 1fr 130px auto;
     align-items: center; gap: 12px; padding: 10px 24px;
     border-bottom: 1px solid rgba(255,255,255,0.04);
     font-size: 14px; transition: background .3s ease;
@@ -53,14 +53,13 @@
   .frung.has { background: linear-gradient(90deg, rgba(46,224,106,0.10), rgba(46,224,106,0.03)); }
   .frung.featured { background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02)); }
   .frung.featured.has { background: linear-gradient(90deg, rgba(46,224,106,0.12), rgba(46,224,106,0.04)); border-left: 3px solid rgba(251,191,36,0.6); }
-  .frung .fe { text-align: center; opacity: .7; }
   .frung .fp { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; }
   .ftokens { display: flex; gap: 4px; justify-content: flex-end; }
 
   .ladder-cta-row { display: flex; justify-content: center; margin-top: 24px; }
 
   @media (max-width: 600px) {
-    .frung { grid-template-columns: 28px 1fr 88px auto; gap: 8px; padding: 10px 14px; font-size: 13px; }
+    .frung { grid-template-columns: 1fr 88px auto; gap: 8px; padding: 10px 14px; font-size: 13px; }
     .frung .fp { font-size: 12px; }
   }
 </style>
@@ -287,11 +286,9 @@
         lastTier = rung.tier;
       }
       const placed = byRung[i] || [];
-      const meta = TIER_META[rung.tier] || {};
       const tokens = placed.map(t => `<span class="ftok" title="${t.sym} · ${fmtPriceText(t.price)}"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></span>`).join('');
       html.push(`
         <div class="frung ${placed.length ? 'has' : ''} ${rung.featured ? 'featured' : ''}" data-rung-index="${i}">
-          <div class="fe">${meta.emoji||'•'}</div>
           <div>${rung.name}${starHtml(rung.featured)}</div>
           <div class="fp">${fmtItemPrice(rung.price)}</div>
           <div class="ftokens">${tokens}</div>
