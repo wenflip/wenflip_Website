@@ -484,12 +484,32 @@
   const _openCalc = document.getElementById('openCalc');
   if (_openCalc) _openCalc.addEventListener('click', openCalcModal);
 
+  // ==== POP-UP FOCUS ====
+  // Opening a pop-up moves keyboard focus onto its close button and makes the page
+  // behind it inert (Tab can't wander underneath). Closing undoes that and returns
+  // focus to whatever opened it. Safe to call when the pop-up isn't open.
+  let _modalReturnFocus = null;
+  function _modalFocusIn(backdropId) {
+    const bd = document.getElementById(backdropId); if (!bd) return;
+    _modalReturnFocus = document.activeElement;
+    Array.from(document.body.children).forEach(el => { if (el !== bd && el.tagName !== 'SCRIPT') el.inert = true; });
+    const c = bd.querySelector('.modal-close'); if (c) c.focus({ preventScroll: true });
+  }
+  function _modalFocusOut() {
+    Array.from(document.body.children).forEach(el => { el.inert = false; });
+    const r = _modalReturnFocus; _modalReturnFocus = null;
+    if (r && typeof r.focus === 'function' && document.contains(r)) r.focus({ preventScroll: true });
+  }
+
   function openTokenModal() {
     document.getElementById('tokenModal').classList.add('open'); document.body.style.overflow='hidden';
     if (window.location.hash.replace(/^#/,'')!=='notacoin') history.replaceState(null,'','#notacoin');
+    _modalFocusIn('tokenModal');
   }
   function closeTokenModal() {
-    document.getElementById('tokenModal').classList.remove('open'); document.body.style.overflow='';
+    const m = document.getElementById('tokenModal'); const wasOpen = m.classList.contains('open');
+    m.classList.remove('open'); document.body.style.overflow='';
+    if (wasOpen) _modalFocusOut();
     if (window.location.hash.replace(/^#/,'').toLowerCase()==='notacoin') history.replaceState(null,'',window.location.pathname+window.location.search);
   }
   document.addEventListener('keydown', e => { if (e.key==='Escape'){closeCalcModal();closeTokenModal();} });
@@ -1270,10 +1290,13 @@
     document.getElementById('flCardWrap').style.display = 'none';
     document.getElementById('flippeningModal').classList.add('open');
     document.body.style.overflow = 'hidden';
+    _modalFocusIn('flippeningModal');
   }
   function closeFlippen() {
-    document.getElementById('flippeningModal').classList.remove('open');
+    const m = document.getElementById('flippeningModal'); const wasOpen = m.classList.contains('open');
+    m.classList.remove('open');
     document.body.style.overflow = '';
+    if (wasOpen) _modalFocusOut();
   }
   // NOTE: Flippening is opened by the "Dunk on a coin" door button (#doorDunk),
   // wired in the EMOTION DOORS block below. The old #openFlippening element no

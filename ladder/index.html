@@ -29,18 +29,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://api.dexscreener.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
 <link rel="stylesheet" href="/styles.css">
 <style>
   /* Page-local layout + un-nested rung rules.
      The .frung family lives under .modal-body in styles.css, so it does NOT apply
      on a standalone page — these are copied here, un-nested, so the rungs render. */
-  .ladder-page { padding: 40px 0 60px; }
-  .ladder-head { text-align: center; margin-bottom: 8px; }
-  .ladder-head .logo { font-size: clamp(36px, 7vw, 68px); margin: 0 auto; }
-  .ladder-intro {
-    max-width: 580px; margin: 12px auto 0; color: var(--muted);
-    font-size: clamp(14px, 1.8vw, 17px); line-height: 1.5; text-wrap: balance;
-  }
+  .ladder-page { padding: 0 20px 20px; }
   .ladder-wrap { max-width: 860px; margin: 22px auto 0; }
   .ladder-list {
     margin-top: 12px; border: 1px solid var(--line); border-radius: 16px;
@@ -74,11 +69,13 @@
 
 <div class="container ladder-page">
 
-  <header class="ladder-head">
-    <a href="/"><h1 class="logo">wenflip</h1></a>
-    <p class="ladder-intro">Every coin we track, climbing one shared ladder of real-world prices — from a single staple to a gold toilet. Live coins sit on the rung they've cleared.</p>
+  <header class="site-head">
+    <div class="brand"><a class="wf" href="/">wenflip</a><span class="slash">/</span><h1 class="sec">full ladder</h1></div>
+    <p class="tag">Every coin we track, climbing one shared ladder of real-world prices — from a single staple to a gold toilet. Live coins sit on the rung they've cleared.</p>
+    <a class="backlink" href="/">← back to wenflip</a>
   </header>
 
+<main>
   <div class="ladder-wrap">
     <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
       <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
@@ -94,6 +91,17 @@
       <a class="full-ladder-btn full-ladder-btn-standings" href="/">← back to wenflip</a>
     </div>
   </div>
+</main>
+
+  <footer>
+    <div class="ftag">Real prices. Real flips. Real receipts.</div>
+    <div class="disc">Not financial advice. Just memes and math.</div>
+    <div class="flinks">
+      <a href="/side-quests">side quests →</a>
+      <a href="https://x.com/wenflips" target="_blank" rel="noopener">follow @wenflips on X</a>
+    </div>
+    <div class="disc fsig">wenflip · powered by PulseChain</div>
+  </footer>
 
 </div>
 
