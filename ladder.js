@@ -54,7 +54,7 @@ const LADDER = [
     { price: 220000, name: 'a used Ferrari Roma', tier: 'heavyweight', category: 'status' }, // coupé discontinued 2024, used-market price
     { price: 180000, name: 'a gold-plated bathtub', tier: 'heavyweight', category: 'status' }, // cite: bespoke commission
     { price: 170000, name: "a forgettable Christie's painting", tier: 'heavyweight', category: 'status' },
-    { price: 160000, name: 'a year at Phillips Exeter', tier: 'heavyweight', category: 'status' }, // cite: one year, boarding
+    { price: 153900, name: "a Mercedes G-Wagon (G 550)", tier: 'heavyweight', category: 'status' }, // cite: 2026 G 550 starting MSRP
     { price: 150000, name: 'a full Beverly Hills makeover', tier: 'heavyweight', category: 'status' }, // cite: full plastic-surgery makeover
     { price: 140000, name: 'a year of luxury nursing home', tier: 'heavyweight', category: 'status' }, // cite: one year, private room
     { price: 130000, name: 'a full surrogacy in the USA', tier: 'heavyweight', category: 'extraction' },
@@ -63,7 +63,7 @@ const LADDER = [
     { price: 110000, name: 'a solid-gold toilet', tier: 'heavyweight', category: 'status' }, // cite: 18-karat, functional (cf. Cattelan "America")
     { price: 90000, name: 'full-mouth dental implants', tier: 'heavyweight', category: 'extraction' },
     { price: 87000, name: 'a year at Harvard', tier: 'heavyweight', category: 'status', featured: true }, // cite: full cost of attendance
-    { price: 75000, name: 'a full luxury kitchen remodel', tier: 'heavyweight', category: 'status' }, // cite: high-end suburban
+    { price: 74990, name: "a Tesla Cybertruck", tier: 'heavyweight', category: 'status' }, // cite: Cybertruck Dual-Motor AWD, after Aug 25 2026 hike (TeslaNorth)
     { price: 60000, name: 'a down payment on a house', tier: 'heavyweight', category: 'extraction' },
     { price: 52000, name: 'a used Porsche 911', tier: 'heavyweight', category: 'status' },
     { price: 48000, name: 'an average new car', tier: 'heavyweight', category: 'status' }, // cite: industry average new-car price
@@ -107,7 +107,7 @@ const LADDER = [
     { price: 1400, name: 'a new gaming console', tier: 'heavyweight', category: 'status' },
     { price: 1300, name: 'an IUD insertion (out of pocket)', tier: 'heavyweight', category: 'extraction' },
     { price: 1250, name: 'a root canal', tier: 'heavyweight', category: 'extraction' },
-    { price: 1200, name: 'a year of college textbooks', tier: 'heavyweight', category: 'extraction' },
+    { price: 1199, name: "an iPhone 17 Pro Max", tier: 'heavyweight', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 1150, name: 'a CoolSculpting session', tier: 'heavyweight', category: 'status' },
     { price: 1100, name: 'a vasectomy', tier: 'heavyweight', category: 'extraction', featured: true },
     { price: 1099, name: "an iPhone 17 Pro", tier: 'heavyweight', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
@@ -216,7 +216,7 @@ const LADDER = [
     { price: 18, name: 'a paperback book', tier: 'snack', category: 'snack' },
     { price: 17, name: 'a bounced-check fee', tier: 'snack', category: 'extraction' }, // cite: NSF (non-sufficient funds) fee
     { price: 15, name: 'a movie ticket', tier: 'snack', category: 'snack' },
-    { price: 14, name: 'a Twitter Blue verification month', tier: 'snack', category: 'extraction' },
+    { price: 14.357, name: "a pound of sirloin steak", tier: 'snack', category: 'extraction' }, // cite: BLS avg price, FRED APU0000703613, Aug 2026
     { price: 13, name: 'a Chipotle burrito', tier: 'snack', category: 'snack' },
     { price: 12, name: 'one stadium beer', tier: 'snack', category: 'extraction' },
     { price: 11.5, name: 'a Botox unit', tier: 'snack', category: 'status', featured: true },
@@ -244,7 +244,7 @@ const LADDER = [
     { price: 2.6, name: 'a 5-Hour Energy shot', tier: 'snack', category: 'snack' },
     { price: 2.5, name: 'a Liquid Death', tier: 'snack', category: 'snack' },
     { price: 2.4, name: 'a White Claw', tier: 'snack', category: 'snack' },
-    { price: 2.3, name: 'a Truly seltzer', tier: 'snack', category: 'snack' },
+    { price: 2.272, name: "a dozen eggs", tier: 'snack', category: 'extraction' }, // cite: BLS avg price, FRED APU0000708111, Aug 2026
     { price: 2, name: 'a Powerball ticket', tier: 'snack', category: 'snack' },
     { price: 1.95, name: 'a scratch-off ticket (entry-tier)', tier: 'snack', category: 'snack' },
     { price: 1.85, name: 'a pickle from 7-Eleven cooler', tier: 'snack', category: 'snack' },
