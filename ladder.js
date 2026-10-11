@@ -94,7 +94,7 @@ const LADDER = [
     { price: 3500, name: 'a mountain bike', tier: 'heavyweight', category: 'status' },
     { price: 3200, name: 'a C-section copay', tier: 'heavyweight', category: 'extraction', featured: true },
     { price: 3000, name: 'one year of US median property tax', tier: 'heavyweight', category: 'extraction' },
-    { price: 2800, name: 'a year of advisor fees', tier: 'heavyweight', category: 'extraction' }, // cite: 1% AUM on $280K
+    { price: 2743, name: "having a baby, with insurance", tier: 'heavyweight', category: 'extraction' }, // cite: Peterson-KFF avg out-of-pocket for pregnancy, childbirth + postpartum, employer plans (2023 $)
     { price: 2600, name: 'a coffin (mid-range)', tier: 'heavyweight', category: 'extraction' },
     { price: 2500, name: 'an epidural during birth', tier: 'heavyweight', category: 'extraction', featured: true },
     { price: 2400, name: 'a CrossFit annual membership', tier: 'heavyweight', category: 'extraction' },
@@ -110,59 +110,59 @@ const LADDER = [
     { price: 1200, name: 'a year of college textbooks', tier: 'heavyweight', category: 'extraction' },
     { price: 1150, name: 'a CoolSculpting session', tier: 'heavyweight', category: 'status' },
     { price: 1100, name: 'a vasectomy', tier: 'heavyweight', category: 'extraction', featured: true },
+    { price: 1099, name: "an iPhone 17 Pro", tier: 'heavyweight', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 1050, name: 'a dental crown', tier: 'heavyweight', category: 'extraction' },
     { price: 1025, name: 'a funeral plot (cheap)', tier: 'heavyweight', category: 'extraction' },
-    { price: 1000, name: 'a year of mutual fund fees', tier: 'heavyweight', category: 'extraction' }, // cite: 1% expense ratio on $100K
     { price: 950, name: 'a cremation (basic)', tier: 'snack', category: 'extraction' },
     { price: 900, name: 'a weekend Airbnb', tier: 'snack', category: 'status' },
     { price: 880, name: 'one year of premium pet insurance', tier: 'snack', category: 'extraction' },
     { price: 875, name: "one month's rent", tier: 'snack', category: 'extraction' }, // cite: small midwest town
-    { price: 850, name: 'a year of insurance copays', tier: 'snack', category: 'extraction' },
+    { price: 799, name: "an iPhone 17", tier: 'snack', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 750, name: "a wedding band (men's, plain)", tier: 'snack', category: 'status' },
     { price: 650, name: 'a used iPhone', tier: 'snack', category: 'status' },
     { price: 530, name: 'one month of health insurance', tier: 'snack', category: 'extraction' }, // cite: unsubsidized ACA, single adult
-    { price: 500, name: 'an annuity surrender charge', tier: 'snack', category: 'extraction' }, // cite: 5% on $10K
+    { price: 500, name: "a Solana Seeker phone", tier: 'snack', category: 'status' }, // cite: retail price (Decrypt review)
     { price: 425, name: 'a round-trip domestic flight', tier: 'snack', category: 'status' },
     { price: 415, name: 'a wisdom tooth removal (per tooth)', tier: 'snack', category: 'extraction' },
     { price: 410, name: 'a bottle of Macallan 18', tier: 'snack', category: 'status' },
     { price: 405, name: 'a Vegas night at the Bellagio', tier: 'snack', category: 'status' },
-    { price: 400, name: 'a non-surgical cosmetic session', tier: 'snack', category: 'status' },
+    { price: 399, name: "a Ledger Stax", tier: 'snack', category: 'status' }, // cite: Ledger list price (TechCrunch 2024). VERIFY on ledger.com before merge
     { price: 379, name: 'an iPhone screen repair', tier: 'snack', category: 'extraction' }, // cite: out of warranty
     { price: 349, name: 'an Apple Watch SE (entry model)', tier: 'snack', category: 'status' },
     { price: 275, name: 'a nice dinner for two', tier: 'snack', category: 'status' },
     { price: 260, name: 'a shot of Ozempic (per dose)', tier: 'snack', category: 'extraction', featured: true },
     { price: 255, name: 'an H&R Block in-person filing', tier: 'snack', category: 'extraction' },
-    { price: 253, name: 'a year of ATM fees', tier: 'snack', category: 'extraction' }, // cite: weekly out-of-network use
     { price: 250, name: 'a Roomba (basic)', tier: 'snack', category: 'status' },
+    { price: 249, name: "a pair of AirPods Pro 3", tier: 'snack', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 240, name: 'one year of ChatGPT Plus', tier: 'snack', category: 'extraction' },
-    { price: 230, name: 'one year of Notion AI', tier: 'snack', category: 'extraction' },
+    { price: 230, name: "a pair of Air Jordan 11s", tier: 'snack', category: 'status' }, // cite: AJ11 'Rare Air' retail (Just Fresh Kicks)
     { price: 225, name: 'a year of overdraft fees', tier: 'snack', category: 'extraction', featured: true }, // cite: typical overdrafting household
     { price: 220, name: 'a year of Xbox Game Pass', tier: 'snack', category: 'extraction' }, // cite: Ultimate tier
+    { price: 219.95, name: "a bottle of Johnnie Walker Blue Label", tier: 'snack', category: 'status' }, // cite: NC ABC state-store retail, eff. 2/1/2025
     { price: 215, name: 'one year of Netflix (standard)', tier: 'snack', category: 'extraction' },
     { price: 210, name: 'a tub of fancy pre-workout', tier: 'snack', category: 'snack' },
     { price: 205, name: 'one year of LinkedIn Premium', tier: 'snack', category: 'extraction' },
-    { price: 204, name: 'one year of Disney+ (no ads)', tier: 'snack', category: 'extraction' },
     { price: 200, name: 'a bottle of Dom Pérignon', tier: 'snack', category: 'status' },
     { price: 198, name: 'a Cameo from a B-lister', tier: 'snack', category: 'snack' },
     { price: 195, name: 'an IV drip wellness session', tier: 'snack', category: 'status' },
     { price: 190, name: 'an hour with a private chef', tier: 'snack', category: 'status' },
     { price: 188, name: 'a TurboTax filing', tier: 'snack', category: 'extraction' }, // cite: Self-Employed, federal + state
-    { price: 180, name: 'a year of checking fees', tier: 'snack', category: 'extraction' }, // cite: ~$15/mo checking maintenance
+    { price: 179.95, name: "a bottle of Don Julio 1942", tier: 'snack', category: 'status' }, // cite: NC ABC state-store retail, eff. 8/1/2025
     { price: 179, name: 'AirPods (with ANC)', tier: 'snack', category: 'status' },
     { price: 178, name: 'a wild Costco run', tier: 'snack', category: 'snack' },
-    { price: 175, name: 'one year of Audible', tier: 'snack', category: 'extraction' },
     { price: 170, name: 'a bougie hot-pot dinner', tier: 'snack', category: 'status' },
+    { price: 169.95, name: "a bottle of Old Rip Van Winkle 10", tier: 'snack', category: 'status' }, // cite: NC ABC state-store retail, eff. 8/1/2026
     { price: 165, name: 'a pair of Lululemon leggings', tier: 'snack', category: 'status' },
     { price: 156, name: 'one Spotify Premium year', tier: 'snack', category: 'extraction' },
     { price: 155, name: 'a therapy session, cash', tier: 'snack', category: 'extraction' }, // cite: full cash price
-    { price: 154, name: 'a Substack subscription', tier: 'snack', category: 'extraction' },
     { price: 150, name: 'a fake ESA certificate', tier: 'snack', category: 'snack' },
+    { price: 149, name: "a Ledger Nano X", tier: 'snack', category: 'status' }, // cite: Ledger list price (TechCrunch 2024). VERIFY on ledger.com before merge
     { price: 145, name: 'a month of AI girlfriend', tier: 'snack', category: 'extraction' },
     { price: 135, name: 'a night at a Holiday Inn Express', tier: 'snack', category: 'status' },
     { price: 130, name: 'a paternity test', tier: 'snack', category: 'snack' },
     { price: 125, name: 'a concert nosebleed', tier: 'snack', category: 'status' },
-    { price: 120, name: 'one Hulu year', tier: 'snack', category: 'extraction' },
     { price: 118, name: 'one Midjourney year', tier: 'snack', category: 'extraction' },
+    { price: 115, name: "a pair of white Air Force 1s", tier: 'snack', category: 'status' }, // cite: Foot Locker, AF1 '07 White/White
     { price: 105, name: 'a Global Entry application', tier: 'snack', category: 'extraction' },
     { price: 102, name: 'a Hamilton ticket (cheap)', tier: 'snack', category: 'status' },
     { price: 100, name: 'a DNA test (23andMe)', tier: 'snack', category: 'snack' },
@@ -171,9 +171,9 @@ const LADDER = [
     { price: 85, name: 'a pair of jeans', tier: 'snack', category: 'snack' },
     { price: 82, name: 'a TaskRabbit IKEA assembly', tier: 'snack', category: 'extraction' },
     { price: 80, name: 'TSA PreCheck', tier: 'snack', category: 'extraction' },
+    { price: 79.99, name: "a copy of Mario Kart World", tier: 'snack', category: 'snack' }, // cite: Nintendo launch price (Shacknews)
     { price: 78, name: 'one PlayStation Plus year', tier: 'snack', category: 'extraction' },
     { price: 77, name: 'a Vegas night at a budget hotel', tier: 'snack', category: 'status' },
-    { price: 76, name: 'a ChatGPT API top-up', tier: 'snack', category: 'extraction' }, // cite: moderate-use month
     { price: 75, name: 'a Hello Fresh meal kit week', tier: 'snack', category: 'extraction' },
     { price: 72, name: 'a Lyft surge ride at 2am', tier: 'snack', category: 'extraction' },
     { price: 71, name: 'an Uber Eats order at 2am', tier: 'snack', category: 'extraction' },
@@ -222,14 +222,14 @@ const LADDER = [
     { price: 11.5, name: 'a Botox unit', tier: 'snack', category: 'status', featured: true },
     { price: 11, name: 'a pack of cigarettes', tier: 'snack', category: 'snack' },
     { price: 10.5, name: 'an OnlyFans subscription (avg)', tier: 'snack', category: 'extraction' },
-    { price: 9, name: 'one fast-food combo meal', tier: 'snack', category: 'extraction' },
+    { price: 9.299, name: "a pound of ground coffee", tier: 'snack', category: 'extraction' }, // cite: BLS avg price, FRED APU0000717311, Aug 2026
     { price: 8, name: 'a round of mini golf', tier: 'snack', category: 'snack' },
     { price: 7.5, name: 'a Starbucks coffee', tier: 'snack', category: 'snack' },
     { price: 7, name: 'a Tinder profile boost', tier: 'snack', category: 'extraction' },
     { price: 6.5, name: 'an Adderall pill', tier: 'snack', category: 'extraction' }, // cite: 10mg generic, cash retail without insurance
     { price: 6, name: 'a Big Mac', tier: 'snack', category: 'snack' },
     { price: 5.5, name: 'a mid-tier scratch-off ticket', tier: 'snack', category: 'snack' },
-    { price: 5, name: 'a Postmates delivery fee', tier: 'snack', category: 'extraction' },
+    { price: 5, name: "a McDonald's $5 Meal Deal", tier: 'snack', category: 'snack' }, // cite: Chowhound, Apr 2026 (some locations $6)
     { price: 4.86, name: 'an out-of-network ATM fee', tier: 'snack', category: 'extraction' }, // cite: Bankrate 2025 average
     { price: 4.75, name: 'a cheap cigar', tier: 'snack', category: 'snack' },
     { price: 4.5, name: 'a mechanical bull ride', tier: 'snack', category: 'snack' },
@@ -256,7 +256,7 @@ const LADDER = [
     { price: 1.25, name: "a Reese's Cup", tier: 'snack', category: 'snack' },
     { price: 1.1, name: 'a Pop Rocks package', tier: 'snack', category: 'snack' },
     { price: 1.05, name: 'a claw machine attempt', tier: 'snack', category: 'snack' },
-    { price: 1, name: 'an item from the $1 shop', tier: 'snack', category: 'snack' },
+    { price: 0.99, name: "a can of AriZona Iced Tea", tier: 'snack', category: 'snack' }, // cite: still 99¢ (Brand Spur, Sep 2026)
     { price: 0.98, name: 'a single cigarette', tier: 'snack', category: 'snack' },
     { price: 0.9, name: 'an onion', tier: 'snack', category: 'snack' },
     { price: 0.88, name: 'a pear', tier: 'snack', category: 'snack' },
@@ -283,7 +283,7 @@ const LADDER = [
     { price: 0.22, name: 'a Bic pen', tier: 'snack', category: 'snack' },
     { price: 0.2, name: 'a penny slot pull (min bet)', tier: 'snack', category: 'snack' },
     { price: 0.18, name: 'a bowl of cooked rice', tier: 'snack', category: 'snack' },
-    { price: 0.16, name: 'a claw machine prize (cost basis)', tier: 'snack', category: 'snack' },
+    { price: 0.16025, name: "a single Hefty trash bag", tier: 'snack', category: 'snack' }, // cite: Walmart, Hefty Ultra Strong 13 gal, 120 ct for $19.23
     { price: 0.15, name: 'a single tortilla', tier: 'snack', category: 'snack' },
     { price: 0.14, name: 'a Snickers fun size', tier: 'snack', category: 'snack' },
     { price: 0.13, name: 'the lettuce from a Big Mac', tier: 'snack', category: 'snack' },
