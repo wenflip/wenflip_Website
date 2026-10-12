@@ -609,8 +609,8 @@
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
       ctx.drawImage(srcCanvas,0,0,1080,1080);
-      if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
-      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
+      if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('saved. attach it to your post.'); }
+      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('copied. paste it in your post.');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('saved. attach it to your post.');}}, 'image/png'); }
     } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
     finally { btn.disabled=false; icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txt.textContent=_isIOS?'Save image':'Copy as image'; }
   }
@@ -632,8 +632,8 @@
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
       ctx.drawImage(srcCanvas,0,0,1080,1080);
-      if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('Saved! Share it on X. 🔥'); }
-      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('Copied! Paste it into X. 🔥');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('Saved! Share it on X. 🔥');}}, 'image/png'); }
+      if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('saved. attach it to your post.'); }
+      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('copied. paste it in your post.');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('saved. attach it to your post.');}}, 'image/png'); }
     } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
     finally { shareBtn.disabled=false; iconEl.className = isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txtEl.textContent=isIOS?'Save image':'Copy as image'; }
   }
@@ -973,7 +973,7 @@
     }
 
     const cope  = (voice === 'cope') ? `<div class="wf-cope">${opts.copeLine || pickCopeLine()}</div>` : '';
-    const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com</span></div>`;
+    const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com · @wenflips</span></div>`;
 
     return head + hero + `<div class="wf-foot">${foot}${cope}${stamp}</div>`;
   }
@@ -1067,12 +1067,12 @@
             try {
               await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent(wfTweet), '_blank', 'noopener');
-              showCalcToast('Image copied — paste it into your post 🔥');
+              showCalcToast('copied. paste it in your post.');
               resolve();
             } catch(e2) {
               const link=document.createElement('a'); link.download='wenflip-status.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent(wfTweet), '_blank', 'noopener');
-              showCalcToast('Saved! Open X and attach the image. 🔥');
+              showCalcToast('saved. attach it to your post.');
               resolve();
             }
           }, 'image/png');
@@ -1522,7 +1522,7 @@
       </div>
       <div class="fl-stamp">
         <span class="fl-date">${dateStr}</span>
-        <span class="fl-wm">wenflip.com</span>
+        <span class="fl-wm">wenflip.com · @wenflips</span>
       </div>
     `;
 
@@ -1580,12 +1580,12 @@
             try {
               await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('Image copied — paste it into your post 🔥');
+              showCalcToast('copied. paste it in your post.');
               resolve();
             } catch(e2) {
               const link=document.createElement('a'); link.download='wenflip-dunk.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('Saved! Open X and attach the image. 🔥');
+              showCalcToast('saved. attach it to your post.');
               resolve();
             }
           }, 'image/png');
@@ -1923,12 +1923,12 @@
             try {
               await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('Image copied — paste it into your post 🔥');
+              showCalcToast('copied. paste it in your post.');
               resolve();
             } catch(e2) {
               const link=document.createElement('a'); link.download='wenflip-pump.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('Saved! Open X and attach the image. 🔥');
+              showCalcToast('saved. attach it to your post.');
               resolve();
             }
           }, 'image/png');
@@ -2363,11 +2363,11 @@
             try {
               await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
               window.open('https://x.com/intent/post?text='+encodeURIComponent('wenflip.com'),'_blank','noopener');
-              showCalcToast('Image copied — paste it into your post 🔥'); resolve();
+              showCalcToast('copied. paste it in your post.'); resolve();
             } catch(e2) {
               const link=document.createElement('a'); link.download=filename; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
               window.open('https://x.com/intent/post?text='+encodeURIComponent('wenflip.com'),'_blank','noopener');
-              showCalcToast('Saved! Open X and attach the image. 🔥'); resolve();
+              showCalcToast('saved. attach it to your post.'); resolve();
             }
           }, 'image/png');
         });
@@ -2388,14 +2388,14 @@
   // ==== HERO FLIP GRID ====
   // 6 core coins, each showing what it flips at the active multiplier.
   // Click a box → opens the existing Pump modal pre-loaded to that coin + multiplier.
-  // Three rosters for the chain toggle (All / PulseChain / The Rest).
+  // Three rosters for the chain toggle (All / PulseChain / Majors).
   // Every symbol here already exists in TOKENS (coins.js) — no new coins.
   const HERO_SETS = {
-    all:        ['BTC','ETH','SOL','PLS','PLSX','HEX','INC','DOGE','pWBTC'],
+    all:        ['BTC','ETH','SOL','XRP','DOGE','GOLD','PLS','PLSX','HEX'],
     pulsechain: ['PLS','PLSX','INC','HEX','eHEX','PRVX','pDAI','pWBTC','DWB'],
     major:      ['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','SHIB','GOLD'],
   };
-  let heroChain = 'all';                  // active chain tab; 'major' = "The Rest"
+  let heroChain = 'all';                  // active chain tab; 'major' = "Majors"
   let HERO_COINS = HERO_SETS[heroChain];  // re-pointed by wireHeroChain() on tab click
   let heroMult = 1;               // default: Today (1×)
   let _heroLastSig = '';          // change-guard so the interval doesn't reset hover/focus
@@ -2505,7 +2505,7 @@
       renderHeroGrid();
     });
   })();
-  // Toggle wiring — All / PulseChain / The Rest. Mirrors wireHeroMult():
+  // Toggle wiring — All / PulseChain / Majors. Mirrors wireHeroMult():
   // sets heroChain, re-points HERO_COINS at the chosen set, re-renders.
   (function wireHeroChain() {
     const wrap = document.getElementById('heroChain');

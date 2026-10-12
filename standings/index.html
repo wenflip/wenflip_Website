@@ -173,7 +173,7 @@
   <div class="chain-filter" id="chainFilter" role="tablist" aria-label="Filter by chain">
     <button type="button" class="chain-filter-btn active" data-chain="all" role="tab" aria-selected="true">All</button>
     <button type="button" class="chain-filter-btn" data-chain="pulsechain" role="tab" aria-selected="false">PulseChain</button>
-    <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">The Rest</button>
+    <button type="button" class="chain-filter-btn" data-chain="major" role="tab" aria-selected="false">Majors</button>
   </div>
 
   <div class="standings" id="standings">
@@ -199,14 +199,13 @@
 </main>
 
   <footer>
-    <div class="ftag">Everyone, ranked. No glow, no mercy.</div>
-    <div class="disc">A snapshot, not advice. Just memes and math.</div>
+    <div class="ftag">every coin gets a receipt.</div>
+    <div class="disc">not financial advice. barely advice.</div>
     <div class="flinks">
       <a href="/side-quests">side quests →</a>
       <a href="/ladder">nerd out on the full ladder →</a>
       <a href="https://x.com/wenflips" target="_blank" rel="noopener">follow @wenflips on X</a>
     </div>
-    <div class="disc fsig">wenflip · powered by PulseChain</div>
   </footer>
 </div>
 
@@ -284,7 +283,7 @@ function renderStandings(){
 
 /* ---------- render the off-screen screenshot card (fixed width, all rows) ---------- */
 function scopeLabel(){
-  return chainFilter==='pulsechain' ? 'PulseChain' : chainFilter==='major' ? 'The Rest' : 'All coins';
+  return chainFilter==='pulsechain' ? 'PulseChain' : chainFilter==='major' ? 'Majors' : 'All coins';
 }
 function renderShot(rows){
   const shot = document.getElementById('stShot');
@@ -310,7 +309,7 @@ function renderShot(rows){
       <div class="shot-scope">${scopeLabel()}</div>
     </div>
     <div class="shot-rows">${body || '<div class="shot-sub" style="text-align:center;padding:20px 0;">no coins in view</div>'}</div>
-    <div class="shot-stamp"><span>${dateStr}</span><span>wenflip.com/standings</span></div>
+    <div class="shot-stamp"><span>${dateStr}</span><span>wenflip.com/standings · @wenflips</span></div>
   `;
 }
 
@@ -395,13 +394,13 @@ async function stExport(){
     const canvas = await window.html2canvas(card, { backgroundColor:'#161629', scale:2, useCORS:true, logging:false });
     if(_isIOS){
       const link=document.createElement('a'); link.download='wenflip-standings.png'; link.href=canvas.toDataURL('image/png');
-      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('Saved! Share it on X. 🔥');
+      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('saved. attach it to your post.');
     } else {
       canvas.toBlob(async blob=>{ try{
-        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('Copied! Paste it into X. 🔥');
+        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('copied. paste it in your post.');
       }catch{
         const link=document.createElement('a'); link.download='wenflip-standings.png'; link.href=URL.createObjectURL(blob);
-        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('Saved! Share it on X. 🔥');
+        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('saved. attach it to your post.');
       }}, 'image/png');
     }
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
