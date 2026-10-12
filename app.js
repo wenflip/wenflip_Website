@@ -33,26 +33,26 @@
 
   // Each string is an exact LADDER item name; resolved to LADDER entries at runtime via name match.
   const OUTRAGE_ITEMS = [
-    "Full IVF package (3 cycles)",
-    "One year of average US daycare",
-    "One year of live-in nanny (NYC)",
-    "Full gestational surrogacy in the USA",
-    "Cost of raising one child to age 18 (USDA estimate)",
-    "Epidural during birth",
-    "C-section copay",
-    "One year of federal income tax for a $75K single earner",
-    "One year of FICA payroll taxes for a $75K earner (you'll never see it back)",
-    "One year of US median property tax",
-    "One year of state college tuition (in-state)",
-    "One year at Harvard (full cost of attendance)",
-    "One uninsured ER visit (minor)",
-    "One shot of Ozempic (per dose)",
-    "Full-mouth dental implants (all teeth)",
-    "One vasectomy",
-    "IUD insertion (out of pocket)",
-    "Down payment on a house",
-    "One year of overdraft fees (typical overdrafting household)",
-    "One year of average insurance copays"
+    "a full IVF package (3 cycles)",
+    "one year of average US daycare",
+    "a live-in nanny (NYC)",
+    "a full surrogacy in the USA",
+    "raising one kid to 18",
+    "an epidural during birth",
+    "a C-section copay",
+    "a year of federal income tax",
+    "a year of FICA payroll taxes",
+    "one year of US median property tax",
+    "a year of state college",
+    "a year at Harvard",
+    "an uninsured ER visit (minor)",
+    "a shot of Ozempic (per dose)",
+    "full-mouth dental implants",
+    "a vasectomy",
+    "an IUD insertion (out of pocket)",
+    "a down payment on a house",
+    "a year of overdraft fees",
+    "having a baby, with insurance"
   ];
 
 

@@ -14,11 +14,12 @@
               coin crosses a price; duplicates collapse the flip event. Before
               adding a rung, check its price against the whole list.
      — Prices are strictly DESCENDING, top to bottom.
-     — `tier` must be one of: heavyweight | snack | absurd_floor | void
+     — `tier` must be one of: whale | heavyweight | snack | pocket | absurd_floor | void
        (these keys must exist in TIER_META below).
      — `featured: true` marks a ⭐ banger flip.
 
-   NOTE: `tier: 'snack'` is the internal key for the "Real Life" tier
+   NOTE: `tier: 'snack'` is the internal key for the "Real Life" tier ($1–$1,000),
+   and `tier: 'void'` is the internal key for "Dust" (below $0.0001)
    (label lives in TIER_META). Legacy name; don't rename without touching
    every `tier` value below and the TIER_META key together.
 
@@ -28,42 +29,42 @@
    ========================================================================== */
 
 const LADDER = [
-    { price: 1000000000, name: 'a Powerball jackpot', tier: 'heavyweight', category: 'status' }, // cite: advertised jackpot, not the cash value
-    { price: 300000000, name: "a billionaire's superyacht", tier: 'heavyweight', category: 'status' },
-    { price: 100000000, name: 'a single painting at auction', tier: 'heavyweight', category: 'status' },
-    { price: 30000000, name: 'a new private jet', tier: 'heavyweight', category: 'status' },
-    { price: 8000000, name: 'a 30-second Super Bowl ad', tier: 'heavyweight', category: 'status' },
-    { price: 5000000, name: "a billionaire's doomsday bunker", tier: 'heavyweight', category: 'status' },
-    { price: 4000000, name: 'a Bugatti', tier: 'heavyweight', category: 'status' }, // cite: Chiron base ~$3.3M / new Tourbillon ~$4.1M (2024–26)
-    { price: 3000000, name: "a nurse's entire working life", tier: 'heavyweight', category: 'extraction' },
-    { price: 2600000, name: "a teacher's whole 40-year career", tier: 'heavyweight', category: 'extraction', featured: true },
-    { price: 1500000, name: 'a comfortable retirement', tier: 'heavyweight', category: 'extraction' },
-    { price: 1000000, name: 'a million dollars', tier: 'heavyweight', category: 'status' },
-    { price: 600000, name: 'a ticket to space', tier: 'heavyweight', category: 'status' },
-    { price: 500000, name: 'your own private island', tier: 'heavyweight', category: 'status' },
-    { price: 450000, name: 'a year of full household staff', tier: 'heavyweight', category: 'status' },
-    { price: 415000, name: 'a paid-off house, free and clear', tier: 'heavyweight', category: 'extraction' },
-    { price: 400000, name: 'a Lamborghini Aventador', tier: 'heavyweight', category: 'status' }, // cite: used-market ~$400K; new production ended 2022
-    { price: 390000, name: 'a Rolls Royce Ghost', tier: 'heavyweight', category: 'status' },
-    { price: 380000, name: 'a thoroughbred racehorse', tier: 'heavyweight', category: 'status' }, // cite: Keeneland average yearling
-    { price: 350000, name: 'a Richard Mille watch', tier: 'heavyweight', category: 'status' }, // cite: RM models commonly $200K–$1M+
-    { price: 315000, name: 'raising one kid to 18', tier: 'heavyweight', category: 'extraction' }, // cite: USDA est., birth to age 18
-    { price: 300000, name: 'a used private jet', tier: 'heavyweight', category: 'status' }, // cite: entry-level used Cessna Citation
-    { price: 280000, name: 'a year of 24/7 security', tier: 'heavyweight', category: 'status' },
-    { price: 250000, name: 'a private college degree', tier: 'heavyweight', category: 'extraction' }, // cite: ~4yr private, total cost of attendance
-    { price: 220000, name: 'a used Ferrari Roma', tier: 'heavyweight', category: 'status' }, // coupé discontinued 2024, used-market price
-    { price: 180000, name: 'a gold-plated bathtub', tier: 'heavyweight', category: 'status' }, // cite: bespoke commission
-    { price: 170000, name: "a forgettable Christie's painting", tier: 'heavyweight', category: 'status' },
-    { price: 160000, name: 'a year at Phillips Exeter', tier: 'heavyweight', category: 'status' }, // cite: one year, boarding
-    { price: 150000, name: 'a full Beverly Hills makeover', tier: 'heavyweight', category: 'status' }, // cite: full plastic-surgery makeover
-    { price: 140000, name: 'a year of luxury nursing home', tier: 'heavyweight', category: 'status' }, // cite: one year, private room
-    { price: 130000, name: 'a full surrogacy in the USA', tier: 'heavyweight', category: 'extraction' },
-    { price: 120000, name: 'a live-in nanny (NYC)', tier: 'heavyweight', category: 'extraction' },
-    { price: 115000, name: 'a Porsche 911 Carrera', tier: 'heavyweight', category: 'status' }, // cite: base, new
-    { price: 110000, name: 'a solid-gold toilet', tier: 'heavyweight', category: 'status' }, // cite: 18-karat, functional (cf. Cattelan "America")
+    { price: 1000000000, name: 'a Powerball jackpot', tier: 'whale', category: 'status' }, // cite: advertised jackpot, not the cash value
+    { price: 300000000, name: "a billionaire's superyacht", tier: 'whale', category: 'status' },
+    { price: 100000000, name: 'a single painting at auction', tier: 'whale', category: 'status' },
+    { price: 30000000, name: 'a new private jet', tier: 'whale', category: 'status' },
+    { price: 8000000, name: 'a 30-second Super Bowl ad', tier: 'whale', category: 'status' },
+    { price: 5000000, name: "a billionaire's doomsday bunker", tier: 'whale', category: 'status' },
+    { price: 4000000, name: 'a Bugatti', tier: 'whale', category: 'status' }, // cite: Chiron base ~$3.3M / new Tourbillon ~$4.1M (2024–26)
+    { price: 3000000, name: "a nurse's entire working life", tier: 'whale', category: 'extraction' },
+    { price: 2600000, name: "a teacher's whole 40-year career", tier: 'whale', category: 'extraction', featured: true },
+    { price: 1500000, name: 'a comfortable retirement', tier: 'whale', category: 'extraction' },
+    { price: 1000000, name: 'a million dollars', tier: 'whale', category: 'status' },
+    { price: 600000, name: 'a ticket to space', tier: 'whale', category: 'status' },
+    { price: 500000, name: 'your own private island', tier: 'whale', category: 'status' },
+    { price: 450000, name: 'a year of full household staff', tier: 'whale', category: 'status' },
+    { price: 415000, name: 'a paid-off house, free and clear', tier: 'whale', category: 'extraction' },
+    { price: 400000, name: 'a Lamborghini Aventador', tier: 'whale', category: 'status', featured: true }, // cite: used-market ~$400K; new production ended 2022
+    { price: 390000, name: 'a Rolls Royce Ghost', tier: 'whale', category: 'status' },
+    { price: 380000, name: 'a thoroughbred racehorse', tier: 'whale', category: 'status' }, // cite: Keeneland average yearling
+    { price: 350000, name: 'a Richard Mille watch', tier: 'whale', category: 'status' }, // cite: RM models commonly $200K–$1M+
+    { price: 315000, name: 'raising one kid to 18', tier: 'whale', category: 'extraction' }, // cite: USDA est., birth to age 18
+    { price: 300000, name: 'a used private jet', tier: 'whale', category: 'status' }, // cite: entry-level used Cessna Citation
+    { price: 280000, name: 'a year of 24/7 security', tier: 'whale', category: 'status' },
+    { price: 250000, name: 'a private college degree', tier: 'whale', category: 'extraction' }, // cite: ~4yr private, total cost of attendance
+    { price: 220000, name: 'a used Ferrari Roma', tier: 'whale', category: 'status' }, // coupé discontinued 2024, used-market price
+    { price: 180000, name: 'a gold-plated bathtub', tier: 'whale', category: 'status' }, // cite: bespoke commission
+    { price: 170000, name: "a forgettable Christie's painting", tier: 'whale', category: 'status' },
+    { price: 153900, name: "a Mercedes G-Wagon (G 550)", tier: 'whale', category: 'status' }, // cite: 2026 G 550 starting MSRP
+    { price: 150000, name: 'a full Beverly Hills makeover', tier: 'whale', category: 'status' }, // cite: full plastic-surgery makeover
+    { price: 140000, name: 'a year of luxury nursing home', tier: 'whale', category: 'status' }, // cite: one year, private room
+    { price: 130000, name: 'a full surrogacy in the USA', tier: 'whale', category: 'extraction' },
+    { price: 120000, name: 'a live-in nanny (NYC)', tier: 'whale', category: 'extraction' },
+    { price: 115000, name: 'a Porsche 911 Carrera', tier: 'whale', category: 'status' }, // cite: base, new
+    { price: 110000, name: 'a solid-gold toilet', tier: 'whale', category: 'status' }, // cite: 18-karat, functional (cf. Cattelan "America")
     { price: 90000, name: 'full-mouth dental implants', tier: 'heavyweight', category: 'extraction' },
     { price: 87000, name: 'a year at Harvard', tier: 'heavyweight', category: 'status', featured: true }, // cite: full cost of attendance
-    { price: 75000, name: 'a full luxury kitchen remodel', tier: 'heavyweight', category: 'status' }, // cite: high-end suburban
+    { price: 74990, name: "a Tesla Cybertruck", tier: 'heavyweight', category: 'status' }, // cite: Cybertruck Dual-Motor AWD, after Aug 25 2026 hike (TeslaNorth)
     { price: 60000, name: 'a down payment on a house', tier: 'heavyweight', category: 'extraction' },
     { price: 52000, name: 'a used Porsche 911', tier: 'heavyweight', category: 'status' },
     { price: 48000, name: 'an average new car', tier: 'heavyweight', category: 'status' }, // cite: industry average new-car price
@@ -86,15 +87,15 @@ const LADDER = [
     { price: 7500, name: 'a rhinoplasty (nose job)', tier: 'heavyweight', category: 'status' },
     { price: 6500, name: 'a BBL (Brazilian butt lift)', tier: 'heavyweight', category: 'status' },
     { price: 6000, name: 'a used car', tier: 'heavyweight', category: 'status' }, // cite: rough condition
-    { price: 5800, name: 'a Super Bowl ticket (nosebleeds)', tier: 'heavyweight', category: 'status', featured: true },
+    { price: 5800, name: 'a Super Bowl ticket (nosebleeds)', tier: 'heavyweight', category: 'status' },
     { price: 5738, name: 'a year of FICA payroll taxes', tier: 'heavyweight', category: 'extraction' }, // cite: $75K earner; broadcast kicker: "you'll never see it back"
-    { price: 5500, name: 'a bottle of Pappy Van Winkle 23', tier: 'heavyweight', category: 'status', featured: true },
+    { price: 5500, name: 'a bottle of Pappy Van Winkle 23', tier: 'heavyweight', category: 'status' },
     { price: 5000, name: 'a full Invisalign treatment', tier: 'heavyweight', category: 'status' },
     { price: 4800, name: 'a Lambo wheel rim', tier: 'heavyweight', category: 'status' },
     { price: 3500, name: 'a mountain bike', tier: 'heavyweight', category: 'status' },
-    { price: 3200, name: 'a C-section copay', tier: 'heavyweight', category: 'extraction', featured: true },
+    { price: 3200, name: 'a C-section copay', tier: 'heavyweight', category: 'extraction' },
     { price: 3000, name: 'one year of US median property tax', tier: 'heavyweight', category: 'extraction' },
-    { price: 2800, name: 'a year of advisor fees', tier: 'heavyweight', category: 'extraction' }, // cite: 1% AUM on $280K
+    { price: 2743, name: "having a baby, with insurance", tier: 'heavyweight', category: 'extraction' }, // cite: Peterson-KFF avg out-of-pocket for pregnancy, childbirth + postpartum, employer plans (2023 $)
     { price: 2600, name: 'a coffin (mid-range)', tier: 'heavyweight', category: 'extraction' },
     { price: 2500, name: 'an epidural during birth', tier: 'heavyweight', category: 'extraction', featured: true },
     { price: 2400, name: 'a CrossFit annual membership', tier: 'heavyweight', category: 'extraction' },
@@ -107,62 +108,62 @@ const LADDER = [
     { price: 1400, name: 'a new gaming console', tier: 'heavyweight', category: 'status' },
     { price: 1300, name: 'an IUD insertion (out of pocket)', tier: 'heavyweight', category: 'extraction' },
     { price: 1250, name: 'a root canal', tier: 'heavyweight', category: 'extraction' },
-    { price: 1200, name: 'a year of college textbooks', tier: 'heavyweight', category: 'extraction' },
+    { price: 1199, name: "an iPhone 17 Pro Max", tier: 'heavyweight', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 1150, name: 'a CoolSculpting session', tier: 'heavyweight', category: 'status' },
     { price: 1100, name: 'a vasectomy', tier: 'heavyweight', category: 'extraction', featured: true },
+    { price: 1099, name: "an iPhone 17 Pro", tier: 'heavyweight', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 1050, name: 'a dental crown', tier: 'heavyweight', category: 'extraction' },
     { price: 1025, name: 'a funeral plot (cheap)', tier: 'heavyweight', category: 'extraction' },
-    { price: 1000, name: 'a year of mutual fund fees', tier: 'heavyweight', category: 'extraction' }, // cite: 1% expense ratio on $100K
     { price: 950, name: 'a cremation (basic)', tier: 'snack', category: 'extraction' },
     { price: 900, name: 'a weekend Airbnb', tier: 'snack', category: 'status' },
     { price: 880, name: 'one year of premium pet insurance', tier: 'snack', category: 'extraction' },
     { price: 875, name: "one month's rent", tier: 'snack', category: 'extraction' }, // cite: small midwest town
-    { price: 850, name: 'a year of insurance copays', tier: 'snack', category: 'extraction' },
+    { price: 799, name: "an iPhone 17", tier: 'snack', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 750, name: "a wedding band (men's, plain)", tier: 'snack', category: 'status' },
     { price: 650, name: 'a used iPhone', tier: 'snack', category: 'status' },
     { price: 530, name: 'one month of health insurance', tier: 'snack', category: 'extraction' }, // cite: unsubsidized ACA, single adult
-    { price: 500, name: 'an annuity surrender charge', tier: 'snack', category: 'extraction' }, // cite: 5% on $10K
+    { price: 500, name: "a Solana Seeker phone", tier: 'snack', category: 'status', featured: true }, // cite: retail price (Decrypt review)
     { price: 425, name: 'a round-trip domestic flight', tier: 'snack', category: 'status' },
     { price: 415, name: 'a wisdom tooth removal (per tooth)', tier: 'snack', category: 'extraction' },
     { price: 410, name: 'a bottle of Macallan 18', tier: 'snack', category: 'status' },
     { price: 405, name: 'a Vegas night at the Bellagio', tier: 'snack', category: 'status' },
-    { price: 400, name: 'a non-surgical cosmetic session', tier: 'snack', category: 'status' },
+    { price: 399, name: "a Ledger Stax", tier: 'snack', category: 'status' }, // cite: Ledger list price (TechCrunch 2024). VERIFY on ledger.com before merge
     { price: 379, name: 'an iPhone screen repair', tier: 'snack', category: 'extraction' }, // cite: out of warranty
     { price: 349, name: 'an Apple Watch SE (entry model)', tier: 'snack', category: 'status' },
     { price: 275, name: 'a nice dinner for two', tier: 'snack', category: 'status' },
     { price: 260, name: 'a shot of Ozempic (per dose)', tier: 'snack', category: 'extraction', featured: true },
     { price: 255, name: 'an H&R Block in-person filing', tier: 'snack', category: 'extraction' },
-    { price: 253, name: 'a year of ATM fees', tier: 'snack', category: 'extraction' }, // cite: weekly out-of-network use
     { price: 250, name: 'a Roomba (basic)', tier: 'snack', category: 'status' },
+    { price: 249, name: "a pair of AirPods Pro 3", tier: 'snack', category: 'status' }, // cite: Apple launch price, Sep 2025 (Axios)
     { price: 240, name: 'one year of ChatGPT Plus', tier: 'snack', category: 'extraction' },
-    { price: 230, name: 'one year of Notion AI', tier: 'snack', category: 'extraction' },
-    { price: 225, name: 'a year of overdraft fees', tier: 'snack', category: 'extraction', featured: true }, // cite: typical overdrafting household
+    { price: 230, name: "a pair of Air Jordan 11s", tier: 'snack', category: 'status' }, // cite: AJ11 'Rare Air' retail (Just Fresh Kicks)
+    { price: 225, name: 'a year of overdraft fees', tier: 'snack', category: 'extraction' }, // cite: typical overdrafting household
     { price: 220, name: 'a year of Xbox Game Pass', tier: 'snack', category: 'extraction' }, // cite: Ultimate tier
+    { price: 219.95, name: "a bottle of Johnnie Walker Blue Label", tier: 'snack', category: 'status' }, // cite: NC ABC state-store retail, eff. 2/1/2025
     { price: 215, name: 'one year of Netflix (standard)', tier: 'snack', category: 'extraction' },
     { price: 210, name: 'a tub of fancy pre-workout', tier: 'snack', category: 'snack' },
     { price: 205, name: 'one year of LinkedIn Premium', tier: 'snack', category: 'extraction' },
-    { price: 204, name: 'one year of Disney+ (no ads)', tier: 'snack', category: 'extraction' },
     { price: 200, name: 'a bottle of Dom Pérignon', tier: 'snack', category: 'status' },
     { price: 198, name: 'a Cameo from a B-lister', tier: 'snack', category: 'snack' },
     { price: 195, name: 'an IV drip wellness session', tier: 'snack', category: 'status' },
     { price: 190, name: 'an hour with a private chef', tier: 'snack', category: 'status' },
     { price: 188, name: 'a TurboTax filing', tier: 'snack', category: 'extraction' }, // cite: Self-Employed, federal + state
-    { price: 180, name: 'a year of checking fees', tier: 'snack', category: 'extraction' }, // cite: ~$15/mo checking maintenance
+    { price: 179.95, name: "a bottle of Don Julio 1942", tier: 'snack', category: 'status' }, // cite: NC ABC state-store retail, eff. 8/1/2025
     { price: 179, name: 'AirPods (with ANC)', tier: 'snack', category: 'status' },
     { price: 178, name: 'a wild Costco run', tier: 'snack', category: 'snack' },
-    { price: 175, name: 'one year of Audible', tier: 'snack', category: 'extraction' },
     { price: 170, name: 'a bougie hot-pot dinner', tier: 'snack', category: 'status' },
+    { price: 169.95, name: "a bottle of Old Rip Van Winkle 10", tier: 'snack', category: 'status' }, // cite: NC ABC state-store retail, eff. 8/1/2026
     { price: 165, name: 'a pair of Lululemon leggings', tier: 'snack', category: 'status' },
     { price: 156, name: 'one Spotify Premium year', tier: 'snack', category: 'extraction' },
     { price: 155, name: 'a therapy session, cash', tier: 'snack', category: 'extraction' }, // cite: full cash price
-    { price: 154, name: 'a Substack subscription', tier: 'snack', category: 'extraction' },
     { price: 150, name: 'a fake ESA certificate', tier: 'snack', category: 'snack' },
+    { price: 149, name: "a Ledger Nano X", tier: 'snack', category: 'status' }, // cite: Ledger list price (TechCrunch 2024). VERIFY on ledger.com before merge
     { price: 145, name: 'a month of AI girlfriend', tier: 'snack', category: 'extraction' },
     { price: 135, name: 'a night at a Holiday Inn Express', tier: 'snack', category: 'status' },
     { price: 130, name: 'a paternity test', tier: 'snack', category: 'snack' },
     { price: 125, name: 'a concert nosebleed', tier: 'snack', category: 'status' },
-    { price: 120, name: 'one Hulu year', tier: 'snack', category: 'extraction' },
     { price: 118, name: 'one Midjourney year', tier: 'snack', category: 'extraction' },
+    { price: 115, name: "a pair of white Air Force 1s", tier: 'snack', category: 'status' }, // cite: Foot Locker, AF1 '07 White/White
     { price: 105, name: 'a Global Entry application', tier: 'snack', category: 'extraction' },
     { price: 102, name: 'a Hamilton ticket (cheap)', tier: 'snack', category: 'status' },
     { price: 100, name: 'a DNA test (23andMe)', tier: 'snack', category: 'snack' },
@@ -171,9 +172,9 @@ const LADDER = [
     { price: 85, name: 'a pair of jeans', tier: 'snack', category: 'snack' },
     { price: 82, name: 'a TaskRabbit IKEA assembly', tier: 'snack', category: 'extraction' },
     { price: 80, name: 'TSA PreCheck', tier: 'snack', category: 'extraction' },
+    { price: 79.99, name: "a copy of Mario Kart World", tier: 'snack', category: 'snack' }, // cite: Nintendo launch price (Shacknews)
     { price: 78, name: 'one PlayStation Plus year', tier: 'snack', category: 'extraction' },
     { price: 77, name: 'a Vegas night at a budget hotel', tier: 'snack', category: 'status' },
-    { price: 76, name: 'a ChatGPT API top-up', tier: 'snack', category: 'extraction' }, // cite: moderate-use month
     { price: 75, name: 'a Hello Fresh meal kit week', tier: 'snack', category: 'extraction' },
     { price: 72, name: 'a Lyft surge ride at 2am', tier: 'snack', category: 'extraction' },
     { price: 71, name: 'an Uber Eats order at 2am', tier: 'snack', category: 'extraction' },
@@ -202,7 +203,7 @@ const LADDER = [
     { price: 30, name: 'a Tinder Gold month', tier: 'snack', category: 'extraction' },
     { price: 29, name: 'an axe-throwing session', tier: 'snack', category: 'snack' },
     { price: 28, name: 'a wire transfer fee', tier: 'snack', category: 'extraction' }, // cite: typical domestic
-    { price: 27, name: 'a large delivery pizza', tier: 'snack', category: 'snack' },
+    { price: 27, name: 'a large delivery pizza', tier: 'snack', category: 'snack', featured: true },
     { price: 26.77, name: 'an overdraft fee', tier: 'snack', category: 'extraction' }, // cite: Bankrate 2025 average
     { price: 26.5, name: 'a CrossFit class drop-in', tier: 'snack', category: 'status' },
     { price: 26, name: 'a Bumble Boost month', tier: 'snack', category: 'extraction' },
@@ -216,20 +217,20 @@ const LADDER = [
     { price: 18, name: 'a paperback book', tier: 'snack', category: 'snack' },
     { price: 17, name: 'a bounced-check fee', tier: 'snack', category: 'extraction' }, // cite: NSF (non-sufficient funds) fee
     { price: 15, name: 'a movie ticket', tier: 'snack', category: 'snack' },
-    { price: 14, name: 'a Twitter Blue verification month', tier: 'snack', category: 'extraction' },
+    { price: 14.357, name: "a pound of sirloin steak", tier: 'snack', category: 'extraction' }, // cite: BLS avg price, FRED APU0000703613, Aug 2026
     { price: 13, name: 'a Chipotle burrito', tier: 'snack', category: 'snack' },
     { price: 12, name: 'one stadium beer', tier: 'snack', category: 'extraction' },
-    { price: 11.5, name: 'a Botox unit', tier: 'snack', category: 'status', featured: true },
+    { price: 11.5, name: 'a Botox unit', tier: 'snack', category: 'status' },
     { price: 11, name: 'a pack of cigarettes', tier: 'snack', category: 'snack' },
     { price: 10.5, name: 'an OnlyFans subscription (avg)', tier: 'snack', category: 'extraction' },
-    { price: 9, name: 'one fast-food combo meal', tier: 'snack', category: 'extraction' },
+    { price: 9.299, name: "a pound of ground coffee", tier: 'snack', category: 'extraction' }, // cite: BLS avg price, FRED APU0000717311, Aug 2026
     { price: 8, name: 'a round of mini golf', tier: 'snack', category: 'snack' },
     { price: 7.5, name: 'a Starbucks coffee', tier: 'snack', category: 'snack' },
     { price: 7, name: 'a Tinder profile boost', tier: 'snack', category: 'extraction' },
     { price: 6.5, name: 'an Adderall pill', tier: 'snack', category: 'extraction' }, // cite: 10mg generic, cash retail without insurance
-    { price: 6, name: 'a Big Mac', tier: 'snack', category: 'snack' },
+    { price: 6, name: 'a Big Mac', tier: 'snack', category: 'snack', featured: true },
     { price: 5.5, name: 'a mid-tier scratch-off ticket', tier: 'snack', category: 'snack' },
-    { price: 5, name: 'a Postmates delivery fee', tier: 'snack', category: 'extraction' },
+    { price: 5, name: "a McDonald's $5 Meal Deal", tier: 'snack', category: 'snack' }, // cite: Chowhound, Apr 2026 (some locations $6)
     { price: 4.86, name: 'an out-of-network ATM fee', tier: 'snack', category: 'extraction' }, // cite: Bankrate 2025 average
     { price: 4.75, name: 'a cheap cigar', tier: 'snack', category: 'snack' },
     { price: 4.5, name: 'a mechanical bull ride', tier: 'snack', category: 'snack' },
@@ -244,7 +245,7 @@ const LADDER = [
     { price: 2.6, name: 'a 5-Hour Energy shot', tier: 'snack', category: 'snack' },
     { price: 2.5, name: 'a Liquid Death', tier: 'snack', category: 'snack' },
     { price: 2.4, name: 'a White Claw', tier: 'snack', category: 'snack' },
-    { price: 2.3, name: 'a Truly seltzer', tier: 'snack', category: 'snack' },
+    { price: 2.272, name: "a dozen eggs", tier: 'snack', category: 'extraction' }, // cite: BLS avg price, FRED APU0000708111, Aug 2026
     { price: 2, name: 'a Powerball ticket', tier: 'snack', category: 'snack' },
     { price: 1.95, name: 'a scratch-off ticket (entry-tier)', tier: 'snack', category: 'snack' },
     { price: 1.85, name: 'a pickle from 7-Eleven cooler', tier: 'snack', category: 'snack' },
@@ -256,93 +257,94 @@ const LADDER = [
     { price: 1.25, name: "a Reese's Cup", tier: 'snack', category: 'snack' },
     { price: 1.1, name: 'a Pop Rocks package', tier: 'snack', category: 'snack' },
     { price: 1.05, name: 'a claw machine attempt', tier: 'snack', category: 'snack' },
-    { price: 1, name: 'an item from the $1 shop', tier: 'snack', category: 'snack' },
-    { price: 0.98, name: 'a single cigarette', tier: 'snack', category: 'snack' },
-    { price: 0.9, name: 'an onion', tier: 'snack', category: 'snack' },
-    { price: 0.88, name: 'a pear', tier: 'snack', category: 'snack' },
-    { price: 0.85, name: 'an AA battery', tier: 'snack', category: 'snack' },
-    { price: 0.82, name: 'a potato', tier: 'snack', category: 'snack' },
-    { price: 0.78, name: 'a tomato', tier: 'snack', category: 'snack' },
-    { price: 0.75, name: 'an orange', tier: 'snack', category: 'snack' },
-    { price: 0.73, name: 'a postage stamp', tier: 'snack', category: 'snack' },
-    { price: 0.65, name: "a McDonald's chicken nugget", tier: 'snack', category: 'snack' },
-    { price: 0.6, name: 'a pack of ramen', tier: 'snack', category: 'snack' },
-    { price: 0.52, name: 'a lime', tier: 'snack', category: 'snack' },
-    { price: 0.5, name: 'a condom (from a 12-pack)', tier: 'snack', category: 'snack' },
-    { price: 0.48, name: 'a lemon', tier: 'snack', category: 'snack' },
-    { price: 0.45, name: 'a disposable razor', tier: 'snack', category: 'snack' },
-    { price: 0.42, name: 'nicotine gum', tier: 'snack', category: 'snack' },
-    { price: 0.4, name: 'an arcade game token', tier: 'snack', category: 'snack' },
-    { price: 0.38, name: 'a CBD gummy', tier: 'snack', category: 'snack' },
-    { price: 0.35, name: 'an AAA battery', tier: 'snack', category: 'snack' },
-    { price: 0.33, name: 'a Capri Sun', tier: 'snack', category: 'snack' },
-    { price: 0.3, name: 'a banana', tier: 'snack', category: 'snack' },
-    { price: 0.28, name: 'a gumball', tier: 'snack', category: 'snack' },
-    { price: 0.25, name: 'a single egg', tier: 'snack', category: 'snack' },
-    { price: 0.23, name: 'a nicotine pouch (Zyn)', tier: 'snack', category: 'snack' },
-    { price: 0.22, name: 'a Bic pen', tier: 'snack', category: 'snack' },
-    { price: 0.2, name: 'a penny slot pull (min bet)', tier: 'snack', category: 'snack' },
-    { price: 0.18, name: 'a bowl of cooked rice', tier: 'snack', category: 'snack' },
-    { price: 0.16, name: 'a claw machine prize (cost basis)', tier: 'snack', category: 'snack' },
-    { price: 0.15, name: 'a single tortilla', tier: 'snack', category: 'snack' },
-    { price: 0.14, name: 'a Snickers fun size', tier: 'snack', category: 'snack' },
-    { price: 0.13, name: 'the lettuce from a Big Mac', tier: 'snack', category: 'snack' },
-    { price: 0.12, name: 'a carrot', tier: 'snack', category: 'snack' },
-    { price: 0.11, name: 'a donut hole', tier: 'snack', category: 'snack' },
-    { price: 0.095, name: 'a Tootsie Pop', tier: 'snack', category: 'snack' },
-    { price: 0.09, name: 'a Dum Dum lollipop', tier: 'snack', category: 'snack' },
-    { price: 0.085, name: 'a pair of wooden chopsticks', tier: 'snack', category: 'snack' },
-    { price: 0.08, name: 'a slice of bread', tier: 'snack', category: 'snack' },
-    { price: 0.075, name: 'a soft pretzel bite', tier: 'snack', category: 'snack' },
-    { price: 0.07, name: 'a tea bag', tier: 'snack', category: 'snack' },
-    { price: 0.065, name: 'a Tylenol tablet', tier: 'snack', category: 'snack' },
-    { price: 0.06, name: 'a melatonin gummy', tier: 'snack', category: 'snack' },
-    { price: 0.055, name: 'a Listerine strip', tier: 'snack', category: 'snack' },
-    { price: 0.05, name: 'a pencil', tier: 'snack', category: 'snack' },
-    { price: 0.048, name: 'a Solo cup', tier: 'snack', category: 'snack' },
-    { price: 0.045, name: 'a stick of gum', tier: 'snack', category: 'snack' },
-    { price: 0.04, name: 'a paper plate', tier: 'snack', category: 'snack' },
-    { price: 0.038, name: 'a plastic fork', tier: 'snack', category: 'snack' },
-    { price: 0.035, name: 'a clothes peg', tier: 'snack', category: 'snack' },
-    { price: 0.033, name: 'a Bandaid', tier: 'snack', category: 'snack' },
-    { price: 0.03, name: 'a ketchup packet', tier: 'snack', category: 'snack' },
-    { price: 0.028, name: "a Hershey's Kiss", tier: 'snack', category: 'snack' },
-    { price: 0.026, name: 'a single Altoid mint', tier: 'snack', category: 'snack' },
-    { price: 0.024, name: 'a Tums tablet', tier: 'snack', category: 'snack' },
-    { price: 0.022, name: 'a paper fortune from a fortune cookie', tier: 'snack', category: 'snack', featured: true },
-    { price: 0.02, name: 'an Ibuprofen tablet', tier: 'snack', category: 'snack' },
-    { price: 0.018, name: 'a single Pringle', tier: 'snack', category: 'snack' },
-    { price: 0.016, name: 'a single Dorito', tier: 'snack', category: 'snack' },
-    { price: 0.014, name: 'a sugar packet', tier: 'snack', category: 'snack' },
-    { price: 0.013, name: 'a plastic spoon', tier: 'snack', category: 'snack' },
-    { price: 0.012, name: 'a Popsicle stick', tier: 'snack', category: 'snack' },
-    { price: 0.011, name: 'a Tootsie Roll mini', tier: 'snack', category: 'snack' },
-    { price: 0.0105, name: 'a bobby pin', tier: 'snack', category: 'snack' },
-    { price: 0.01, name: 'a thumbtack', tier: 'snack', category: 'snack' },
-    { price: 0.0095, name: 'a plastic straw', tier: 'snack', category: 'snack' },
-    { price: 0.009, name: 'a saltine cracker', tier: 'snack', category: 'snack' },
-    { price: 0.0085, name: 'a single pretzel stick', tier: 'snack', category: 'snack' },
-    { price: 0.008, name: 'a single napkin', tier: 'snack', category: 'snack' },
-    { price: 0.0075, name: 'a single coffee filter', tier: 'snack', category: 'snack' },
-    { price: 0.007, name: 'a single sheet of rolling paper', tier: 'snack', category: 'snack' },
-    { price: 0.0065, name: 'a paperclip', tier: 'snack', category: 'snack' },
-    { price: 0.006, name: 'a square of aluminum foil', tier: 'snack', category: 'snack' },
-    { price: 0.0055, name: 'a single Cheeto', tier: 'snack', category: 'snack' },
-    { price: 0.005, name: 'a Q-tip', tier: 'snack', category: 'snack' },
-    { price: 0.0045, name: 'a sheet of printer paper', tier: 'snack', category: 'snack' },
-    { price: 0.004, name: 'a Tic Tac', tier: 'snack', category: 'snack' },
-    { price: 0.0038, name: 'a single match', tier: 'snack', category: 'snack' },
-    { price: 0.0035, name: 'a rubber band', tier: 'snack', category: 'snack' },
-    { price: 0.003, name: 'a sheet of toilet paper', tier: 'snack', category: 'snack' },
-    { price: 0.0028, name: 'a single Skittle', tier: 'snack', category: 'snack' },
-    { price: 0.0025, name: 'a toothpick', tier: 'snack', category: 'snack' },
-    { price: 0.0023, name: 'a Goldfish cracker', tier: 'snack', category: 'snack' },
-    { price: 0.002, name: 'a single M&M', tier: 'snack', category: 'snack' },
-    { price: 0.0018, name: 'a single coffee bean', tier: 'snack', category: 'snack' },
-    { price: 0.0016, name: 'a single sprinkle (large)', tier: 'snack', category: 'snack' },
-    { price: 0.0014, name: 'a sunflower seed', tier: 'snack', category: 'snack' },
-    { price: 0.0012, name: 'a single Cheerio', tier: 'snack', category: 'snack' },
-    { price: 0.001, name: 'a single staple', tier: 'snack', category: 'snack' },
+    { price: 1, name: 'one US dollar', tier: 'snack', category: 'extraction', featured: true }, // cite: face value. pDAI re-peg rung; also the Pocket Change -> Real Life line
+    { price: 0.99, name: "a can of AriZona Iced Tea", tier: 'pocket', category: 'snack' }, // cite: still 99¢ (Brand Spur, Sep 2026)
+    { price: 0.98, name: 'a single cigarette', tier: 'pocket', category: 'snack' },
+    { price: 0.9, name: 'an onion', tier: 'pocket', category: 'snack' },
+    { price: 0.88, name: 'a pear', tier: 'pocket', category: 'snack' },
+    { price: 0.85, name: 'an AA battery', tier: 'pocket', category: 'snack' },
+    { price: 0.82, name: 'a potato', tier: 'pocket', category: 'snack' },
+    { price: 0.78, name: 'a tomato', tier: 'pocket', category: 'snack' },
+    { price: 0.75, name: 'an orange', tier: 'pocket', category: 'snack' },
+    { price: 0.73, name: 'a postage stamp', tier: 'pocket', category: 'snack' },
+    { price: 0.65, name: "a McDonald's chicken nugget", tier: 'pocket', category: 'snack' },
+    { price: 0.6, name: 'a pack of ramen', tier: 'pocket', category: 'snack' },
+    { price: 0.52, name: 'a lime', tier: 'pocket', category: 'snack' },
+    { price: 0.5, name: 'a condom (from a 12-pack)', tier: 'pocket', category: 'snack' },
+    { price: 0.48, name: 'a lemon', tier: 'pocket', category: 'snack' },
+    { price: 0.45, name: 'a disposable razor', tier: 'pocket', category: 'snack' },
+    { price: 0.42, name: 'nicotine gum', tier: 'pocket', category: 'snack' },
+    { price: 0.4, name: 'an arcade game token', tier: 'pocket', category: 'snack' },
+    { price: 0.38, name: 'a CBD gummy', tier: 'pocket', category: 'snack' },
+    { price: 0.35, name: 'an AAA battery', tier: 'pocket', category: 'snack' },
+    { price: 0.33, name: 'a Capri Sun', tier: 'pocket', category: 'snack' },
+    { price: 0.3, name: 'a banana', tier: 'pocket', category: 'snack' },
+    { price: 0.28, name: 'a gumball', tier: 'pocket', category: 'snack' },
+    { price: 0.25, name: 'a single egg', tier: 'pocket', category: 'snack' },
+    { price: 0.23, name: 'a nicotine pouch (Zyn)', tier: 'pocket', category: 'snack', featured: true },
+    { price: 0.22, name: 'a Bic pen', tier: 'pocket', category: 'snack' },
+    { price: 0.2, name: 'a penny slot pull (min bet)', tier: 'pocket', category: 'snack' },
+    { price: 0.18, name: 'a bowl of cooked rice', tier: 'pocket', category: 'snack' },
+    { price: 0.16025, name: "a single Hefty trash bag", tier: 'pocket', category: 'snack' }, // cite: Walmart, Hefty Ultra Strong 13 gal, 120 ct for $19.23
+    { price: 0.15, name: 'a single tortilla', tier: 'pocket', category: 'snack' },
+    { price: 0.14, name: 'a Snickers fun size', tier: 'pocket', category: 'snack' },
+    { price: 0.13, name: 'the lettuce from a Big Mac', tier: 'pocket', category: 'snack' },
+    { price: 0.12, name: 'a carrot', tier: 'pocket', category: 'snack' },
+    { price: 0.11, name: 'a donut hole', tier: 'pocket', category: 'snack' },
+    { price: 0.095, name: 'a Tootsie Pop', tier: 'pocket', category: 'snack' },
+    { price: 0.09, name: 'a Dum Dum lollipop', tier: 'pocket', category: 'snack' },
+    { price: 0.085, name: 'a pair of wooden chopsticks', tier: 'pocket', category: 'snack' },
+    { price: 0.08, name: 'a slice of bread', tier: 'pocket', category: 'snack' },
+    { price: 0.075, name: 'a soft pretzel bite', tier: 'pocket', category: 'snack' },
+    { price: 0.07, name: 'a tea bag', tier: 'pocket', category: 'snack' },
+    { price: 0.065, name: 'a Tylenol tablet', tier: 'pocket', category: 'snack' },
+    { price: 0.06, name: 'a melatonin gummy', tier: 'pocket', category: 'snack' },
+    { price: 0.055, name: 'a Listerine strip', tier: 'pocket', category: 'snack' },
+    { price: 0.05, name: 'a pencil', tier: 'pocket', category: 'snack' },
+    { price: 0.048, name: 'a Solo cup', tier: 'pocket', category: 'snack' },
+    { price: 0.045, name: 'a stick of gum', tier: 'pocket', category: 'snack' },
+    { price: 0.04, name: 'a paper plate', tier: 'pocket', category: 'snack' },
+    { price: 0.038, name: 'a plastic fork', tier: 'pocket', category: 'snack' },
+    { price: 0.035, name: 'a clothes peg', tier: 'pocket', category: 'snack' },
+    { price: 0.033, name: 'a Bandaid', tier: 'pocket', category: 'snack' },
+    { price: 0.03, name: 'a ketchup packet', tier: 'pocket', category: 'snack' },
+    { price: 0.028, name: "a Hershey's Kiss", tier: 'pocket', category: 'snack' },
+    { price: 0.026, name: 'a single Altoid mint', tier: 'pocket', category: 'snack' },
+    { price: 0.024, name: 'a Tums tablet', tier: 'pocket', category: 'snack' },
+    { price: 0.022, name: 'a paper fortune from a fortune cookie', tier: 'pocket', category: 'snack' },
+    { price: 0.02, name: 'an Ibuprofen tablet', tier: 'pocket', category: 'snack' },
+    { price: 0.018, name: 'a single Pringle', tier: 'pocket', category: 'snack' },
+    { price: 0.016, name: 'a single Dorito', tier: 'pocket', category: 'snack' },
+    { price: 0.014, name: 'a sugar packet', tier: 'pocket', category: 'snack' },
+    { price: 0.013, name: 'a plastic spoon', tier: 'pocket', category: 'snack' },
+    { price: 0.012, name: 'a Popsicle stick', tier: 'pocket', category: 'snack' },
+    { price: 0.011, name: 'a Tootsie Roll mini', tier: 'pocket', category: 'snack' },
+    { price: 0.0105, name: 'a bobby pin', tier: 'pocket', category: 'snack' },
+    { price: 0.01, name: 'a thumbtack', tier: 'pocket', category: 'snack' },
+    { price: 0.0095, name: 'a plastic straw', tier: 'pocket', category: 'snack' },
+    { price: 0.009, name: 'a saltine cracker', tier: 'pocket', category: 'snack' },
+    { price: 0.0085, name: 'a single pretzel stick', tier: 'pocket', category: 'snack' },
+    { price: 0.008, name: 'a single napkin', tier: 'pocket', category: 'snack' },
+    { price: 0.0075, name: 'a single coffee filter', tier: 'pocket', category: 'snack' },
+    { price: 0.007, name: 'a single sheet of rolling paper', tier: 'pocket', category: 'snack' },
+    { price: 0.0065, name: 'a paperclip', tier: 'pocket', category: 'snack' },
+    { price: 0.006, name: 'a square of aluminum foil', tier: 'pocket', category: 'snack' },
+    { price: 0.0055, name: 'a single Cheeto', tier: 'pocket', category: 'snack' },
+    { price: 0.005, name: 'a Q-tip', tier: 'pocket', category: 'snack' },
+    { price: 0.0045, name: 'a sheet of printer paper', tier: 'pocket', category: 'snack' },
+    { price: 0.004, name: 'a Tic Tac', tier: 'pocket', category: 'snack' },
+    { price: 0.0038, name: 'a single match', tier: 'pocket', category: 'snack' },
+    { price: 0.0035, name: 'a rubber band', tier: 'pocket', category: 'snack' },
+    { price: 0.003, name: 'a sheet of toilet paper', tier: 'pocket', category: 'snack' },
+    { price: 0.0028, name: 'a single Skittle', tier: 'pocket', category: 'snack' },
+    { price: 0.0025, name: 'a toothpick', tier: 'pocket', category: 'snack' },
+    { price: 0.0023, name: 'a Goldfish cracker', tier: 'pocket', category: 'snack' },
+    { price: 0.002, name: 'a single M&M', tier: 'pocket', category: 'snack', featured: true },
+    { price: 0.0018, name: 'a single coffee bean', tier: 'pocket', category: 'snack' },
+    { price: 0.0016, name: 'a single sprinkle (large)', tier: 'pocket', category: 'snack' },
+    { price: 0.0014, name: 'a sunflower seed', tier: 'pocket', category: 'snack' },
+    { price: 0.0012, name: 'a single Cheerio', tier: 'pocket', category: 'snack' },
+    { price: 0.001, name: 'a single staple', tier: 'pocket', category: 'snack' },
     { price: 0.0008, name: 'a Froot Loop', tier: 'absurd_floor', category: 'snack' },
     { price: 0.0007, name: 'a pinch of pepper', tier: 'absurd_floor', category: 'snack' },
     { price: 0.0006, name: 'a single coffee ground', tier: 'absurd_floor', category: 'snack' },
@@ -356,7 +358,7 @@ const LADDER = [
     { price: 0.0002, name: 'a sesame seed', tier: 'absurd_floor', category: 'snack' },
     { price: 0.00015, name: 'a speck of dust', tier: 'absurd_floor', category: 'snack' },
     { price: 0.00012, name: 'a broken rubber band', tier: 'absurd_floor', category: 'snack' },
-    { price: 0.0001, name: 'a grain of fine sand', tier: 'absurd_floor', category: 'snack' },
+    { price: 0.0001, name: 'a grain of fine sand', tier: 'absurd_floor', category: 'snack', featured: true },
     { price: 7e-05, name: 'a crumb from the bottom of the bag', tier: 'void', category: 'snack' },
     { price: 5e-05, name: "a dropped McDonald's chip", tier: 'void', category: 'snack' },
     { price: 3.5e-05, name: 'a flake of dandruff', tier: 'void', category: 'snack' },
@@ -365,7 +367,7 @@ const LADDER = [
     { price: 1.5e-05, name: "a fingernail clipping", tier: 'void', category: 'snack' },
     { price: 1e-05, name: 'a popped bubble-wrap bubble', tier: 'void', category: 'snack' },
     { price: 7.5e-06, name: 'a used cotton swab', tier: 'void', category: 'snack' },
-    { price: 5e-06, name: 'a single belly button lint', tier: 'void', category: 'snack' },
+    { price: 5e-06, name: 'a single belly button lint', tier: 'void', category: 'snack', featured: true },
     { price: 3e-06, name: 'a strand of shed cat hair', tier: 'void', category: 'snack' },
     { price: 2e-06, name: 'a used tooth floss string', tier: 'void', category: 'snack' },
     { price: 1.5e-06, name: 'a burnt match head', tier: 'void', category: 'snack' },
@@ -373,8 +375,10 @@ const LADDER = [
 ];
 
 const TIER_META = {
-    heavyweight:  { cls: 'tier-heavy',  text: '🍔 Heavyweight Tier — $1,000+',        emoji: '💎' },
-    snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $0.001 to $1,000', emoji: '🏠' },
-    absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',  emoji: '🏖️' },
-    void:         { cls: 'tier-dust',   text: '🕳 The Gutter — stuff so cheap it fell through the price floor',  emoji: '🕳️' },
+    whale:        { cls: 'tier-whale',  text: '🐋 Whale Tier — $100,000+',               emoji: '🐋' },
+    heavyweight:  { cls: 'tier-heavy',  text: '💎 Heavyweight Tier — $1,000 to $100,000', emoji: '💎' },
+    snack:        { cls: 'tier-snack',  text: '🏠 Real Life Tier — $1 to $1,000',         emoji: '🏠' },
+    pocket:       { cls: 'tier-pocket', text: '🪙 Pocket Change — $0.001 to $1',          emoji: '🪙' },
+    absurd_floor: { cls: 'tier-absurd', text: '🤡 Absurd Floor — $0.0001 to $0.001',      emoji: '🤡' },
+    void:         { cls: 'tier-dust',   text: '🌫️ Dust — below $0.0001',                 emoji: '🌫️' },
 };
