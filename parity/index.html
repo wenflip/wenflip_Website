@@ -207,14 +207,13 @@
 </main>
 
   <footer>
-    <div class="ftag">Wen 1:1?</div>
-    <div class="disc">A gauge, not a promise. Just memes and math.</div>
+    <div class="ftag">every coin gets a receipt.</div>
+    <div class="disc">not financial advice. barely advice.</div>
     <div class="flinks">
       <a href="/side-quests">side quests →</a>
       <a href="/ladder">nerd out on the full ladder →</a>
       <a href="https://x.com/wenflips" target="_blank" rel="noopener">follow @wenflips on X</a>
     </div>
-    <div class="disc fsig">wenflip · powered by PulseChain</div>
   </footer>
 </div>
 
@@ -428,7 +427,7 @@ function renderParityCard(id){
       <div class="pc-post-label">${postLabel}</div>
     </div>
     <div class="pc-desc">${p.myth}</div>
-    <div class="pc-stamp"><span>${dateStr}</span><span>wenflip.com/parity</span></div>
+    <div class="pc-stamp"><span>${dateStr}</span><span>wenflip.com/parity · @wenflips</span></div>
   `;
 }
 
@@ -508,13 +507,13 @@ async function pcExport(){
     ctx.drawImage(src,30,30,1020,1020);
     if(_isIOS){
       const link=document.createElement('a'); link.download='wenflip-parity.png'; link.href=out.toDataURL('image/png');
-      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('Saved! Share it on X. 🔥');
+      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('saved. attach it to your post.');
     } else {
       out.toBlob(async blob=>{ try{
-        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('Copied! Paste it into X. 🔥');
+        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('copied. paste it in your post.');
       }catch{
         const link=document.createElement('a'); link.download='wenflip-parity.png'; link.href=URL.createObjectURL(blob);
-        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('Saved! Share it on X. 🔥');
+        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('saved. attach it to your post.');
       }}, 'image/png');
     }
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
