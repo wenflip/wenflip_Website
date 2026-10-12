@@ -91,7 +91,6 @@ footer .ftag { font-family: 'Space Grotesk', sans-serif; font-size: 17px; font-w
 footer .disc { margin-top: 14px; font-size: 12px; opacity: 0.7; }
 footer .flinks { display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: center; margin: 14px 0 0; }
 footer .flinks a:hover { color: var(--text); }
-footer .fsig { margin-top: 10px; }
 /* larger invisible tap area — padding cancelled by negative margin, so the look is unchanged */
 footer a { display: inline-block; padding: 14px 6px; margin: -14px -6px; }
 

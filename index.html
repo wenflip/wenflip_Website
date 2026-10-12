@@ -44,13 +44,6 @@
   <h1 class="logo">wenflip</h1>
   <p class="logo-tagline">what your coin is worth, in real stuff.</p>
 
-  <!-- HERO COPY — switched OFF (kept in source; uncomment to restore) -->
-  <!--
-  <p class="hero-descriptor">what your coin is worth, in real stuff.</p>
-  <p class="subhead">Modern America priced you out of healthcare, college, and homeownership. Crypto is the receipt for what they took. We just show the math, one Dorito at a time.</p>
-  <p class="bridge-line"><span class="bridge-arrow">→</span> <span class="bridge-pulse">PulseChain</span> runs the same math for pennies.</p>
-  -->
-
   <!-- HERO = MAKE A FLIP CARD — two-column (controls left / card right on desktop; card-first on mobile). TICKET 3 side-by-side pass -->
   <div class="mafc-hero" id="mafcHero">
     <!-- CARD — the hero object. Always on screen; driven by auto-rotation,
@@ -120,15 +113,6 @@
           </div>
         </div>
 
-        <!-- Voice (hidden; retained so app.js #flipVoiceRow listener never throws) -->
-        <div class="flip-ctrl-row" id="flipVoiceRowWrap" style="display:none">
-          <div class="calc-lbl">Voice</div>
-          <div class="flip-chip-row" id="flipVoiceRow">
-            <button class="flip-chip active" data-voice="straight">Straight</button>
-            <button class="flip-chip" data-voice="cope">Cope</button>
-          </div>
-        </div>
-
         <!-- CA (contract address) — collapsed behind a reveal; power-user escape hatch.
              Toggle is inline (no app.js dependency): show/hide the next sibling + rotate caret. -->
         <div class="mafc-ca-collapse">
@@ -143,12 +127,6 @@
     </div>
   </div><!-- /mafc-hero -->
 </header>
-
-<!-- TICKER — switched OFF. Element kept in the DOM so app.js renderTicker() still runs
-     without throwing; remove the inline display:none to switch the bar back on. -->
-<div class="ticker-wrap" id="tickerWrap" style="display:none">
-  <div class="ticker" id="ticker"></div>
-</div>
 
 <div class="container">
 <main>
@@ -251,155 +229,6 @@
 
 
 
-<!-- COPE MODAL -->
-<div class="modal-backdrop" id="copeModal" onclick="if(event.target===this)closeCope()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Cope">
-    <div class="modal-head">
-      <div>
-        <h3>Cope 💀</h3>
-        <div class="sub">Pick a coin. We'll handle the rest.</div>
-      </div>
-      <button class="modal-close" aria-label="Close" onclick="closeCope()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
-      <div class="sc-coin-list" id="copeCoinList"></div>
-      <div class="sc-card-wrap" id="copeCardWrap" style="display:none">
-        <!-- cope line displayed above the card -->
-        <div class="cope-line-display" id="copeLineDisplay"></div>
-        <div id="copeResultCard" class="sc-result-card cope-result-card flip-card">
-          <!-- rendered by JS -->
-        </div>
-        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
-          <button class="calc-share-btn" id="copeShareBtn" onclick="copeExport()">
-            <span id="copeShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="copeShareText">Copy as image</span>
-          </button>
-          <button class="calc-share-btn sc-share-btn-x" id="copeShareBtn2" onclick="copeShare()">
-            <span id="copeShareIcon2" aria-hidden="true">𝕏</span><span id="copeShareText2">Share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- OUTRAGE MODAL -->
-<div class="modal-backdrop" id="outrageModal" onclick="if(event.target===this)closeOutrage()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="What did crypto flip?">
-    <div class="modal-head">
-      <div>
-        <h3>What did crypto flip? 🤬</h3>
-        <div class="sub">Pick the thing that made you angry. See which coin flips it.</div>
-      </div>
-      <button class="modal-close" aria-label="Close" onclick="closeOutrage()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
-      <div class="outrage-item-list" id="outrageItemList"></div>
-      <div class="sc-card-wrap" id="outrageCardWrap" style="display:none">
-        <div id="outrageResultCard" class="sc-result-card flip-card">
-          <!-- rendered by JS -->
-        </div>
-        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
-          <button class="calc-share-btn" id="outrageShareBtn" onclick="outrageExport()">
-            <span id="outrageShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="outrageShareText">Copy as image</span>
-          </button>
-          <button class="calc-share-btn sc-share-btn-x" id="outrageShareBtn2" onclick="outrageShare()">
-            <span id="outrageShareIcon2" aria-hidden="true">𝕏</span><span id="outrageShareText2">Share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- WONDER MODAL -->
-<div class="modal-backdrop" id="wonderModal" onclick="if(event.target===this)closeWonder()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Show me something insane">
-    <div class="modal-head">
-      <div>
-        <h3>Something Insane 🤯</h3>
-        <div class="sub">No inputs. Just vibes.</div>
-      </div>
-      <button class="modal-close" aria-label="Close" onclick="closeWonder()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
-      <div class="sc-card-wrap" id="wonderCardWrap">
-        <div id="wonderResultCard" class="sc-result-card flip-card">
-          <!-- rendered by JS -->
-        </div>
-        <div class="calc-share-row sc-share-row" style="margin-top:14px;">
-          <button class="calc-share-btn wonder-reroll-btn" id="wonderRerollBtn" onclick="wonderReroll()">
-            <span class="ico ico-shuffle" aria-hidden="true"></span> Again
-          </button>
-          <button class="calc-share-btn" id="wonderShareBtn" onclick="wonderExport()">
-            <span id="wonderShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="wonderShareText">Copy as image</span>
-          </button>
-          <button class="calc-share-btn sc-share-btn-x" id="wonderShareBtn2" onclick="wonderShare()">
-            <span id="wonderShareIcon2" aria-hidden="true">𝕏</span><span id="wonderShareText2">Share</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- PUMP MODAL -->
-<div class="modal-backdrop" id="pumpModal" onclick="if(event.target===this)closePump()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Pump — dream forward">
-    <div class="modal-head">
-      <div>
-        <h3>Pump <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">🚀</span></h3>
-        <div class="sub">Pick a coin. Dream a price. See what it flips.</div>
-      </div>
-      <button class="modal-close" aria-label="Close" onclick="closePump()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
-
-      <!-- Step 1: pick coin -->
-      <div class="calc-section">
-        <div class="calc-lbl">Pick your coin</div>
-        <div class="coin-badges" id="pumpCoinBadges"><span style="color:var(--muted);font-size:13px;">Loading prices…</span></div>
-      </div>
-
-      <!-- Step 2: enter target -->
-      <div class="calc-section">
-        <div class="calc-lbl">Dream a price or pick a multiple</div>
-        <!-- Quick-pick multiples -->
-        <div class="pump-quick-row" id="pumpQuickRow">
-          <button class="pump-quick-btn" data-mult="2">2×</button>
-          <button class="pump-quick-btn" data-mult="5">5×</button>
-          <button class="pump-quick-btn" data-mult="10">10×</button>
-          <button class="pump-quick-btn" data-mult="100">100×</button>
-        </div>
-        <!-- Free input -->
-        <div class="pump-input-wrap">
-          <input class="pump-input" id="pumpInput" type="text"
-            placeholder='e.g. "10x" or "$1.00"'
-            autocomplete="off" spellcheck="false" inputmode="decimal"/>
-          <button class="pump-go-btn" id="pumpGoBtn">Go</button>
-        </div>
-        <div class="pump-input-hint" id="pumpInputHint"></div>
-      </div>
-
-      <!-- Result card + share -->
-      <div class="calc-result-section" id="pumpResultSection">
-        <div id="pumpPlaceholder" class="calc-result-placeholder">Pick a coin and enter a price or multiple.</div>
-        <div id="pumpResultCard" class="pump-result-card flip-card" style="display:none">
-          <!-- rendered by JS -->
-        </div>
-        <div class="calc-share-row sc-share-row" id="pumpShareRow" style="display:none">
-          <button class="calc-share-btn" id="pumpShareBtn" onclick="pumpExport()">
-            <span id="pumpShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="pumpShareText">Copy as image</span>
-          </button>
-          <button class="calc-share-btn sc-share-btn-x" id="pumpShareBtn2" onclick="pumpShare()">
-            <span id="pumpShareIcon2" aria-hidden="true">𝕏</span><span id="pumpShareText2">Share</span>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 <!-- FLIPPENING MODAL -->
 <div class="modal-backdrop" id="flippeningModal" onclick="if(event.target===this)closeFlippen()">
   <div class="modal" role="dialog" aria-modal="true" aria-label="Dunk on a coin">
@@ -454,61 +283,6 @@
 </div>
 
 
-
-<!-- FLIP CALCULATOR MODAL -->
-<div class="modal-backdrop" id="calcModal" onclick="if(event.target===this)closeCalcModal()">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Flip Calculator">
-    <div class="modal-head">
-      <div>
-        <h3>Flip Calculator <span style="background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;">🧮</span></h3>
-        <div class="sub">How many times does your coin need to multiply?</div>
-      </div>
-      <button class="modal-close" aria-label="Close" onclick="closeCalcModal()">✕</button>
-    </div>
-    <div class="modal-body" style="padding:0 0 24px;overflow-y:auto;">
-      <div class="calc-section">
-        <div class="calc-lbl">Pick your coin</div>
-        <div class="coin-badges" id="calcCoinBadges"><span style="color:var(--muted);font-size:13px;">Loading prices…</span></div>
-      </div>
-      <div class="calc-section">
-        <div class="calc-lbl">Pick your target</div>
-        <div class="calc-search-wrap">
-          <span class="calc-search-icon" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="7"></circle><line x1="20" y1="20" x2="15.8" y2="15.8"></line></svg></span>
-          <input class="calc-search" id="calcSearch" type="text" placeholder="Search items… e.g. Harvard, Big Mac, Cheerio" autocomplete="off" spellcheck="false"/>
-        </div>
-        <div class="target-list" id="calcTargetList"></div>
-      </div>
-      <div class="calc-result-section">
-        <div id="calcPlaceholder" class="calc-result-placeholder">Pick a coin and a target to see the math.</div>
-        <div id="calcResultCard" class="calc-result-card flip-card" style="display:none">
-          <div class="calc-zone-top">
-            <div class="calc-sb-side">
-              <div class="calc-sb-coin"><img id="calcSbLogo" class="calc-sb-logo" alt=""/><span id="calcSbCoinName"></span></div>
-              <div class="calc-sb-price" id="calcSbCoinPrice"></div>
-            </div>
-            <div class="calc-sb-vs">vs</div>
-            <div class="calc-sb-side calc-sb-right">
-              <div class="calc-sb-item" id="calcSbItemName"></div>
-              <div class="calc-sb-price" id="calcSbItemPrice"></div>
-            </div>
-          </div>
-          <div class="calc-zone-mid">
-            <div class="calc-verdict" id="calcVerdict"></div>
-            <div class="calc-line-mult" id="calcLineMult"></div>
-          </div>
-          <div class="calc-zone-bot"><div class="calc-line-3" id="calcLine3"></div></div>
-          <div class="calc-date" id="calcDate"></div>
-          <div class="calc-wm">wenflip.com</div>
-        </div>
-        <div class="calc-share-row" id="calcShareRow" style="display:none">
-          <button class="calc-share-btn" id="calcShareBtn" onclick="calcCopyImage()">
-            <span id="calcShareIcon" class="ico ico-clipboard" aria-hidden="true"></span><span id="calcShareText">Copy as image</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <div class="calc-toast" id="calcToast"></div>
 

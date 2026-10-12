@@ -14,49 +14,6 @@
 
   // ==== EMOTION DOORS — CONTENT LISTS (verbatim, do not edit inline) ====
 
-  const COPE_LINES = [
-    "we knew her.",
-    "gravity remains undefeated.",
-    "reverting to the mean.",
-    "back to the trenches.",
-    "the rung was nice while it lasted.",
-    "it was real for a while.",
-    "the ladder is a two-way street.",
-    "down a rung. the ladder remains.",
-    "she's not heavy anymore.",
-    "it visited. it did not stay.",
-    "we're choosing to remember the good times.",
-    "this is fine. everything is fine.",
-    "hodl, allegedly.",
-    "it's not a loss until you sell. it's not a flip until it flips."
-  ];
-
-  // Each string is an exact LADDER item name; resolved to LADDER entries at runtime via name match.
-  const OUTRAGE_ITEMS = [
-    "a full IVF package (3 cycles)",
-    "one year of average US daycare",
-    "a live-in nanny (NYC)",
-    "a full surrogacy in the USA",
-    "raising one kid to 18",
-    "an epidural during birth",
-    "a C-section copay",
-    "a year of federal income tax",
-    "a year of FICA payroll taxes",
-    "one year of US median property tax",
-    "a year of state college",
-    "a year at Harvard",
-    "an uninsured ER visit (minor)",
-    "a shot of Ozempic (per dose)",
-    "full-mouth dental implants",
-    "a vasectomy",
-    "an IUD insertion (out of pocket)",
-    "a down payment on a house",
-    "a year of overdraft fees",
-    "having a baby, with insurance"
-  ];
-
-
-
 
   // ── Coin price formatter ─────────────────────────────────────────────────
   // Used ONLY for live coin prices (ticker, cards, share cards, calc).
@@ -120,8 +77,6 @@
 
   // For coin prices — HTML-safe (subscript digit is Unicode, no tags needed)
   function fmtPrice(p) { return fmtCoinPrice(p); }
-  // Alias used in modal token tooltips (plain text context)
-  function fmtPriceText(p) { return fmtCoinPrice(p); }
 
   // Real-world item prices: stored values rendered character-for-character.
   // fmtItemPrice is used wherever a ladder/item price is displayed.
@@ -160,152 +115,8 @@
   }
 
 
-
-  function rungLabelForToken(rung) {
-    if (!rung) return null;
-    return { name: rung.name, price: fmtItemPrice(rung.price), featured: !!rung.featured };
-  }
-
-  function starHtml(featured) {
-    if (!featured) return '';
-    return '<span class="star" title="Featured flip — these are the bangers">⭐</span>';
-  }
-
-  function flipReadiness(t) {
-    if (t.price == null) return -1;
-    const i = findRungIndex(t.price);
-    const nextRung = LADDER[i - 1];
-    const prevRung = LADDER[i];
-    if (!nextRung) return 1.0;
-    const span = nextRung.price - (prevRung ? prevRung.price : 0);
-    if (span <= 0) return 0;
-    return Math.min(1, Math.max(0, (t.price - (prevRung ? prevRung.price : 0)) / span));
-  }
-
-  function renderTicker() {
-    const html = state.map(t => `
-      <div class="tick">
-        <div class="tick-badge"><img src="${t.logo}" alt="${t.sym}" class="logo-img" loading="lazy"/></div>
-        <div class="tick-sym">${t.sym}</div>
-        <div class="tick-price">${fmtPrice(t.price)}</div>
-        <div class="tick-chg ${t.chg < 0 ? 'neg' : ''}">${t.chg >= 0 ? '+' : ''}${(t.chg||0).toFixed(2)}%</div>
-      </div>
-    `).join('');
-    document.getElementById('ticker').innerHTML = html + html;
-  }
-
-  function tweetUrl(t, prev) {
-    const flipText = prev ? prev.name : 'something';
-    const text = encodeURIComponent(`${t.sym} just flipped ${flipText} 👀 wenflip.com/#${t.sym}`);
-    return `https://twitter.com/intent/tweet?text=${text}`;
-  }
-
-  function chainPillHtml(t) {
-    // Pills removed from ladder cards — the All / PulseChain / Majors filter tabs
-    // already make chain membership clear. Kept as a no-op so the ${chainPill}
-    // slot in renderLadder() renders nothing.
-    return '';
-  }
-
-  const X_ICON = `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.402 6.231H2.746l7.73-8.835L2.42 2.25h6.58l4.26 5.638 5.984-5.638Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>`;
-
-  let showAllCoins = false;
-  let chainFilter = 'all';
-
-  function renderLadder() {
-    const el = document.getElementById('clusters');
-    if (!el) return;                      // ladder markup removed (TICKET 3) — bail, don't throw
-    const ready = state.filter(t => t.price != null && (chainFilter === 'all' || t.chain === chainFilter));
-    if (!ready.length) return;
-
-    const ordered = [...ready].sort((a, b) => flipReadiness(b) - flipReadiness(a));
-
-    const cards = ordered.map((t, idx) => {
-      const i = findRungIndex(t.price);
-      const nextRung = LADDER[i - 1];
-      const prevRung = LADDER[i];
-      const next = rungLabelForToken(nextRung);
-      const prev = rungLabelForToken(prevRung);
-      const chgCls = t.chg >= 0 ? 'pos' : 'neg';
-      const chgStr = (t.chg >= 0 ? '+' : '') + (t.chg||0).toFixed(2) + '%';
-      const chainCls = t.chain === 'pulsechain' ? 'chain-pulsechain' : 'chain-major';
-      const chainPill = chainPillHtml(t);
-
-      let pct = 0;
-      if (nextRung) {
-        // Standard gap formula
-        const span = nextRung.price - (prevRung ? prevRung.price : 0);
-        pct = span > 0 ? Math.min(100, Math.max(0, ((t.price - (prevRung ? prevRung.price : 0)) / span) * 100)) : 0;
-      } else {
-        // No next rung (top of ladder): fall back to cheapest rung above coin price
-        const fallback = [...LADDER].reverse().find(r => r.price > t.price);
-        const targetP = fallback ? fallback.price : 0.0001;
-        pct = Math.min(100, Math.max(0, (t.price / targetP) * 100));
-      }
-      // Minimum visible sliver for any non-zero progress
-      const pctDisplay = pct > 0 ? Math.max(3, pct) : 0;
-
-      let caption = '';
-      if (!nextRung) {
-        caption = `<span class="cap-pct">Top of the ladder 🏆</span>`;
-      } else {
-        const pctRounded = pct < 1 ? pct.toFixed(1) : Math.round(pct);
-        caption = `<span class="cap-pct">${pctRounded}% to</span><span class="cap-next">${next ? next.name : ''}${next && next.featured ? starHtml(true) : ''}</span>`;
-      }
-
-      return `
-        ${idx > 0 ? '<div class="cluster-divider"></div>' : ''}
-        <div class="cluster ${chainCls}" data-sym="${t.sym}">
-          <div class="card-top" data-zoom="${t.sym}" role="button" tabindex="0" aria-label="Make a flip card for ${t.sym}">
-            <div class="card-logo"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/></div>
-            <div class="card-id">
-              <div class="card-sym">${t.sym}</div>
-              ${chainPill}
-            </div>
-            <div class="card-spacer"></div>
-            <div class="card-right">
-              <span class="card-price"${(t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS) ? ' style="opacity:.5" title="Last known price — live feed is lagging"' : ''}>${fmtPrice(t.price)}</span>${(t.lastGood && Date.now() - t.lastGood > STALE_AFTER_MS) ? '<span style="font-size:9px;font-weight:700;letter-spacing:.5px;opacity:.5;margin-left:5px;text-transform:uppercase;">stale</span>' : ''}
-              <span class="card-chg ${chgCls}">${chgStr}</span>
-              <span class="card-chevron" aria-hidden="true">›</span>
-            </div>
-          </div>
-          <div class="card-caption">${caption}</div>
-          <div class="card-bar-wrap"><div class="card-bar-track"><div class="card-bar-fill" style="width:${pctDisplay.toFixed(2)}%"></div></div></div>
-          <div class="card-identity">${t.identity || ''}</div>
-        </div>`;
-    });
-
-    const firstFour = cards.slice(0, 4).join('');
-    const rest = cards.slice(4).join('');
-     el.innerHTML = '<p class="cards-hint">tap a coin for the full receipt.</p>' + firstFour + (rest
-      ? `<div id="extraClusters" class="extra-clusters" style="${showAllCoins ? '' : 'display:none'}">${rest}</div><div class="show-all-wrap"><button id="showAllBtn" class="show-all-btn">${showAllCoins ? 'Show fewer ↑' : 'Show all coins ↓'}</button></div>`
-      : '');
-
-    const showAllBtn = document.getElementById('showAllBtn');
-    if (showAllBtn) showAllBtn.addEventListener('click', () => { showAllCoins = !showAllCoins; renderLadder(); });
-
-    el.querySelectorAll('.card-top[data-zoom]').forEach(row => {
-      const sym = row.getAttribute('data-zoom');
-      row.addEventListener('click', () => openStatusCheckModalForCoin(sym));
-      row.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); openStatusCheckModalForCoin(sym); } });
-    });
-  }
-
  
 
-  document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const next = btn.getAttribute('data-chain');
-      if (next === chainFilter) return;
-      chainFilter = next;
-      document.querySelectorAll('#chainFilter .chain-filter-btn').forEach(b => {
-        const active = b.getAttribute('data-chain') === chainFilter;
-        b.classList.toggle('active', active);
-        b.setAttribute('aria-selected', active ? 'true' : 'false');
-      });
-      renderLadder();
-    });
-  });
 
   let lastFetch = null;
   function renderUpdated() {
@@ -320,12 +131,11 @@
   const FETCH_TIMEOUT_MS = 5000;    // give up on any one chain's request after 5s
   const BASE_REFRESH_MS  = 60000;   // normal refresh cadence (same 60s as before)
   const MAX_REFRESH_MS   = 240000;  // slowest we'll poll during a total outage
-  const STALE_AFTER_MS   = 90000;   // a price older than this shows a "stale" tag
 
   let _refreshTimer   = null;
   let _refreshDelayMs = BASE_REFRESH_MS;
 
-  const renderAll = () => { renderTicker(); renderLadder(); renderScCoinList(); renderUpdated(); tryPrefillMafc(); };
+  const renderAll = () => { renderScCoinList(); renderUpdated(); tryPrefillMafc(); };
 
   // Fill the inline MAFC hero with BTC once its price lands — but only once, and
   // never over a card the user already made or a deep link the page is honoring.
@@ -436,7 +246,6 @@
     renderAll();
   }
 
-  renderTicker();
   renderScCoinList();   // paint the inline MAFC picker on load (loading rows until prices land)
 
   function handleDeepLink() {
@@ -473,16 +282,6 @@
 
   refreshAll().then(handleDeepLink).then(() => { _mafcPrefilled = true; });
 
-  // ==== FLIP CALCULATOR ====
-  let calcCoin = null, calcTarget = null;
-  function openCalcModal() {
-    renderCalcCoinBadges(); renderCalcTargetList(''); updateCalcResult();
-    document.getElementById('calcModal').classList.add('open'); document.body.style.overflow='hidden';
-    const s = document.getElementById('calcSearch'); s.value=''; setTimeout(()=>s.focus(),120);
-  }
-  function closeCalcModal() { document.getElementById('calcModal').classList.remove('open'); document.body.style.overflow=''; }
-  const _openCalc = document.getElementById('openCalc');
-  if (_openCalc) _openCalc.addEventListener('click', openCalcModal);
 
   // ==== POP-UP FOCUS ====
   // Opening a pop-up moves keyboard focus onto its close button and makes the page
@@ -512,41 +311,10 @@
     if (wasOpen) _modalFocusOut();
     if (window.location.hash.replace(/^#/,'').toLowerCase()==='notacoin') history.replaceState(null,'',window.location.pathname+window.location.search);
   }
-  document.addEventListener('keydown', e => { if (e.key==='Escape'){closeCalcModal();closeTokenModal();} });
+  document.addEventListener('keydown', e => { if (e.key==='Escape'){closeTokenModal();} });
 
   function htmlAttr(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-  function renderCalcCoinBadges() {
-    const wrap = document.getElementById('calcCoinBadges');
-    wrap.innerHTML = TOKENS.map(t => {
-      const s = state.find(x => x.sym===t.sym);
-      const loading = !s || s.price==null;
-      return `<button class="coin-badge ${calcCoin===t.sym?'selected':''} ${loading?'loading':''}" data-sym="${t.sym}" title="${t.name}${loading?' (loading…)':''}"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span></button>`;
-    }).join('');
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('calcCoinBadges').addEventListener('click', function(e) {
-      const badge = e.target.closest('.coin-badge');
-      if (!badge || badge.classList.contains('loading')) return;
-      calcCoin = badge.dataset.sym; renderCalcCoinBadges(); updateCalcResult();
-    });
-    document.getElementById('calcTargetList').addEventListener('click', function(e) {
-      const item = e.target.closest('.target-item');
-      if (!item) return;
-      calcTarget = { name: item.dataset.name, price: parseFloat(item.dataset.price) };
-      renderCalcTargetList(document.getElementById('calcSearch').value); updateCalcResult();
-    });
-    document.getElementById('calcSearch').addEventListener('input', function() { renderCalcTargetList(this.value); });
-  });
-
-  function renderCalcTargetList(filter) {
-    const list = document.getElementById('calcTargetList');
-    const q = filter.toLowerCase().trim();
-    const items = LADDER.filter(r => r.price!=null && (!q || r.name.toLowerCase().includes(q)));
-    if (!items.length) { list.innerHTML=`<div class="target-empty">No items match "${htmlAttr(filter)}"</div>`; return; }
-    list.innerHTML = items.map(r => `<div class="target-item ${calcTarget&&calcTarget.name===r.name?'selected':''}" data-name="${htmlAttr(r.name)}" data-price="${r.price}"><span class="ti-name">${r.name}</span><span class="ti-price">${fmtItemPrice(r.price)}</span></div>`).join('');
-  }
 
   function fmtMult(mult) {
     if (mult>=1e9) return '1B+';
@@ -557,70 +325,14 @@
     return parseFloat(mult.toFixed(2)).toString();
   }
 
-  const CALC_STATE_COLORS = {
-    flipped:     { main: '#22c55e', glow: 'rgba(34,197,94,0.45)' },
-    approaching: { main: '#f5f5fa', glow: 'rgba(245,245,250,0.20)' },
-  };
-
-  function updateCalcResult() {
-    const placeholder=document.getElementById('calcPlaceholder'), card=document.getElementById('calcResultCard'), shareRow=document.getElementById('calcShareRow'), lineMult=document.getElementById('calcLineMult'), line3=document.getElementById('calcLine3');
-    if (!calcCoin||!calcTarget) {
-      placeholder.style.display=''; card.style.display='none'; shareRow.style.display='none';
-      placeholder.textContent = !calcCoin&&!calcTarget ? 'Pick a coin and a target to see the math.' : !calcCoin ? 'Now pick your coin.' : 'Now pick a target item.';
-      return;
-    }
-    const s = state.find(x=>x.sym===calcCoin);
-    if (!s||!s.price) { placeholder.style.display=''; placeholder.textContent=`Price unavailable for ${calcCoin}. Try again shortly.`; card.style.display='none'; shareRow.style.display='none'; return; }
-    placeholder.style.display='none'; card.style.display=''; shareRow.style.display='';
-    const coinPrice=s.price, targetPrice=calcTarget.price, mult=targetPrice/coinPrice;
-    const tk=TOKENS.find(t=>t.sym===calcCoin);
-    const logoEl=document.getElementById('calcSbLogo');
-    if (tk){logoEl.src=tk.logo;logoEl.alt=calcCoin;}
-    document.getElementById('calcSbCoinName').textContent=`1 ${calcCoin}`;
-    document.getElementById('calcSbCoinPrice').textContent=fmtPrice(coinPrice);
-    document.getElementById('calcSbItemName').textContent=calcTarget.name;
-    document.getElementById('calcSbItemPrice').textContent=fmtItemPrice(targetPrice);
-    document.getElementById('calcDate').textContent=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-    const stateKey=mult<=1?'flipped':'approaching', col=CALC_STATE_COLORS[stateKey];
-    const verdictEl=document.getElementById('calcVerdict');
-    let multText;
-    if (stateKey==='flipped') { const n=coinPrice/targetPrice; verdictEl.textContent='FLIPPED ✓'; multText=fmtMult(n)+'×'; line3.textContent=`1 ${calcCoin} buys ${multText} ${calcTarget.name}`; line3.removeAttribute('title'); }
-    else { verdictEl.textContent='NOT YET'; multText=fmtMult(mult)+'×'; line3.textContent=`${calcCoin} needs ${multText} to reach ${calcTarget.name}`; if (mult>=1e9) line3.setAttribute('title',`Exact: ${Math.round(mult).toLocaleString()}x`); else line3.removeAttribute('title'); }
-    lineMult.textContent=multText;
-    lineMult.style.fontSize=multText.length>7?'42px':multText.length>5?'52px':'64px';
-    verdictEl.style.color='#f5f5fa'; lineMult.style.color=col.main; lineMult.style.filter=`drop-shadow(0 0 16px ${col.glow})`;
-  }
 
   const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
   async function loadHtml2Canvas() {
     if (window.html2canvas) return;
     await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';s.crossOrigin='anonymous';s.onload=resolve;s.onerror=()=>reject(new Error('html2canvas failed'));document.head.appendChild(s);});
   }
-  (function(){if(_isIOS){const icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');if(icon)icon.className='ico ico-download';if(txt)txt.textContent='Save image';}})();
-  async function calcCopyImage() {
-    const btn=document.getElementById('calcShareBtn'),icon=document.getElementById('calcShareIcon'),txt=document.getElementById('calcShareText');
-    btn.disabled=true; icon.className='ico ico-spin'; icon.textContent=''; txt.textContent='Generating…';
-    try {
-      await loadHtml2Canvas();
-      const card=document.getElementById('calcResultCard');
-      const srcCanvas=await window.html2canvas(card,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
-      const ctx=out.getContext('2d');
-      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,0,0,1080,1080);
-      if (_isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('saved. attach it to your post.'); }
-      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('copied. paste it in your post.');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('saved. attach it to your post.');}}, 'image/png'); }
-    } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
-    finally { btn.disabled=false; icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txt.textContent=_isIOS?'Save image':'Copy as image'; }
-  }
   function showCalcToast(msg) { const t=document.getElementById('calcToast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 
-  // ==== SHARED IMAGE EXPORT (refactored — both calc and status check use this) ====
-  // calcCopyImage now delegates to exportCardAsImage; no behavior change for the calculator.
-  const _origCalcCopy = calcCopyImage;
-  // Re-bind calcCopyImage to use the shared function
-  // (We define exportCardAsImage first, then shadow calcCopyImage below.)
 
   async function exportCardAsImage(cardEl, shareBtn, iconEl, txtEl, isIOS) {
     shareBtn.disabled=true; iconEl.className='ico ico-spin'; iconEl.textContent=''; txtEl.textContent='Generating…';
@@ -638,24 +350,6 @@
     finally { shareBtn.disabled=false; iconEl.className = isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txtEl.textContent=isIOS?'Save image':'Copy as image'; }
   }
 
-  // ==== STATUS CHECK MODAL ====
-  const GAP_BUCKETS = {
-    high:   ["Agonizing.", "This close.", "Right there."],
-    mid:    ["Getting there.", "Knocking on the door.", "Almost rude how close."],
-    low:    ["A journey, not a sprint.", "Work to do.", "We wait."],
-    bottom: ["A ways to go.", "Patience.", "Long road."],
-  };
-  function gapBucket(pct) {
-    if (pct >= 95) return GAP_BUCKETS.high;
-    if (pct >= 75) return GAP_BUCKETS.mid;
-    if (pct >= 40) return GAP_BUCKETS.low;
-    return GAP_BUCKETS.bottom;
-  }
-  function randPick(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
-  function getGapLine(pct, dollarGap) {
-    const tag = randPick(gapBucket(pct));
-    return fmtItemPrice(dollarGap) + ' to go.  ' + tag;
-  }
 
    // MAFC is now inline in the hero (TICKET 3). "Open" = refresh the picker + scroll to it.
    function _scrollToHeroMafc() {
@@ -695,7 +389,6 @@
     else { caShowFail(result.reason); }
   }
 
-  function closeStatusCheckModal() { /* modal retired in TICKET 3 — MAFC is inline; no-op */ }
 
   function renderScCoinList() {
     const wrap = document.getElementById('scCoinList');
@@ -863,22 +556,20 @@
   // One renderer for every ladder-read card. Returns an HTML string; the
   // caller injects it into a `.wf-flip-card.flip-card` container.
   //
-  //   renderFlipCard({ coin, mult, item, voice })
+  //   renderFlipCard({ coin, mult, item })
   //     coin  : { sym, name, price, chg, logo }   (required)
   //     mult  : number × coin.price               (default 1 → "Today")
   //     item  : { name, price } → item-versus body (default null)
   //             (the old HFFF; dormant until Stage 2 wires the toggle)
-  //     voice : 'straight' | 'cope'               (default 'straight')
   //
   // Reuses: findRungIndex, flipProgressPct, fmtItemPrice, fmtPrice, fmtMult,
-  //         pumpObjSizeClass, getGapLine, pickCopeLine, htmlAttr, LADDER.
+  //         pumpObjSizeClass, htmlAttr, LADDER.
   // ===================================================================
   function renderFlipCard(opts) {
     opts = opts || {};
     const coin  = opts.coin || {};
     const mult  = (opts.mult != null) ? opts.mult : 1;
     const item  = opts.item || null;
-    const voice = opts.voice || 'straight';
 
     const sym    = String(coin.sym  || '');
     const name   = String(coin.name || sym);
@@ -972,10 +663,9 @@
       }
     }
 
-    const cope  = (voice === 'cope') ? `<div class="wf-cope">${opts.copeLine || pickCopeLine()}</div>` : '';
     const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com · @wenflips</span></div>`;
 
-    return head + hero + `<div class="wf-foot">${foot}${cope}${stamp}</div>`;
+    return head + hero + `<div class="wf-foot">${foot}${stamp}</div>`;
   }
 
   // Thin wrapper: look up a built-in coin by symbol, then delegate to the data-driven renderer.
@@ -1009,79 +699,6 @@
     await exportCardAsImage(document.getElementById('scResultCard'),btn,icon,txt,_isIOS);
   }
 
-  async function scShare() {
-    const btn2=document.getElementById('scShareBtn2'),icon2=document.getElementById('scShareIcon2'),txt2=document.getElementById('scShareText2');
-    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
-    // Pre-filled X post text, read off the live card so it always matches what's shown.
-    // Card carries the noun; this carries the voice. User can edit before posting.
-    const _card  = document.getElementById('scResultCard');
-    const _sym   = flipCoin ? flipCoin.sym : '';
-    const _objEl = _card ? _card.querySelector('.pump-dream-name') : null;
-    const _lblEl = _card ? _card.querySelector('.pump-flips-lbl')  : null;
-    const _obj   = _objEl ? _objEl.textContent.trim() : '';
-    const _lbl   = _lblEl ? _lblEl.textContent.trim().toLowerCase() : '';
-    let _verb = 'flips';
-    if      (_lbl.indexOf('would')   >= 0) _verb = 'would flip';
-    else if (_lbl.indexOf('chasing') >= 0) _verb = 'is chasing';
-    else if (_lbl.indexOf('flipped') >= 0) _verb = 'just flipped';
-    const wfTweet = (_sym && _obj) ? `${_sym} ${_verb} ${_obj} 👀 wenflip.com` : 'wenflip.com';
-    try {
-      await loadHtml2Canvas();
-      const cardEl=document.getElementById('scResultCard');
-      const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
-      const ctx=out.getContext('2d');
-      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,0,0,1080,1080);
-      const canShareFiles = navigator.canShare && navigator.share;
-      if (canShareFiles) {
-        await new Promise((resolve, reject) => {
-          out.toBlob(async blob => {
-            try {
-              const file = new File([blob], 'wenflip-status.png', {type:'image/png'});
-              const shareData = { files:[file], title:'wenflip', text: wfTweet };
-              if (navigator.canShare(shareData)) {
-                await navigator.share(shareData);
-                resolve();
-              } else {
-                reject(new Error('canShare false'));
-              }
-            } catch(e) { reject(e); }
-          }, 'image/png');
-        });
-      } else {
-        throw new Error('no share');
-      }
-    } catch(err) {
-      try {
-        const cardEl=document.getElementById('scResultCard');
-        const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-        const out2=document.createElement('canvas'); out2.width=1080; out2.height=1080;
-        const ctx2=out2.getContext('2d');
-        const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
-        const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas,0,0,1080,1080);
-        await new Promise((resolve, reject) => {
-          out2.toBlob(async blob => {
-            try {
-              await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-              window.open('https://x.com/intent/post?text=' + encodeURIComponent(wfTweet), '_blank', 'noopener');
-              showCalcToast('copied. paste it in your post.');
-              resolve();
-            } catch(e2) {
-              const link=document.createElement('a'); link.download='wenflip-status.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
-              window.open('https://x.com/intent/post?text=' + encodeURIComponent(wfTweet), '_blank', 'noopener');
-              showCalcToast('saved. attach it to your post.');
-              resolve();
-            }
-          }, 'image/png');
-        });
-      } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
-    } finally {
-      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
-    }
-  }
 
   // ===================================================================
   // MAKE A FLIP CARD — mega modal controller (Stage 2)
@@ -1093,20 +710,16 @@
   let flipMult      = 1;            // 1|2|5|10|100 or 'custom'
   let flipCustomRaw = '';           // raw custom input ("25x" / "$1.00")
   let flipTarget    = null;         // null (next rung) | {name, price}
-  let flipVoice     = 'straight';   // 'straight' | 'cope'
-  let flipCopeLine  = null;         // cached cope line (stable across control changes)
 
   // Reset every control to defaults + resync the control UI. Called on each open.
   function _flipResetAll() {
     flipCoin = null; flipMult = 1; flipCustomRaw = '';
-    flipTarget = null; flipVoice = 'straight'; flipCopeLine = null;
+    flipTarget = null;
 
     const pr = document.getElementById('flipPriceRow');
     if (pr) { pr.classList.remove('flip-dim'); pr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.mult === '1')); }
     const tr = document.getElementById('flipTargetRow');
     if (tr) tr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.target === 'next'));
-    const vr = document.getElementById('flipVoiceRow');
-    if (vr) vr.querySelectorAll('.flip-chip').forEach(b => b.classList.toggle('active', b.dataset.voice === 'straight'));
 
     const cw = document.getElementById('flipCustomWrap'); if (cw) { cw.style.display = 'none'; cw.classList.remove('flip-dim'); }
     const iw = document.getElementById('flipItemWrap');   if (iw) iw.style.display = 'none';
@@ -1162,7 +775,7 @@
 
     const card = document.getElementById('scResultCard');
     card.className = 'wf-flip-card flip-card';
-    card.innerHTML = renderFlipCard({ coin: flipCoin, mult: mult, item: item, voice: flipVoice, copeLine: flipCopeLine });
+    card.innerHTML = renderFlipCard({ coin: flipCoin, mult: mult, item: item });
 
     if (wrap) {
       wrap.style.display = '';
@@ -1249,15 +862,6 @@
     });
     const itemSearch = document.getElementById('flipItemSearch');
     if (itemSearch) itemSearch.addEventListener('input', function () { renderFlipItemList(this.value); });
-
-    const voiceRow = document.getElementById('flipVoiceRow');
-    if (voiceRow) voiceRow.addEventListener('click', e => {
-      const b = e.target.closest('.flip-chip'); if (!b) return;
-      flipVoice = b.dataset.voice;
-      _flipSetActive(voiceRow, b);
-      flipCopeLine = (flipVoice === 'cope') ? pickCopeLine() : null;
-      renderFlipModalCard();
-    });
 
     const randomBtn = document.getElementById('flipRandomBtn');
     if (randomBtn) randomBtn.addEventListener('click', () => {
@@ -1596,55 +1200,6 @@
     }
   }
 
-  // ==== PUMP MODAL ====
-  let pumpCoin = null;
-  let pumpActiveQuick = null; // tracks the active quick-pick mult string, e.g. '10'
-
-  function openPump() {
-    pumpCoin = null; pumpActiveQuick = null;
-    renderPumpCoinBadges();
-    document.getElementById('pumpInput').value = '';
-    document.getElementById('pumpInputHint').textContent = '';
-    document.getElementById('pumpResultCard').style.display = 'none';
-    document.getElementById('pumpShareRow').style.display = 'none';
-    document.getElementById('pumpPlaceholder').style.display = '';
-    document.getElementById('pumpPlaceholder').textContent = 'Pick a coin and enter a price or multiple.';
-    updatePumpQuickRow();
-    document.getElementById('pumpModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closePump() {
-    document.getElementById('pumpModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-  // NOTE: Pump is opened by the "Pump your bag" door button (#doorPump), wired
-  // in the EMOTION DOORS block below. The old #openPump element no longer exists
-  // in the HTML; the stray listener that referenced it has been removed.
-
-  function renderPumpCoinBadges() {
-    const wrap = document.getElementById('pumpCoinBadges');
-    wrap.innerHTML = TOKENS.map(t => {
-      const s = state.find(x => x.sym === t.sym);
-      const loading = !s || s.price == null;
-      return `<button class="coin-badge ${pumpCoin === t.sym ? 'selected' : ''} ${loading ? 'loading' : ''}"
-        data-sym="${t.sym}" title="${t.name}${loading ? ' (loading…)' : ''}">
-        <img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span>
-      </button>`;
-    }).join('');
-    wrap.querySelectorAll('.coin-badge:not(.loading)').forEach(btn => {
-      btn.addEventListener('click', () => {
-        pumpCoin = btn.dataset.sym;
-        renderPumpCoinBadges();
-        updatePumpResult();
-      });
-    });
-  }
-
-  function updatePumpQuickRow() {
-    document.querySelectorAll('.pump-quick-btn').forEach(btn => {
-      btn.classList.toggle('pump-quick-active', btn.dataset.mult === pumpActiveQuick);
-    });
-  }
 
   // Parse the input field into { mode: 'multiple'|'price', value: number } or null
   function parsePumpInput(raw) {
@@ -1671,11 +1226,6 @@
     return parsed.value; // direct price
   }
 
-  // Truncate helper (reuses same logic as flTrunc but pump-scoped for clarity)
-  function pumpTrunc(str, max) {
-    if (!str) return '';
-    return str.length > max ? str.slice(0, max - 1) + '…' : str;
-  }
 
   // Object-size bucket for the pump card hero. Length-based (never measure-and-reflow,
   // so the on-screen card and the html2canvas export always agree). pump-obj-sm is the
@@ -1709,680 +1259,22 @@
     }
   }
 
-  function updatePumpResult() {
-    const placeholder = document.getElementById('pumpPlaceholder');
-    const card = document.getElementById('pumpResultCard');
-    const shareRow = document.getElementById('pumpShareRow');
-    const hint = document.getElementById('pumpInputHint');
-
-    const rawInput = document.getElementById('pumpInput').value;
-    const parsed = parsePumpInput(rawInput);
-
-    // Guard: need both a coin and a valid input
-    if (!pumpCoin) {
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      placeholder.style.display = '';
-      placeholder.textContent = 'Pick a coin first.';
-      hint.textContent = '';
-      return;
-    }
-    const s = state.find(x => x.sym === pumpCoin);
-    if (!s || !s.price) {
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      placeholder.style.display = '';
-      placeholder.textContent = `Price unavailable for ${pumpCoin}. Try again shortly.`;
-      hint.textContent = '';
-      return;
-    }
-    if (!rawInput.trim()) {
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      placeholder.style.display = '';
-      placeholder.textContent = 'Enter a target price (e.g. $1.00) or a multiple (e.g. 10x).';
-      hint.textContent = '';
-      return;
-    }
-    if (!parsed) {
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      placeholder.style.display = '';
-      placeholder.textContent = '';
-      hint.textContent = 'Try "10x" for a multiple, or "$1.00" for a price.';
-      hint.style.color = 'var(--red)';
-      return;
-    }
-
-    hint.textContent = '';
-    const coinPrice = s.price;
-    const hypPrice = computePumpHypPrice(coinPrice, parsed);
-    if (!hypPrice || hypPrice <= 0) {
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      placeholder.style.display = '';
-      placeholder.textContent = 'Price must be greater than zero.';
-      return;
-    }
-
-        // At or below today's price → no pump happened. Kill the card (nothing to
-    // screenshot) and nudge. Link routes to Status Check pre-loaded on this coin,
-    // which prints the "today" card they were probably after.
-    if (hypPrice <= coinPrice) {
-      card.style.display = 'none'; shareRow.style.display = 'none';
-      placeholder.style.display = '';
-      const nudge = hypPrice < coinPrice
-        ? "That's a dump, not a pump. Aim higher. 👆"
-        : "That's today's price. Now pump it. 👆";
-        placeholder.innerHTML = nudge +
-        '<br><a href="#" class="pump-status-link" onclick="event.preventDefault();closePump();openStatusCheckModalForCoin(pumpCoin);">or grab today\'s card →</a>';
-      // (Link already routes to openStatusCheckModalForCoin = the mega modal. No change needed;
-      //  the old Pump modal is only reachable if something still calls openPump directly.)
-      return;
-    }
-
-    const tk = TOKENS.find(t => t.sym === pumpCoin);
-    const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-
-    // The pill ALWAYS shows a multiple now — back-calculated from today's price when the
-    // user typed a raw target price, so a price-mode card is never missing its anchor.
-    const impliedMult = hypPrice / coinPrice;
-    const multLabel = fmtMult(impliedMult) + '×';
-
-    // What would it flip at the dreamed price?
-    const hypIdx = findRungIndex(hypPrice);
-    const hypRung = (hypIdx >= 0 && LADDER[hypIdx] && LADDER[hypIdx].price <= hypPrice) ? LADDER[hypIdx] : null;
-
-    // Dream object block — the single hero. No competing "today" object.
-    let dreamHtml = '';
-    if (hypIdx === 0 && hypRung) {
-      // Clears the entire ladder
-      dreamHtml = `
-        <div class="pump-dream-obj pump-dream-obj-top pump-obj-lg">
-          <div class="pump-flips-lbl">FLIPS</div>
-          <div class="pump-dream-name">the entire ladder.</div>
-          <div class="pump-dream-sub">Nothing left to buy.</div>
-        </div>`;
-    } else if (!hypRung) {
-      // Still below the board
-      dreamHtml = `
-        <div class="pump-dream-obj pump-dream-obj-none pump-obj-lg">
-          <div class="pump-flips-lbl">FLIPS</div>
-          <div class="pump-dream-name pump-dream-none">nothing on the ladder yet.</div>
-          <div class="pump-dream-sub">Needs more pump.</div>
-        </div>`;
-    } else {
-      const sizeCls = pumpObjSizeClass(hypRung.name);
-      dreamHtml = `
-        <div class="pump-dream-obj ${sizeCls}">
-          <div class="pump-flips-lbl">FLIPS</div>
-          <div class="pump-dream-name">${pumpTrunc(hypRung.name, 60)}</div>
-          <div class="pump-dream-price">${fmtItemPrice(hypRung.price)}</div>
-        </div>`;
-    }
-
-    card.innerHTML = `
-      <div class="pump-top">
-        <div class="pump-header-row">
-          <img class="pump-logo" src="${tk.logo}" alt="${tk.sym}"/>
-          <div class="pump-coin-id">
-            <div class="pump-coin-sym">${tk.sym}</div>
-            <div class="pump-coin-name-sm">${pumpTrunc(tk.name, 18)} · ${fmtPrice(coinPrice)}</div>
-          </div>
-          <div class="pump-mult-badge">${multLabel}</div>
-        </div>
-        ${dreamHtml}
-      </div>
-      <div class="pump-bottom">
-        <div class="pump-divider"></div>
-        <div class="pump-disclaim">Hypothetical if ${tk.sym} hits ${fmtPrice(hypPrice)}. The coin decides.</div>
-      </div>
-      <div class="pump-stamp">
-        <span class="pump-date">${dateStr}</span>
-        <span class="pump-wm">wenflip.com</span>
-      </div>
-    `;
-
-    placeholder.style.display = 'none';
-    card.style.display = '';
-    shareRow.style.display = '';
-
-    // Reset share icon labels
-    const icon = document.getElementById('pumpShareIcon');
-    const txt = document.getElementById('pumpShareText');
-    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
-
-    requestAnimationFrame(() => card.scrollIntoView({behavior:'smooth', block:'nearest'}));
-  }
-
-  // Wire quick-pick buttons
-  document.getElementById('pumpQuickRow').addEventListener('click', function(e) {
-    const btn = e.target.closest('.pump-quick-btn');
-    if (!btn) return;
-    const mult = btn.dataset.mult;
-    pumpActiveQuick = mult;
-    updatePumpQuickRow();
-    document.getElementById('pumpInput').value = mult + 'x';
-    document.getElementById('pumpInputHint').textContent = '';
-    updatePumpResult();
-  });
-
-  // Wire free input — Go button and Enter key
-  document.getElementById('pumpGoBtn').addEventListener('click', function() {
-    pumpActiveQuick = null; updatePumpQuickRow(); updatePumpResult();
-  });
-  document.getElementById('pumpInput').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') { pumpActiveQuick = null; updatePumpQuickRow(); updatePumpResult(); }
-  });
-  // Live-update as user types (debounced slightly so it doesn't thrash)
-  (function() {
-    let pumpDebounce = null;
-    document.getElementById('pumpInput').addEventListener('input', function() {
-      clearTimeout(pumpDebounce);
-      pumpDebounce = setTimeout(() => { pumpActiveQuick = null; updatePumpQuickRow(); updatePumpResult(); }, 320);
-    });
-  })();
-
-  async function pumpExport() {
-    const btn=document.getElementById('pumpShareBtn'),icon=document.getElementById('pumpShareIcon'),txt=document.getElementById('pumpShareText');
-    await exportCardAsImage(document.getElementById('pumpResultCard'),btn,icon,txt,_isIOS);
-  }
-
-  async function pumpShare() {
-    const btn2=document.getElementById('pumpShareBtn2'),icon2=document.getElementById('pumpShareIcon2'),txt2=document.getElementById('pumpShareText2');
-    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
-    try {
-      await loadHtml2Canvas();
-      const cardEl=document.getElementById('pumpResultCard');
-      const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
-      const ctx=out.getContext('2d');
-      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,0,0,1080,1080);
-      const canShareFiles = navigator.canShare && navigator.share;
-      if (canShareFiles) {
-        await new Promise((resolve, reject) => {
-          out.toBlob(async blob => {
-            try {
-              const file = new File([blob], 'wenflip-pump.png', {type:'image/png'});
-              const shareData = { files:[file], title:'Pump', text:'wenflip.com' };
-              if (navigator.canShare(shareData)) { await navigator.share(shareData); resolve(); }
-              else { reject(new Error('canShare false')); }
-            } catch(e) { reject(e); }
-          }, 'image/png');
-        });
-      } else { throw new Error('no share'); }
-    } catch(err) {
-      try {
-        const cardEl=document.getElementById('pumpResultCard');
-        const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-        const out2=document.createElement('canvas'); out2.width=1080; out2.height=1080;
-        const ctx2=out2.getContext('2d');
-        const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
-        const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas,0,0,1080,1080);
-        await new Promise((resolve, reject) => {
-          out2.toBlob(async blob => {
-            try {
-              await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-              window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('copied. paste it in your post.');
-              resolve();
-            } catch(e2) {
-              const link=document.createElement('a'); link.download='wenflip-pump.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
-              window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('saved. attach it to your post.');
-              resolve();
-            }
-          }, 'image/png');
-        });
-      } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
-    } finally {
-      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
-    }
-  }
 
   // ==== EMOTION DOORS — WIRING ====
 
   // Door 1: Dunk → existing Flippening modal
   document.getElementById('doorDunk').addEventListener('click', openFlippen);
 
-   // Door 2: Pump → MEGA flip-card modal (Stage 3). Old Pump modal retained but
-  // unreachable; opening the mega modal with Price defaulted, user picks a multiplier.
-  const _doorPump = document.getElementById('doorPump');
-  if (_doorPump) _doorPump.addEventListener('click', openStatusCheckModal);
-
-  // Doors 3 & 5 (Cope / Surprise me) are folded into the mega modal (Voice: Cope,
-  // and the 🎲 Surprise-me button). Their buttons are display:none in index.html.
-  // Listeners are guarded so they no-op if the hidden buttons are ever removed —
-  // Cope/Wonder modal code is retained but unreachable (Stage 4 will delete it).
-  const _doorCope = document.getElementById('doorCope');
-  if (_doorCope) _doorCope.addEventListener('click', openCope);
-  const _doorWonder = document.getElementById('doorWonder');
-  if (_doorWonder) _doorWonder.addEventListener('click', openWonder);
-
-  // ==== COPE ====
-  let _copeLastLine = null;
-
-  function openCope() {
-    renderCopeCoinList();
-    document.getElementById('copeCardWrap').style.display = 'none';
-    document.getElementById('copeLineDisplay').textContent = '';
-    document.getElementById('copeModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeCope() {
-    document.getElementById('copeModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function renderCopeCoinList() {
-    const wrap = document.getElementById('copeCoinList');
-    wrap.innerHTML = TOKENS.map(t => {
-      const s = state.find(x => x.sym === t.sym);
-      const loading = !s || s.price == null;
-      return `<button class="sc-coin-row${loading ? ' loading' : ''}" data-sym="${t.sym}">
-        <span class="sc-coin-logo-wrap"><img src="${t.logo}" alt="${t.sym}"/></span>
-        <span class="sc-coin-name">${t.name}</span>
-        <span class="sc-coin-sym-tag">${t.sym}</span>
-      </button>`;
-    }).join('');
-    wrap.querySelectorAll('.sc-coin-row:not(.loading)').forEach(btn => {
-      btn.addEventListener('click', () => renderCopeCard(btn.dataset.sym));
-    });
-  }
-
-  function pickCopeLine() {
-    // No immediate repeat: filter out the last line, then pick randomly
-    const pool = COPE_LINES.filter(l => l !== _copeLastLine);
-    const line = pool[Math.floor(Math.random() * pool.length)];
-    _copeLastLine = line;
-    return line;
-  }
-
-  function renderCopeCard(sym) {
-    const s = state.find(x => x.sym === sym);
-    const tk = TOKENS.find(t => t.sym === sym);
-    if (!s || !s.price || !tk) return;
-
-    const copeLine = pickCopeLine();
-
-    const coinPrice = s.price;
-    const chg = s.chg || 0;
-    const chgSign = chg >= 0 ? '▲' : '▼';
-    const chgCls = chg >= 0 ? 'sc-up' : 'sc-down';
-    const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-
-    const clearedIdx = findRungIndex(coinPrice);
-    const clearedRung = LADDER[clearedIdx];
-    const nextRung = LADDER[clearedIdx - 1];
-
-    let zone3Html = '', zone4Html = '', hasDivider4 = false;
-
-    if (clearedIdx === 0 || !nextRung) {
-      zone3Html = `<div class="sc-zone sc-zone-top-msg">
-        <div class="sc-top-msg-line">There is nothing left to flip.</div>
-        <div class="sc-top-msg-sub">It has cleared the entire ladder.</div>
-      </div>`;
-    } else if (clearedIdx === LADDER.length - 1 && coinPrice < LADDER[clearedIdx].price) {
-      const firstRung = LADDER[LADDER.length - 1];
-      const pctRaw = Math.min(99, Math.round((coinPrice / firstRung.price) * 100));
-      const dollarGap = firstRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone"><div class="sc-label">STATUS: not on the board yet</div></div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${firstRung.name}</span> <span class="sc-item-price">${fmtItemPrice(firstRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    } else {
-      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
-      const dollarGap = nextRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone">
-        <div class="sc-label">STATUS: FLIPPED</div>
-        <div class="sc-cleared-name">${clearedRung.name}</div>
-        <div class="sc-cleared-price">${fmtItemPrice(clearedRung.price)}</div>
-      </div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${nextRung.name}</span> <span class="sc-item-price">${fmtItemPrice(nextRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    }
-
-    document.getElementById('copeResultCard').innerHTML = `
-      <div class="sc-zone sc-zone-identity">
-        <div class="sc-id-row">
-          <img class="sc-logo" src="${tk.logo}" alt="${sym}"/>
-          <span class="sc-coin-fullname">${tk.name}</span>
-        </div>
-        <div class="sc-price-row">
-          <span class="sc-live-price">${fmtPrice(coinPrice)}</span>
-          <span class="sc-chg ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}% (24h)</span>
-        </div>
-      </div>
-      <div class="sc-divider"></div>
-      ${zone3Html}
-      <div class="sc-divider"></div>
-      ${zone4Html}
-      ${hasDivider4 ? '<div class="sc-divider"></div>' : ''}
-      <div class="cope-card-line">${copeLine}</div>
-      <div class="sc-stamp">
-        <span class="sc-date">${dateStr}</span>
-        <span class="sc-wm">wenflip.com</span>
-      </div>
-    `;
-
-    document.getElementById('copeLineDisplay').textContent = copeLine;
-
-    const wrap = document.getElementById('copeCardWrap');
-    wrap.style.display = '';
-    const icon = document.getElementById('copeShareIcon');
-    const txt = document.getElementById('copeShareText');
-    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
-    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
-  }
-
-  async function copeExport() {
-    const btn=document.getElementById('copeShareBtn'),icon=document.getElementById('copeShareIcon'),txt=document.getElementById('copeShareText');
-    await exportCardAsImage(document.getElementById('copeResultCard'),btn,icon,txt,_isIOS);
-  }
-  async function copeShare() {
-    const btn2=document.getElementById('copeShareBtn2'),icon2=document.getElementById('copeShareIcon2'),txt2=document.getElementById('copeShareText2');
-    await _shareCardFile(document.getElementById('copeResultCard'),'wenflip-cope.png',btn2,icon2,txt2);
-  }
 
   // ==== OUTRAGE ====
 
-  function openOutrage() {
-    renderOutrageItemList();
-    document.getElementById('outrageCardWrap').style.display = 'none';
-    document.getElementById('outrageModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-  }
-  function closeOutrage() {
-    document.getElementById('outrageModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function renderOutrageItemList() {
-    const wrap = document.getElementById('outrageItemList');
-    wrap.innerHTML = OUTRAGE_ITEMS.map(itemName => {
-      const ladderEntry = LADDER.find(r => r.name === itemName);
-      if (!ladderEntry) return ''; // safety — should never happen given verbatim match
-      return `<button class="outrage-item-row" data-name="${itemName.replace(/"/g,'&quot;')}">
-        <span class="outrage-item-name">${itemName}</span>
-        <span class="outrage-item-price">${fmtItemPrice(ladderEntry.price)}</span>
-      </button>`;
-    }).join('');
-    wrap.querySelectorAll('.outrage-item-row').forEach(btn => {
-      btn.addEventListener('click', () => renderOutrageCard(btn.dataset.name));
-    });
-  }
-
-  function renderOutrageCard(itemName) {
-    const ladderEntry = LADDER.find(r => r.name === itemName);
-    if (!ladderEntry) return;
-
-    const objPrice = ladderEntry.price;
-    const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-
-    // Cheapest coin that still clears the object — maximum "even THIS coin flips your X" effect.
-    // If none clear it, show the highest-priced coin with the gap.
-    const readyCoins = state.filter(s => s.price != null);
-    const clearingCoins = readyCoins.filter(s => s.price >= objPrice);
-    const showGap = clearingCoins.length === 0;
-
-    let chosenState;
-    if (!showGap) {
-      chosenState = clearingCoins.reduce((a, b) => a.price < b.price ? a : b);
-    } else {
-      chosenState = readyCoins.reduce((a, b) => (a.price > b.price ? a : b));
-    }
-
-    const tk = TOKENS.find(t => t.sym === chosenState.sym);
-    const coinPrice = chosenState.price;
-
-    let zone3Html, zone4Html = '', hasDivider4 = false;
-
-    zone3Html = `<div class="sc-zone">
-      <div class="sc-label outrage-lead-lbl">CRYPTO FLIPPED THIS</div>
-      <div class="sc-cleared-name">${itemName}</div>
-      <div class="sc-cleared-price">${fmtItemPrice(objPrice)}</div>
-    </div>`;
-
-    if (!showGap) {
-      const idxAbove = findRungIndex(coinPrice);
-      const clearedRung = LADDER[idxAbove];
-      const nextRung = LADDER[idxAbove - 1];
-      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-label">COIN THAT FLIPS IT</div>
-        <div class="sc-id-row" style="margin-bottom:4px;">
-          <img class="sc-logo" src="${tk.logo}" alt="${chosenState.sym}"/>
-          <span class="sc-coin-fullname">${tk.name}</span>
-          <span class="sc-chg" style="font-size:12px;margin-left:8px;">${fmtPrice(coinPrice)}</span>
-        </div>
-        ${nextRung ? `<div class="sc-vector-line" style="margin-top:4px;">${pctRaw}% to <span class="sc-item-name">${nextRung.name}</span></div>
-        <div class="sc-bar-track" style="margin-top:4px;"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>` : ''}
-      </div>`;
-      hasDivider4 = true;
-    } else {
-      const pctRaw = Math.min(99, Math.round((coinPrice / objPrice) * 100));
-      const dollarGap = objPrice - coinPrice;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-label">CLOSEST COIN</div>
-        <div class="sc-id-row" style="margin-bottom:4px;">
-          <img class="sc-logo" src="${tk.logo}" alt="${chosenState.sym}"/>
-          <span class="sc-coin-fullname">${tk.name}</span>
-          <span class="sc-chg" style="font-size:12px;margin-left:8px;">${fmtPrice(coinPrice)}</span>
-        </div>
-        <div class="sc-vector-line" style="margin-top:4px;">${pctRaw}% of the way there</div>
-        <div class="sc-bar-track" style="margin-top:4px;"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${fmtItemPrice(dollarGap)} to go.</div>
-      </div>`;
-      hasDivider4 = true;
-    }
-
-    document.getElementById('outrageResultCard').innerHTML = `
-      <div class="sc-zone sc-zone-identity" style="padding-bottom:8px;">
-        <div class="sc-price-row" style="font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-bottom:2px;">What did crypto flip?</div>
-      </div>
-      <div class="sc-divider"></div>
-      ${zone3Html}
-      <div class="sc-divider"></div>
-      ${zone4Html}
-      ${hasDivider4 ? '<div class="sc-divider"></div>' : ''}
-      <div class="sc-stamp">
-        <span class="sc-date">${dateStr}</span>
-        <span class="sc-wm">wenflip.com</span>
-      </div>
-    `;
-
-    const wrap = document.getElementById('outrageCardWrap');
-    wrap.style.display = '';
-    const icon = document.getElementById('outrageShareIcon');
-    const txt = document.getElementById('outrageShareText');
-    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
-    requestAnimationFrame(() => wrap.scrollIntoView({behavior:'smooth', block:'nearest'}));
-  }
-
-  async function outrageExport() {
-    const btn=document.getElementById('outrageShareBtn'),icon=document.getElementById('outrageShareIcon'),txt=document.getElementById('outrageShareText');
-    await exportCardAsImage(document.getElementById('outrageResultCard'),btn,icon,txt,_isIOS);
-  }
-  async function outrageShare() {
-    const btn2=document.getElementById('outrageShareBtn2'),icon2=document.getElementById('outrageShareIcon2'),txt2=document.getElementById('outrageShareText2');
-    await _shareCardFile(document.getElementById('outrageResultCard'),'wenflip-outrage.png',btn2,icon2,txt2);
-  }
 
   // ==== WONDER ====
 
-  let _wonderLastSym = null;
 
-  function openWonder() {
-    document.getElementById('wonderModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    wonderReroll();
-  }
-  function closeWonder() {
-    document.getElementById('wonderModal').classList.remove('open');
-    document.body.style.overflow = '';
-  }
-
-  function wonderReroll() {
-    const ready = state.filter(s => s.price != null);
-    if (!ready.length) return;
-    const pool = ready.length > 1 ? ready.filter(s => s.sym !== _wonderLastSym) : ready;
-    const picked = pool[Math.floor(Math.random() * pool.length)];
-    _wonderLastSym = picked.sym;
-    renderWonderCard(picked.sym);
-  }
-
-  function renderWonderCard(sym) {
-    const s = state.find(x => x.sym === sym);
-    const tk = TOKENS.find(t => t.sym === sym);
-    if (!s || !s.price || !tk) return;
-
-    const coinPrice = s.price;
-    const chg = s.chg || 0;
-    const chgSign = chg >= 0 ? '▲' : '▼';
-    const chgCls = chg >= 0 ? 'sc-up' : 'sc-down';
-    const dateStr = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-
-    const clearedIdx = findRungIndex(coinPrice);
-    const clearedRung = LADDER[clearedIdx];
-    const nextRung = LADDER[clearedIdx - 1];
-
-    let zone3Html = '', zone4Html = '', hasDivider4 = false;
-
-    if (clearedIdx === 0 || !nextRung) {
-      zone3Html = `<div class="sc-zone sc-zone-top-msg">
-        <div class="sc-top-msg-line">There is nothing left to flip.</div>
-        <div class="sc-top-msg-sub">It has cleared the entire ladder.</div>
-      </div>`;
-    } else if (clearedIdx === LADDER.length - 1 && coinPrice < LADDER[clearedIdx].price) {
-      const firstRung = LADDER[LADDER.length - 1];
-      const pctRaw = Math.min(99, Math.round((coinPrice / firstRung.price) * 100));
-      const dollarGap = firstRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone"><div class="sc-label">STATUS: not on the board yet</div></div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${firstRung.name}</span> <span class="sc-item-price">${fmtItemPrice(firstRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    } else {
-      const pctRaw = flipProgressPct(coinPrice, clearedRung, nextRung);
-      const dollarGap = nextRung.price - coinPrice;
-      zone3Html = `<div class="sc-zone">
-        <div class="sc-label">STATUS: FLIPPED</div>
-        <div class="sc-cleared-name">${clearedRung.name}</div>
-        <div class="sc-cleared-price">${fmtItemPrice(clearedRung.price)}</div>
-      </div>`;
-      zone4Html = `<div class="sc-zone">
-        <div class="sc-vector-line">${pctRaw}% of the way to <span class="sc-item-name">${nextRung.name}</span> <span class="sc-item-price">${fmtItemPrice(nextRung.price)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pctRaw)}%"></div></div>
-        <div class="sc-gap-line">${getGapLine(pctRaw, dollarGap)}</div>
-      </div>`;
-      hasDivider4 = true;
-    }
-
-    document.getElementById('wonderResultCard').innerHTML = `
-      <div class="sc-zone sc-zone-identity">
-        <div class="sc-id-row">
-          <img class="sc-logo" src="${tk.logo}" alt="${sym}"/>
-          <span class="sc-coin-fullname">${tk.name}</span>
-        </div>
-        <div class="sc-price-row">
-          <span class="sc-live-price">${fmtPrice(coinPrice)}</span>
-          <span class="sc-chg ${chgCls}">${chgSign} ${Math.abs(chg).toFixed(2)}% (24h)</span>
-        </div>
-      </div>
-      <div class="sc-divider"></div>
-      ${zone3Html}
-      <div class="sc-divider"></div>
-      ${zone4Html}
-      ${hasDivider4 ? '<div class="sc-divider"></div>' : ''}
-      <div class="sc-stamp">
-        <span class="sc-date">${dateStr}</span>
-        <span class="sc-wm">wenflip.com</span>
-      </div>
-    `;
-
-    const icon = document.getElementById('wonderShareIcon');
-    const txt = document.getElementById('wonderShareText');
-    if (icon) icon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
-    if (txt) txt.textContent = _isIOS ? 'Save image' : 'Copy as image';
-  }
-
-  async function wonderExport() {
-    const btn=document.getElementById('wonderShareBtn'),icon=document.getElementById('wonderShareIcon'),txt=document.getElementById('wonderShareText');
-    await exportCardAsImage(document.getElementById('wonderResultCard'),btn,icon,txt,_isIOS);
-  }
-  async function wonderShare() {
-    const btn2=document.getElementById('wonderShareBtn2'),icon2=document.getElementById('wonderShareIcon2'),txt2=document.getElementById('wonderShareText2');
-    await _shareCardFile(document.getElementById('wonderResultCard'),'wenflip-wonder.png',btn2,icon2,txt2);
-  }
-
-  // ==== SHARED NATIVE SHARE HELPER ====
-  // Reuses exportCardAsImage pipeline for the canvas; same navigator.share + clipboard fallback.
-  async function _shareCardFile(cardEl, filename, btn2, icon2, txt2) {
-    btn2.disabled=true; icon2.className='ico ico-spin'; icon2.textContent=''; txt2.textContent='Preparing…';
-    try {
-      await loadHtml2Canvas();
-      const srcCanvas=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-      const out=document.createElement('canvas'); out.width=1080; out.height=1080;
-      const ctx=out.getContext('2d');
-      const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-      const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-      ctx.drawImage(srcCanvas,0,0,1080,1080);
-      const canShareFiles = navigator.canShare && navigator.share;
-      if (canShareFiles) {
-        await new Promise((resolve, reject) => {
-          out.toBlob(async blob => {
-            try {
-              const file = new File([blob], filename, {type:'image/png'});
-              const shareData = { files:[file], title:'WenFlip', text:'wenflip.com' };
-              if (navigator.canShare(shareData)) { await navigator.share(shareData); resolve(); }
-              else { reject(new Error('canShare false')); }
-            } catch(e) { reject(e); }
-          }, 'image/png');
-        });
-      } else { throw new Error('no share'); }
-    } catch(err) {
-      try {
-        const srcCanvas2=await window.html2canvas(cardEl,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-        const out2=document.createElement('canvas'); out2.width=1080; out2.height=1080;
-        const ctx2=out2.getContext('2d');
-        const bg2=ctx2.createLinearGradient(0,0,0,1080); bg2.addColorStop(0,'#0d0d1e'); bg2.addColorStop(1,'#0a0a14'); ctx2.fillStyle=bg2; ctx2.fillRect(0,0,1080,1080);
-        const glow2=ctx2.createRadialGradient(540,150,0,540,150,640); glow2.addColorStop(0,'rgba(46,224,106,0.10)'); glow2.addColorStop(1,'transparent'); ctx2.fillStyle=glow2; ctx2.fillRect(0,0,1080,1080);
-        ctx2.drawImage(srcCanvas2,0,0,1080,1080);
-        await new Promise((resolve, reject) => {
-          out2.toBlob(async blob => {
-            try {
-              await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
-              window.open('https://x.com/intent/post?text='+encodeURIComponent('wenflip.com'),'_blank','noopener');
-              showCalcToast('copied. paste it in your post.'); resolve();
-            } catch(e2) {
-              const link=document.createElement('a'); link.download=filename; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
-              window.open('https://x.com/intent/post?text='+encodeURIComponent('wenflip.com'),'_blank','noopener');
-              showCalcToast('saved. attach it to your post.'); resolve();
-            }
-          }, 'image/png');
-        });
-      } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
-    } finally {
-      btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
-    }
-  }
-
-  // Patch Escape key to close all modals
+  // Escape closes the Dunk modal
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      closeStatusCheckModal(); closeFlippen(); closePump();
-      closeCope(); closeOutrage(); closeWonder();
-    }
+    if (e.key === 'Escape') closeFlippen();
   }, true);
 
   // ==== HERO FLIP GRID ====
@@ -2657,7 +1549,6 @@
   // ===================================================================
   let _heroFrozen  = false;   // set true by the freeze listeners (next edit)
   let _heroTimer   = null;
-  let _heroRolls   = 0;       // count of auto-rolls fired (drives the PulseChain bias)
   let _heroLastSym = null;    // no-immediate-repeat guard
 
   const _heroCueEl      = document.getElementById('mafcCue');
