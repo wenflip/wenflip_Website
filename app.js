@@ -7,16 +7,16 @@
   const MIN_VOLUME_24H = 1000;
   // Mechanism A — wenflip impersonation (plaintext substring/fuzzy). Standalone 'flip' is NOT blocked.
   const WENFLIP_BLOCK = ['wenflip','wen flip','wenflp','w3nflip','weflip','wflip'];
-  // Mechanism B — CSAM + hate (hashed, exact-token SHA-256 hex). POPULATED VIA hash-tool.html — leave empty.
+  // Mechanism B — CSAM + hate (hashed, exact-token SHA-256 hex). Empty on purpose: add lowercase SHA-256 hex digests
+  // of blocked tokens here to switch it on (no hashing tool lives in this repo).
   const BLOCKED_HASHES = [];
   const _blockedHashSet = new Set(BLOCKED_HASHES);
 
 
-  // ==== EMOTION DOORS — CONTENT LISTS (verbatim, do not edit inline) ====
 
 
   // ── Coin price formatter ─────────────────────────────────────────────────
-  // Used ONLY for live coin prices (ticker, cards, share cards, calc).
+  // Used ONLY for live coin prices (board, cards, share cards).
   // Real-world item/ladder prices are passed through fmtItemPrice (identity).
   // All truncation chops toward zero — never rounds up.
   const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
@@ -147,7 +147,7 @@
     const btc = state.find(s => s.sym === 'BTC' && s.price != null);
     if (!btc) return;                                       // BTC price not in yet — try again next refresh
     _mafcPrefilled = true;
-    renderStatusCard('BTC');
+    renderCardForCoin('BTC');
   }
 
   // Group coins by their DexScreener chain (pulsechain / ethereum / bsc / base).
@@ -261,19 +261,19 @@
       const value = raw.toLowerCase() === 'flip' ? '' : raw.slice(5); // everything after 'flip='
       if (!value) {
         // #flip → open picker
-        openStatusCheckModal();
+        resetCardMaker();
         return;
       }
       // #flip=SYMBOL — case-insensitive match against built-in tokens
       const symMatch = TOKENS.find(t => t.sym.toLowerCase() === value.toLowerCase());
-      if (symMatch) { openStatusCheckModalForCoin(symMatch.sym); return; }
+      if (symMatch) { showCardForCoin(symMatch.sym); return; }
       // #flip=<contract address> — starts with 0x OR is long enough to be a CA
       if (value.startsWith('0x') || value.length > 30) {
-        openStatusCheckModalForCA(value);
+        showCardForCA(value);
         return;
       }
       // #flip=<anything else> → graceful fallback: open picker
-      openStatusCheckModal();
+      resetCardMaker();
       return;
     }
 
@@ -331,7 +331,7 @@
     if (window.html2canvas) return;
     await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';s.crossOrigin='anonymous';s.onload=resolve;s.onerror=()=>reject(new Error('html2canvas failed'));document.head.appendChild(s);});
   }
-  function showCalcToast(msg) { const t=document.getElementById('calcToast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
+  function showToast(msg) { const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 
 
   async function exportCardAsImage(cardEl, shareBtn, iconEl, txtEl, isIOS) {
@@ -344,40 +344,39 @@
       const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
       const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
       ctx.drawImage(srcCanvas,0,0,1080,1080);
-      if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showCalcToast('saved. attach it to your post.'); }
-      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showCalcToast('copied. paste it in your post.');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showCalcToast('saved. attach it to your post.');}}, 'image/png'); }
-    } catch(err) { console.error(err); showCalcToast('Screenshot failed — try again 😬'); }
+      if (isIOS) { const link=document.createElement('a'); link.download='wenflip.png'; link.href=out.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('saved. attach it to your post.'); }
+      else { out.toBlob(async blob=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);showToast('copied. paste it in your post.');}catch{const link=document.createElement('a');link.download='wenflip.png';link.href=URL.createObjectURL(blob);document.body.appendChild(link);link.click();document.body.removeChild(link);URL.revokeObjectURL(link.href);showToast('saved. attach it to your post.');}}, 'image/png'); }
+    } catch(err) { console.error(err); showToast('Screenshot failed — try again 😬'); }
     finally { shareBtn.disabled=false; iconEl.className = isIOS ? 'ico ico-download' : 'ico ico-clipboard'; txtEl.textContent=isIOS?'Save image':'Copy as image'; }
   }
 
 
-   // MAFC is now inline in the hero (TICKET 3). "Open" = refresh the picker + scroll to it.
-   function _scrollToHeroMafc() {
+  // The card maker is the homepage hero. These reset it and scroll to it.
+   function _scrollToCardMaker() {
     const el = document.getElementById('mafcHero');
     if (el && el.scrollIntoView) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
-   function openStatusCheckModal() {
+   function resetCardMaker() {
     _flipResetAll();
     renderScCoinList();
     const w = document.getElementById('scCardWrap');
     if (w) w.style.display = 'none';
-    _scrollToHeroMafc();
+    _scrollToCardMaker();
   }
-  function openStatusCheckModalForCoin(sym) {
+  function showCardForCoin(sym) {
     _flipResetAll();
     renderScCoinList();
     const w = document.getElementById('scCardWrap');
     if (w) w.style.display = 'none';
     // Pre-render the card for this coin immediately (Today / next rung / straight)
-    renderStatusCard(sym);
-    _scrollToHeroMafc();
+    renderCardForCoin(sym);
+    _scrollToCardMaker();
   }
-  // Helper: open the Status Check modal and invoke the existing CA resolve+render flow for a
-  // contract address string. Re-uses resolveContractAddress + renderStatusCardFromData + caShowFail
-  // exactly as caSubmit does — no duplicated logic.
-  async function openStatusCheckModalForCA(address) {
-    openStatusCheckModal();
-    // Let the modal paint before kicking off the async fetch
+  // Reset the card maker, then run the contract-address resolve + render flow for a pasted
+  // address. Re-uses resolveContractAddress + renderCardFromData + caShowFail exactly as caSubmit does.
+  async function showCardForCA(address) {
+    resetCardMaker();
+    // Let the reset paint before kicking off the async fetch
     await new Promise(r => setTimeout(r, 80));
     const caInput = document.getElementById('caInput');
     if (caInput) caInput.value = address;
@@ -385,7 +384,7 @@
     let result;
     try { result = await resolveContractAddress(address); }
     catch(e) { result = { ok:false, reason:'network' }; }
-    if (result.ok) { caClearFail(); renderStatusCardFromData(result.token); }
+    if (result.ok) { caClearFail(); renderCardFromData(result.token); }
     else { caShowFail(result.reason); }
   }
 
@@ -400,13 +399,13 @@
       return `<button class="coin-badge ${selSym===t.sym?'selected':''} ${loading?'loading':''}" data-sym="${t.sym}" title="${t.name}${loading?' (loading…)':''}"><img src="${t.logo}" alt="${t.sym}" loading="lazy"/><span>${t.sym}</span></button>`;
     }).join('');
     wrap.querySelectorAll('.coin-badge:not(.loading)').forEach(btn => {
-      btn.addEventListener('click', () => renderStatusCard(btn.dataset.sym));
+      btn.addEventListener('click', () => renderCardForCoin(btn.dataset.sym));
     });
   }
 
   // ==== PASTE-A-CONTRACT-ADDRESS (CA) TOOL ====
-  // Lives ONLY inside the Status Check modal. Resolves an arbitrary token via DexScreener and
-  // renders it through renderStatusCardFromData — it never touches `state` or the TOKENS array,
+  // Lives ONLY in the homepage card maker. Resolves an arbitrary token via DexScreener and
+  // renders it through renderCardFromData — it never touches `state` or the TOKENS array,
   // so a pasted address can never collide with or duplicate a built-in coin.
 
   // Inline SVG data-URI fallback logo: dark circle + first letter of the symbol in white. No image files.
@@ -490,7 +489,7 @@
     }};
   }
 
-  // ---- CA UI flow: input + button + inline failure message, inside the status modal ----
+  // ---- CA UI flow: input + button + inline failure message, inside the card maker ----
   const CA_FAIL_MESSAGES = {
     invalid:  "That's not a contract address. Try pasting the actual thing.",
     network:  "DexScreener isn't answering. Try again in a sec.",
@@ -533,14 +532,14 @@
     // Guarantee at least a ~1s deadpan beat
     await new Promise(r => setTimeout(r, Math.max(0, 1000 - (Date.now() - started))));
     try {
-      if (result.ok) { caClearFail(); renderStatusCardFromData(result.token); }
+      if (result.ok) { caClearFail(); renderCardFromData(result.token); }
       else { caShowFail(result.reason); }
     } finally {
       _caBusy = false; btn.disabled = false; btn.textContent = prevLabel;
     }
   }
 
-  // Wire the CA controls (static elements in the status modal; script is deferred so DOM exists).
+  // Wire the CA controls (static elements in the card maker; script is deferred so DOM exists).
   (function wireCaTool(){
     const btn = document.getElementById('caGoBtn');
     const input = document.getElementById('caInput');
@@ -552,18 +551,17 @@
   })();
 
   // ===================================================================
-  // UNIFIED FLIP CARD ENGINE — Stage 1.
+  // FLIP CARD ENGINE
   // One renderer for every ladder-read card. Returns an HTML string; the
   // caller injects it into a `.wf-flip-card.flip-card` container.
   //
   //   renderFlipCard({ coin, mult, item })
   //     coin  : { sym, name, price, chg, logo }   (required)
   //     mult  : number × coin.price               (default 1 → "Today")
-  //     item  : { name, price } → item-versus body (default null)
-  //             (the old HFFF; dormant until Stage 2 wires the toggle)
+  //     item  : { name, price } → item-versus body (default null; set by "Pick an item")
   //
   // Reuses: findRungIndex, flipProgressPct, fmtItemPrice, fmtPrice, fmtMult,
-  //         pumpObjSizeClass, htmlAttr, LADDER.
+  //         objSizeClass, htmlAttr, LADDER.
   // ===================================================================
   function renderFlipCard(opts) {
     opts = opts || {};
@@ -599,12 +597,12 @@
     let hero = '', foot = '';
 
     if (item) {
-      // ---------- BODY 2: item-versus (old HFFF) — dormant until Stage 2 ----------
+      // ---------- BODY 2: item-versus ("Pick an item") ----------
       const tPrice  = item.price;
       const flipped = price >= tPrice;
       const eyeCls  = flipped ? '' : ' wf-chase';
       hero = `
-        <div class="pump-dream-obj ${pumpObjSizeClass(item.name)}">
+        <div class="pump-dream-obj ${objSizeClass(item.name)}">
           <div class="pump-flips-lbl${eyeCls}">${flipped ? 'FLIPS ✓' : 'CHASING'}</div>
           <div class="pump-dream-name">${htmlAttr(item.name)}</div>
         </div>`;
@@ -622,7 +620,7 @@
           <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1,pct)}%"></div></div>`;
       }
     } else {
-      // ---------- BODY 1: ladder-read (Status / Pump / Cope / Surprise) ----------
+      // ---------- BODY 1: ladder-read (next rung) ----------
       const eff = price * mult;
       const idx = findRungIndex(eff);
       const cleared = LADDER[idx];
@@ -640,7 +638,7 @@
         const pct = Math.min(99, Math.round((eff / first.price) * 100));
         const gap = first.price - eff;
         hero = `
-          <div class="pump-dream-obj ${pumpObjSizeClass(first.name)}">
+          <div class="pump-dream-obj ${objSizeClass(first.name)}">
             <div class="pump-flips-lbl wf-chase">CHASING</div>
             <div class="pump-dream-name">${htmlAttr(first.name)}</div>
           </div>`;
@@ -652,7 +650,7 @@
         const pct = flipProgressPct(eff, cleared, next);
         const gap = next.price - eff;
         hero = `
-          <div class="pump-dream-obj ${pumpObjSizeClass(cleared.name)}">
+          <div class="pump-dream-obj ${objSizeClass(cleared.name)}">
             <div class="pump-flips-lbl">${pumped ? 'WOULD FLIP' : 'FLIPPED ✓'}</div>
             <div class="pump-dream-name">${htmlAttr(cleared.name)}</div>
           </div>`;
@@ -670,18 +668,17 @@
 
   // Thin wrapper: look up a built-in coin by symbol, then delegate to the data-driven renderer.
   // Behavior for built-ins is byte-for-byte identical to before (their names/syms/logos contain
-  // no HTML-special characters, so the escaping in renderStatusCardFromData is a no-op on them).
-  function renderStatusCard(sym) {
+  // no HTML-special characters, so the escaping in renderCardFromData is a no-op on them).
+  function renderCardForCoin(sym) {
     const s = state.find(x => x.sym===sym);
     const tk = TOKENS.find(t => t.sym===sym);
     if (!s || !s.price || !tk) return;
-    renderStatusCardFromData({ sym, name: tk.name, price: s.price, chg: s.chg || 0, logo: tk.logo });
+    renderCardFromData({ sym, name: tk.name, price: s.price, chg: s.chg || 0, logo: tk.logo });
   }
 
-   // Data-driven renderer → now a thin adapter over the unified renderFlipCard() engine.
-  // Both the built-in picker (renderStatusCard) and the pasted-CA path call this.
-  // Stage 1: renders the new hero card at Today (mult 1), straight voice.
-  function renderStatusCardFromData(tokenObj) {
+  // Data-driven entry point into renderFlipCard(). Both the built-in picker
+  // (renderCardForCoin) and the pasted-CA path call this.
+  function renderCardFromData(tokenObj) {
     if (!tokenObj || tokenObj.price == null) return;
     caClearFail();
     flipCoin = {
@@ -692,7 +689,7 @@
       logo:  String(tokenObj.logo || ''),
     };
     renderScCoinList();   // repaint picker so the selected chip highlights immediately
-    renderFlipModalCard();
+    renderMakerCard();
   }
   async function scExport() {
     const btn=document.getElementById('scShareBtn'),icon=document.getElementById('scShareIcon'),txt=document.getElementById('scShareText');
@@ -701,17 +698,16 @@
 
 
   // ===================================================================
-  // MAKE A FLIP CARD — mega modal controller (Stage 2)
-  // Converts the former Status modal into the four-knob flip-card maker.
-  // State = which coin / price mode / target / voice. Every control mutates
-  // state then calls renderFlipModalCard(), which feeds renderFlipCard().
+  // MAKE A FLIP CARD — card maker controller
+  // State = which coin / price mode / target. Every control mutates
+  // state then calls renderMakerCard(), which feeds renderFlipCard().
   // ===================================================================
   flipCoin          = null;         // {sym,name,price,chg,logo} or null (hoisted via var at top)
   let flipMult      = 1;            // 1|2|5|10|100 or 'custom'
   let flipCustomRaw = '';           // raw custom input ("25x" / "$1.00")
   let flipTarget    = null;         // null (next rung) | {name, price}
 
-  // Reset every control to defaults + resync the control UI. Called on each open.
+  // Reset every control to defaults + resync the control UI.
   function _flipResetAll() {
     flipCoin = null; flipMult = 1; flipCustomRaw = '';
     flipTarget = null;
@@ -745,9 +741,9 @@
   function _flipEffectiveMult() {
     if (flipMult !== 'custom') return flipMult;
     if (!flipCoin) return null;
-    const parsed = parsePumpInput(flipCustomRaw);
+    const parsed = parseCustomPrice(flipCustomRaw);
     if (!parsed) return null;
-    const hyp = computePumpHypPrice(flipCoin.price, parsed);
+    const hyp = customTargetPrice(flipCoin.price, parsed);
     if (!hyp || hyp <= 0) return null;
     return hyp / flipCoin.price;
   }
@@ -757,8 +753,8 @@
   // every 4s; user-initiated renders leave it false and still scroll into view.
   let _heroSuppressScroll = false;
 
-  // The single render path for the mega modal. Reads state → renderFlipCard().
-  function renderFlipModalCard() {
+  // The single render path for the card maker. Reads state → renderFlipCard().
+  function renderMakerCard() {
     const wrap = document.getElementById('scCardWrap');
     if (!flipCoin) { if (wrap) wrap.style.display = 'none'; return; }
 
@@ -805,7 +801,7 @@
     ).join('');
   }
 
-  // Wire the mega-modal controls once (static elements; deferred script → DOM exists).
+  // Wire the card maker controls once (static elements; deferred script → DOM exists).
   (function wireFlipControls() {
     const priceRow = document.getElementById('flipPriceRow');
     if (priceRow) priceRow.addEventListener('click', e => {
@@ -820,13 +816,13 @@
       } else {
         flipMult = parseFloat(m);
         if (cw) cw.style.display = 'none';
-        renderFlipModalCard();
+        renderMakerCard();
       }
     });
 
     const customInput = document.getElementById('flipCustomInput');
     const customGo    = document.getElementById('flipCustomGo');
-    function applyCustom() { flipMult = 'custom'; flipCustomRaw = customInput ? customInput.value : ''; renderFlipModalCard(); }
+    function applyCustom() { flipMult = 'custom'; flipCustomRaw = customInput ? customInput.value : ''; renderMakerCard(); }
     if (customGo)    customGo.addEventListener('click', applyCustom);
     if (customInput) {
       customInput.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); applyCustom(); } });
@@ -843,12 +839,12 @@
         if (iw) iw.style.display = '';
         _flipDimPrice(true);
         renderFlipItemList('');
-        if (flipTarget) renderFlipModalCard();
+        if (flipTarget) renderMakerCard();
       } else {
         flipTarget = null;
         if (iw) iw.style.display = 'none';
         _flipDimPrice(false);
-        renderFlipModalCard();
+        renderMakerCard();
       }
     });
 
@@ -858,7 +854,7 @@
       flipTarget = { name: it.dataset.name, price: parseFloat(it.dataset.price) };
       const is = document.getElementById('flipItemSearch');
       renderFlipItemList(is ? is.value : '');
-      renderFlipModalCard();
+      renderMakerCard();
     });
     const itemSearch = document.getElementById('flipItemSearch');
     if (itemSearch) itemSearch.addEventListener('input', function () { renderFlipItemList(this.value); });
@@ -869,7 +865,7 @@
       if (!ready.length) return;
       const pool = (ready.length > 1 && flipCoin) ? ready.filter(s => s.sym !== flipCoin.sym) : ready;
       const picked = pool[Math.floor(Math.random() * pool.length)];
-      renderStatusCard(picked.sym);   // sets flipCoin + renders at current controls
+      renderCardForCoin(picked.sym);   // sets flipCoin + renders at current controls
     });
   })();
 
@@ -902,10 +898,7 @@
     document.body.style.overflow = '';
     if (wasOpen) _modalFocusOut();
   }
-  // NOTE: Flippening is opened by the "Dunk on a coin" door button (#doorDunk),
-  // wired in the EMOTION DOORS block below. The old #openFlippening element no
-  // longer exists in the HTML; the stray listener that referenced it has been
-  // removed (it threw on null and halted all of app.js).
+  // Opened by the "Dunk on a coin" pill (#doorDunk), wired further down.
 
   function renderFlippenPickers() {
     ['A','B'].forEach(side => {
@@ -979,7 +972,7 @@
     try { result = await resolveContractAddress(input.value); }
     catch(e) { result = { ok: false, reason: 'network' }; }
 
-    // 1-second deadpan beat (same as the status modal)
+    // 1-second deadpan beat (same as the card maker's CA lookup)
     await new Promise(r => setTimeout(r, Math.max(0, 1000 - (Date.now() - started))));
 
     try {
@@ -1184,17 +1177,17 @@
             try {
               await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('copied. paste it in your post.');
+              showToast('copied. paste it in your post.');
               resolve();
             } catch(e2) {
               const link=document.createElement('a'); link.download='wenflip-dunk.png'; link.href=URL.createObjectURL(blob); document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href);
               window.open('https://x.com/intent/post?text=' + encodeURIComponent('wenflip.com'), '_blank', 'noopener');
-              showCalcToast('saved. attach it to your post.');
+              showToast('saved. attach it to your post.');
               resolve();
             }
           }, 'image/png');
         });
-      } catch(e3) { console.error(e3); showCalcToast('Screenshot failed — try again 😬'); }
+      } catch(e3) { console.error(e3); showToast('Screenshot failed — try again 😬'); }
     } finally {
       btn2.disabled=false; icon2.className=''; icon2.textContent='𝕏'; txt2.textContent='Share';
     }
@@ -1202,7 +1195,7 @@
 
 
   // Parse the input field into { mode: 'multiple'|'price', value: number } or null
-  function parsePumpInput(raw) {
+  function parseCustomPrice(raw) {
     if (!raw) return null;
     const s = raw.trim().replace(/,/g, '');
     // Multiple: ends with x/X, or is a plain number >= 1 with no $ and no decimal that looks like a small price
@@ -1220,7 +1213,7 @@
     return null;
   }
 
-  function computePumpHypPrice(coinPrice, parsed) {
+  function customTargetPrice(coinPrice, parsed) {
     if (!parsed) return null;
     if (parsed.mode === 'multiple') return coinPrice * parsed.value;
     return parsed.value; // direct price
@@ -1230,7 +1223,7 @@
   // Object-size bucket for the pump card hero. Length-based (never measure-and-reflow,
   // so the on-screen card and the html2canvas export always agree). pump-obj-sm is the
   // hard floor — still visually heavier than the today-price / stamp lines.
-  function pumpObjSizeClass(name) {
+  function objSizeClass(name) {
     const n = (name || '').length;
     if (n <= 18) return 'pump-obj-xl';
     if (n <= 32) return 'pump-obj-lg';
@@ -1260,9 +1253,9 @@
   }
 
 
-  // ==== EMOTION DOORS — WIRING ====
+  // ==== DUNK PILL — WIRING ====
 
-  // Door 1: Dunk → existing Flippening modal
+  // "Dunk on a coin" pill → Flippening modal
   document.getElementById('doorDunk').addEventListener('click', openFlippen);
 
 
@@ -1357,18 +1350,16 @@
     
     el.querySelectorAll('.hero-box:not(.loading)').forEach(box => {
       const sym = box.getAttribute('data-sym');
-      box.addEventListener('click', () => openHeroPump(sym, heroMult));
+      box.addEventListener('click', () => openCardAt(sym, heroMult));
       box.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openHeroPump(sym, heroMult); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCardAt(sym, heroMult); }
       });
     });
   }
 
-  // Open the MEGA flip-card modal, pre-loaded to a coin at the given multiplier.
-  // (Was the old Pump modal; re-pointed in Stage 3. Name kept so the hero-grid
-  // click/keydown handlers that call openHeroPump() need no change.)
-  function openHeroPump(sym, mult) {
-    openStatusCheckModal();             // resets controls + opens the mega modal
+  // Load the card maker with a coin at the given multiplier (board tap).
+  function openCardAt(sym, mult) {
+    resetCardMaker();             // resets controls + scrolls to the card maker
     const m = parseFloat(mult);
     // Reflect the incoming multiplier on the Price row (1/2/5/10/100 map to chips).
     const priceRow = document.getElementById('flipPriceRow');
@@ -1376,7 +1367,7 @@
     if (chip) { _flipSetActive(priceRow, chip); flipMult = m; }
     else      { flipMult = (isFinite(m) && m > 0) ? m : 1; }  // non-chip mult still honored
     // Select the coin + render at the resolved multiplier.
-    renderStatusCard(sym);
+    renderCardForCoin(sym);
   }
 
   // Toggle wiring — Today / 2× / 5× / 10×
@@ -1434,7 +1425,7 @@
     let hasLoaded   = false;  // first fetch (success or fail) has resolved
 
     // Resolve a logo by symbol against the existing TOKENS table (same source the
-    // ticker/ladder use). Case-insensitive. Falls back to the neutral lettered
+    // board/ladder use). Case-insensitive. Falls back to the neutral lettered
     // circle used elsewhere on the site — never a broken image.
     function logoForSym(sym) {
       const key = String(sym || '').toLowerCase();
@@ -1525,7 +1516,7 @@
 
     render();                          // initial loading state
     refreshFeed();                     // first fetch on load
-    setInterval(refreshFeed, 60_000);  // poll, matching the price-ticker cadence
+    setInterval(refreshFeed, 60_000);  // poll, matching the price refresh cadence
     setInterval(tickTimes, 30_000);    // age timestamps between polls
   })();
   // Re-fit the visible flip-card once the webfont finishes loading, so the first
@@ -1540,7 +1531,7 @@
   // ===================================================================
   // HERO ATTRACT-MODE ROTATION CONTROLLER
   // Owns the single hero card in State 1. Auto-rotates coin+item combos
-  // through the EXISTING renderStatusCard() path (no new renderer), leans
+  // through the EXISTING renderCardForCoin() path (no new renderer), leans
   // PulseChain for the opening rolls, never repeats the current coin, and
   // suppresses the render's auto-scroll so the page never jumps every 4s.
   // Respects prefers-reduced-motion (one static card, no rotation) and
@@ -1605,7 +1596,7 @@
     if (!sym) return;
     _heroLastSym = sym;
     _heroSuppressScroll = true;
-    renderStatusCard(sym);   // sets flipCoin + renders (edit 1 gates the scroll)
+    renderCardForCoin(sym);   // sets flipCoin + renders (edit 1 gates the scroll)
     _heroSuppressScroll = false;
   }
 

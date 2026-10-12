@@ -13,28 +13,12 @@
     letter-spacing: -0.04em;
     filter: drop-shadow(0 0 24px rgba(46,224,106,0.18));
   }
-  .pulse-dot {
-    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: var(--accent); box-shadow: 0 0 12px var(--accent);
-    margin-right: 8px; vertical-align: middle;
-    animation: pulse 1.6s ease-in-out infinite;
-  }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
-  .live-pill {
-    display: inline-flex; align-items: center; gap: 6px;
-    margin-bottom: 18px; padding: 6px 14px;
-    border: 1px solid var(--line); border-radius: 999px;
-    background: rgba(255,255,255,0.03);
-    font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
-  }
   .updated {
     margin-top: 14px; color: var(--muted); font-size: 12px; letter-spacing: 0.06em; text-align: center;
     min-height: 18px;
   }
   .updated b { color: var(--text); font-weight: 700; }
-  .ticker { display: flex; gap: 0; align-items: stretch; animation: scroll 80s linear infinite; width: max-content; }
-  @keyframes scroll { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-  .tick { display: flex; align-items: center; gap: 10px; padding: 10px 20px; border-right: 1px solid var(--line); white-space: nowrap; }
   .logo-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
   .section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(26px, 4vw, 40px); font-weight: 700; letter-spacing: -0.02em; line-height: 1; }
   .section-title .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -145,7 +129,6 @@
   }
   .card-caption .cap-pct  { color: var(--text); font-weight: 700; }
   .card-caption .cap-next { color: rgba(245,245,250,0.65); }
-  /* Quiet hint line above coin list */
   /* Identity descriptor — PulseChain coins only.
      Fixed slot on every card;
      empty string for majors keeps height consistent across the mixed list. */
@@ -189,10 +172,6 @@
     content:""; position:absolute; inset:0; pointer-events:none; border-radius: 20px;
     background: radial-gradient(600px 200px at 50% 0%, rgba(46,224,106,0.10), transparent 70%);
   }
-  /* Calculator modal: neutral charcoal, no green halo (ladder/token modals keep theirs) */
-  #calcModal .modal { border-color: var(--line); box-shadow: 0 20px 80px rgba(0,0,0,0.55); }
-  #calcModal .modal::before { background: none; }
-  #calcModal .modal-head { background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); }
   .modal-head {
     display: block;
     padding: 20px 60px 20px 60px; border-bottom: 1px solid var(--line);
@@ -221,12 +200,6 @@
   .modal-body .frung.has { background: linear-gradient(90deg, rgba(46,224,106,0.10), rgba(46,224,106,0.03)); }
   .modal-body .frung.featured { background: linear-gradient(90deg, rgba(251,191,36,0.10), rgba(251,191,36,0.02)); }
   .modal-body .frung.featured.has { background: linear-gradient(90deg, rgba(46,224,106,0.12), rgba(46,224,106,0.04)); border-left: 3px solid rgba(251,191,36,0.6); }
-  @keyframes zoomPulse {
-    0%   { box-shadow: inset 0 0 0 0 rgba(46,224,106,0), 0 0 0 0 rgba(46,224,106,0); }
-    30%  { box-shadow: inset 0 0 60px 0 rgba(46,224,106,0.32), 0 0 30px 4px rgba(46,224,106,0.42); }
-    60%  { box-shadow: inset 0 0 40px 0 rgba(31,138,76,0.24), 0 0 25px 3px rgba(31,138,76,0.32); }
-    100% { box-shadow: inset 0 0 0 0 rgba(46,224,106,0), 0 0 0 0 rgba(46,224,106,0); }
-  }
   .modal-body .frung .fp { color: var(--muted); font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; }
   .modal-body .ftokens { display: flex; gap: 4px; justify-content: flex-end; }
    .ftok {
@@ -240,7 +213,7 @@
   }
   .cta-sub { margin: 10px auto 0; max-width: 420px; color: var(--muted); font-size: clamp(13px, 1.4vw, 15px); line-height: 1.5; }
 
-  /* ===== FLIP CALCULATOR ===== */
+  /* ===== CARD MAKER — labels, search, item list, share button ===== */
   .calc-lbl { font-size: 11px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
   .coin-badges { display: flex; flex-wrap: wrap; gap: 8px; }
   .coin-badge {
@@ -284,13 +257,10 @@
   .calc-share-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border-radius: 999px; background: var(--grad); border: none; color: var(--on-accent); font-weight: 800; font-size: 14px; cursor: pointer; font-family: 'Inter', sans-serif; box-shadow: 0 8px 30px rgba(46,224,106,0.32); transition: transform .15s, box-shadow .2s; }
   .calc-share-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(46,224,106,0.45); }
   .calc-share-btn:disabled { opacity: 0.5; pointer-events: none; }
-  .calc-toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(34,197,94,0.92); color: var(--on-accent); padding: 12px 26px; border-radius: 999px; font-weight: 800; font-size: 14px; box-shadow: 0 8px 30px rgba(34,197,94,0.4); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity .3s ease, transform .3s ease; white-space: nowrap; }
-  .calc-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(34,197,94,0.92); color: var(--on-accent); padding: 12px 26px; border-radius: 999px; font-weight: 800; font-size: 14px; box-shadow: 0 8px 30px rgba(34,197,94,0.4); opacity: 0; pointer-events: none; z-index: 9999; transition: opacity .3s ease, transform .3s ease; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-  /* ===== STATUS CHECK MODAL ===== */
-  #statusCheckModal .modal { border-color: var(--line); box-shadow: 0 20px 80px rgba(0,0,0,0.55); }
-  #statusCheckModal .modal::before { background: none; }
-  #statusCheckModal .modal-head { background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); }
+  /* ===== FLIP CARD — coin picker rows ===== */
   .sc-coin-row {
     display: flex; align-items: center; gap: 12px;
     padding: 10px 14px; border-radius: 10px;
@@ -320,7 +290,6 @@
   .sc-share-btn-x { background: rgba(255,255,255,0.08); box-shadow: none; border: 1px solid var(--line); color: var(--text); }
   .sc-share-btn-x:hover { background: rgba(255,255,255,0.14); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
 
-
   /* One-button copy — stacked verb + explainer (X share button retired) */
   .sc-copy-btn {
     flex-direction: column;
@@ -340,9 +309,6 @@
     line-height: 1.3; letter-spacing: 0.01em;
     opacity: 0.85;
   }
-
-  /* ===== FLIPPENING ===== */
-  /* Temp entry-point button — slightly different so it reads as "different thing" */
 
   /* Picker layout: two columns side by side */
   .fl-pickers {
@@ -450,7 +416,7 @@
   }
 
   /* Per-side CA input inside the Flippening picker columns.
-     Reuses .ca-input / .ca-go-btn / .ca-fail from the Status modal.
+     Reuses .ca-input / .ca-go-btn / .ca-fail from the homepage card maker.
      Overrides only what the narrower two-column layout requires. */
   .fl-ca-tool {
     display: flex; flex-direction: column; gap: 5px;
@@ -473,9 +439,6 @@
     text-align: left !important;
   }
 
-  /* ===== PUMP CONTROLS ===== */
-  /* Quick-pick multiple buttons */
-
   /* Free input row */
   .pump-input {
     flex: 1; padding: 11px 16px;
@@ -495,8 +458,6 @@
     white-space: nowrap;
   }
   .pump-go-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 22px rgba(46,224,106,0.38); }
-
-   /* Pump result card */
 
   /* Subtle glow overlay for the dream aesthetic */
   .pump-logo {
@@ -533,7 +494,7 @@
     font-family: 'Space Grotesk', sans-serif; font-weight: 700;
     color: var(--text); line-height: 1.14;
   }
-  /* Responsive size buckets — set on .pump-dream-obj by JS (pumpObjSizeClass).
+  /* Responsive size buckets — set on .pump-dream-obj by JS (objSizeClass).
      pump-obj-sm is the hard floor: still visually heavier than the price/stamp lines. */
   .pump-obj-xl .pump-dream-name { font-size: 40px; line-height: 1.06; }
   .pump-obj-lg .pump-dream-name { font-size: 33px; line-height: 1.12; }
@@ -545,8 +506,6 @@
   /* Divider — separates the hero from the fine print below it. */
   .pump-divider { height: 1px; background: rgba(255,255,255,0.08); flex-shrink: 0; margin: 14px 0 10px; }
 
-  /* Fine-print disclaimer — dimmest tier, reads as a caveat, not part of the joke. */
-
   /* Stamp — date + URL. Neutral dim (green now means "flip" only). */
 
   @media (max-width: 520px) {
@@ -557,22 +516,6 @@
     .pump-obj-sm .pump-dream-name { font-size: 20px; }
     .pump-input { min-width: 0; }
   }
-
-  /* Pump nudge → Status Check link (shown at 1× / dumps, replaces the card) */
-
-  /* ===== EMOTION DOORS ===== */
-
-  /* Per-door colour accents — faint resting tint so they're not four grey boxes */
-
-  /* Quiet secondary calculator link */
-  /* ===== MIDDLE SECTION LAYOUT (signpost / toys / actions / coin zone) ===== */
-
-  /* Signpost — a caption, not a headline. Sits quietly above the toys. */
-
-  /* Primary action: Make a Flip Card — its own centred row, green-outline + soft glow */
-/* Pull the second twin up tight against the first so the pair reads as one unit */
-
-  /* Quiet utility: How far from flipping — single ghost line below the action */
 
   /* Coin zone: breathing room, then filters as a tight header on the list */
   .coin-zone { margin-top: 30px; }
@@ -592,15 +535,7 @@
     box-shadow: 0 8px 30px rgba(46,224,106,0.32); transform: translateY(-2px);
   }
 
-  /* ===== COPE MODAL ===== */
-  /* The cope line baked into the card at the bottom */
-  /* Cope card uses sc-result-card layout but with a slight tonal shift */
-
-  /* ===== OUTRAGE MODAL ===== */
-
-  /* ===== WONDER MODAL ===== */
-
-  /* ==== PASTE-A-CONTRACT-ADDRESS (CA) TOOL — status modal only ==== */
+  /* ==== PASTE-A-CONTRACT-ADDRESS (CA) TOOL — homepage card maker ==== */
   .ca-tool {
     display: flex; gap: 8px; align-items: stretch;
     padding: 14px 16px 10px; max-width: 460px; margin: 0 auto;
@@ -723,17 +658,14 @@
   text-wrap: balance;
 }
 
-
 /* Shrink the logo, keep it centered. Original .logo gradient/glow still applies. */
 .hero .logo { font-size: clamp(40px, 6.5vw, 72px); margin: 0 auto; }
 
 .hero-flip { max-width: 860px; margin: 22px auto 0; }
 
-/* Secondary hero pills — Dunk / Bag check relocated from the do-your-own-math
-   grid (Task 2). Standalone: .door-btn's grid sizing does NOT follow them here.
-   Mirrors the existing .flip-chip / .hero-mult-btn pill language so they read
-   as quiet nav, never as glowing panels. TEMPORARY — fused into the builder
-   next build. */
+/* Secondary hero pills — Dunk / Bag check under the card maker.
+   Same pill language as .flip-chip / .hero-mult-btn so they read as quiet
+   nav, never as glowing panels. */
 .hero-subnav {
   display: flex; justify-content: center; flex-wrap: wrap; gap: 8px;
   max-width: 860px; margin: 14px auto 0;
@@ -903,8 +835,6 @@
 /* Lift the rows one shade so they read as cards ON the tray, not merged into it */
 .just-flipped .jf-row { background: var(--bg-3); }
 
-/* Games: matching tray, also flat so it never competes with the CTA */
-
 /* Tighten panel padding on phones so it doesn't eat width */
 @media (max-width: 600px) {
   .just-flipped  { padding: 20px 14px; }
@@ -930,7 +860,6 @@
   transform: translateY(-1px);
 }
 
-
   /* Standings entry — the one nav button that gets a faint green tint,
      so it reads as "the way in" and not a third identical grey ghost. */
   .full-ladder-btn-standings {
@@ -946,7 +875,6 @@
     transform: translateY(-1px);
   }
 
-
   /* Standings CTA in the hero — centered, contained, breathing room above.
      Sits right under "live prices" as the newcomer's first BTC anchor. */
   .hero-standings-cta {
@@ -959,20 +887,9 @@
     max-width: 420px;
   }
 
-/* "Show all coins" (emitted by app.js — class override only, no JS touched) */
-
-  /* ===== THE WEN-VERSE — footer channel family ===== */
-
-  /* ===== ZONE HEADER — "do your own math" (interactive zone title) ===== */
-
-  /* ===== ANSWER DOORS — the "questions" grid (calm cousin of the mood doors) =====
-     Reuses .door-btn for identical shape/emoji/label. No per-button colour, so it
-     stays uniform grey — composed, not shouty — while the mood grid stays colourful.
-     Same tray + layout as .emotion-doors so the two read as siblings. */
-
   /* ===================================================================
-     MAKE A FLIP CARD — mega-modal controls (Stage 2)
-     Price / Target / Voice chip rows + 🎲 random + custom/item reveals.
+     MAKE A FLIP CARD — card maker controls
+     Price / Target chip rows + Surprise me + custom/item reveals.
      Reuses .pump-input / .pump-go-btn / .calc-search / .target-list.
      =================================================================== */
   .flip-random-btn {
@@ -1011,17 +928,11 @@
   }
 
   /* ===================================================================
-     MATH GRID — hero tile (Make a Flip Card spans both columns)
-     Pure layout/skin; the grid is still the existing .emotion-doors 2-col.
-     =================================================================== */
-
-  /* ===================================================================
-     UNIFIED FLIP CARD (wf-*) — Stage 1 engine output.
-     Reuses the Pump hero (.pump-dream-obj / .pump-obj-* / .pump-flips-lbl /
-     .pump-dream-name / .pump-dream-price / .pump-mult-badge) and the sc
-     progress bar (.sc-bar-track / .sc-bar-fill / .sc-gap-line). Adds only
-     the identity pill, the receipt line, the cope footnote, and an
-     in-flow stamp. Container class is `wf-flip-card flip-card`.
+     FLIP CARD (wf-*) — output of renderFlipCard() in app.js.
+     Reuses the .pump-* object styles (.pump-dream-obj / .pump-obj-* /
+     .pump-flips-lbl / .pump-dream-name / .pump-mult-badge) and the progress
+     bar (.sc-bar-track / .sc-bar-fill). Adds the identity pill, the receipt
+     line and the in-flow stamp. Container class is `wf-flip-card flip-card`.
      =================================================================== */
   .wf-flip-card { padding: 26px 26px 22px; position: relative; }
 
@@ -1053,8 +964,6 @@
   .wf-to { color: var(--text); font-weight: 600; }
   .wf-flip-card .sc-bar-track { margin: 12px 0 10px; }
 
-  /* Cope footnote — the one editorial field, opt-in via voice:'cope' */
-
   /* In-flow stamp (this card doesn't use an absolute stamp) */
   .wf-stamp {
     display: flex; justify-content: space-between; align-items: baseline;
@@ -1064,9 +973,8 @@
   }
 
   /* ===================================================================
-     MAFC HERO — inline flip-card maker as the homepage hero.
-     Two columns on desktop (controls left / card right); on mobile the
-     card sits on top (column-reverse), controls below. TICKET 3 side-by-side.
+     MAFC HERO — the flip-card maker that is the homepage hero.
+     Base layout; the single-column overrides follow in "MAFC HERO v2".
      =================================================================== */
   .mafc-hero {
     max-width: 640px;
@@ -1112,13 +1020,6 @@
     .mafc-cardcol  { flex: 0 0 auto; display: flex; justify-content: center; padding-top: 6px; }
     .mafc-cardcol .sc-card-wrap { padding: 0; width: 360px; }
   }
-
-/* ===================================================================
-   MAFC HERO v2 — single centered column (card → actions → builder).
-   Supersedes the .mafc-cols two-column layout (now unused). One card,
-   centered and dominant; Surprise-me + Copy in an always-visible row;
-   builder collapsed behind "make your own".
-   =================================================================== */
 
 /* Card block: centered, dominant, generous top room. */
 .mafc-hero .mafc-cardcol { padding: 20px 0 4px; display: flex; flex-direction: column; align-items: center;
@@ -1204,3 +1105,7 @@
   .mafc-actions { padding: 8px 0 16px; }
 }
 
+/* No-token pop-up (#tokenModal) body text */
+#tokenModal .token-body { padding: 20px 24px 32px; }
+#tokenModal .token-p { color: var(--text); font-size: 15px; line-height: 1.6; margin-bottom: 14px; }
+#tokenModal .token-p:last-child { margin-bottom: 0; }
