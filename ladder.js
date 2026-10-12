@@ -257,7 +257,8 @@ const LADDER = [
     { price: 1.25, name: "a Reese's Cup", tier: 'snack', category: 'snack' },
     { price: 1.1, name: 'a Pop Rocks package', tier: 'snack', category: 'snack' },
     { price: 1.05, name: 'a claw machine attempt', tier: 'snack', category: 'snack' },
-    { price: 0.99, name: "a can of AriZona Iced Tea", tier: 'pocket', category: 'snack', featured: true }, // cite: still 99¢ (Brand Spur, Sep 2026)
+    { price: 1, name: 'one US dollar', tier: 'snack', category: 'extraction', featured: true }, // cite: face value. pDAI re-peg rung; also the Pocket Change -> Real Life line
+    { price: 0.99, name: "a can of AriZona Iced Tea", tier: 'pocket', category: 'snack' }, // cite: still 99¢ (Brand Spur, Sep 2026)
     { price: 0.98, name: 'a single cigarette', tier: 'pocket', category: 'snack' },
     { price: 0.9, name: 'an onion', tier: 'pocket', category: 'snack' },
     { price: 0.88, name: 'a pear', tier: 'pocket', category: 'snack' },
