@@ -182,41 +182,21 @@
 
 <script src="/coins.js"></script>
 <script src="/ladder.js"></script>
+<script src="/shared.js"></script>
 <script>
 /* Coin roster comes from /coins.js (the homepage's list) — one source of truth. */
 
 
 
 /* highest-priced rung ≤ value (same walk the site uses) */
-function findRungIndex(price){
-  if(price==null) return -1;
-  for(let i=0;i<LADDER.length;i++){ if(LADDER[i].price<=price) return i; }
-  return LADDER.length-1; // below the lowest rung → cheapest item
-}
 
 /* ---------- formatters ---------- */
-const SUB=['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
-function fmtSmall(p){ // subscript notation for sub-$1 values
-  if(p>=0.0001){ const mag=Math.floor(Math.log10(p)); const f=Math.pow(10,3-mag); const t=Math.floor(p*f)/f; return '$'+t.toFixed(-mag+3).replace(/0+$/,'').replace(/\.$/,''); }
-  const mag=Math.floor(Math.log10(p)); const lz=-mag-1; const f=Math.pow(10,3-mag);
-  const t=Math.floor(p*f)/f; const raw=t.toFixed(lz+4); const after=raw.split('.')[1]||'';
-  let z=0; for(let i=0;i<after.length;i++){ if(after[i]==='0')z++; else break; }
-  return '$0.0'+(SUB[z]||z)+after.slice(z).replace(/0+$/,'');
-}
 // bag value → whole dollars w/ commas; cents only under $1
 function fmtBag(v){
   if(v==null) return '—';
   if(v<=0) return '$0';
   if(v>=1) return '$'+Math.round(v).toLocaleString('en-US');
-  return fmtSmall(v);
-}
-// object price → character-for-character stored value
-function fmtItemPrice(p){
-  if(p==null) return '—';
-  if(p>=1000) return '$'+p.toLocaleString('en-US',{maximumFractionDigits:0});
-  if(p>=1)    return '$'+p.toFixed(2).replace(/\.?0+$/,'');
-  if(p>=0.0001){ const mag=Math.floor(Math.log10(p)); const dec=Math.max(0,-mag+3); return '$'+p.toFixed(dec).replace(/0+$/,'').replace(/\.$/,''); }
-  return '$'+p.toPrecision(2);
+  return fmtCoinPrice(v);
 }
 // quantity → commas, keep fractional bags readable
 function fmtQty(n){
@@ -232,18 +212,9 @@ let lastFetch = null;
 function coinBySym(sym){ return TOKENS.find(t => t.sym.toLowerCase() === String(sym||'').toLowerCase()); }
 
 /* ---------- price fetch ---------- */
-async function fetchPrice(coin){
-  const url = `https://api.dexscreener.com/latest/dex/pairs/${coin.dexChain}/${coin.pairAddress}`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error('HTTP '+res.status);
-  const json = await res.json();
-  const pr = json.pair || (Array.isArray(json.pairs)?json.pairs[0]:null);
-  if(!pr || !pr.priceUsd) throw new Error('no pair data');
-  return parseFloat(pr.priceUsd);
-}
 async function ensurePrice(sym){
   const coin = coinBySym(sym); if(!coin) return;
-  try{ priceCache[sym] = await fetchPrice(coin); lastFetch = Date.now(); }
+  try{ priceCache[sym] = await fetchPairPrice(coin.dexChain, coin.pairAddress); lastFetch = Date.now(); }
   catch(e){ console.warn('price fetch failed', sym, e); /* keep last good */ }
   renderUpdated();
 }
@@ -344,15 +315,6 @@ function readURL(){
 }
 
 /* ---------- image export (site's 1080×1080 approach) ---------- */
-const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-async function loadHtml2Canvas(){
-  if(window.html2canvas) return;
-  await new Promise((res,rej)=>{ const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
-    s.crossOrigin='anonymous'; s.onload=res; s.onerror=()=>rej(new Error('html2canvas failed')); document.head.appendChild(s); });
-}
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 async function bcExport(){
   const btn=document.getElementById('pngBtn'), ic=document.getElementById('pngIcon'), tx=document.getElementById('pngText');
   btn.disabled=true; ic.className='ico ico-spin'; tx.textContent='Generating…';
@@ -360,22 +322,7 @@ async function bcExport(){
     await loadHtml2Canvas();
     const card=document.getElementById('bcCard');
     const src=await window.html2canvas(card,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-    const out=document.createElement('canvas'); out.width=1080; out.height=1080;
-    const ctx=out.getContext('2d');
-    const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-    const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-    ctx.drawImage(src,30,30,1020,1020);
-    if(_isIOS){
-      const link=document.createElement('a'); link.download='wenflip-bag.png'; link.href=out.toDataURL('image/png');
-      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('saved. attach it to your post.');
-    } else {
-      out.toBlob(async blob=>{ try{
-        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('copied. paste it in your post.');
-      }catch{
-        const link=document.createElement('a'); link.download='wenflip-bag.png'; link.href=URL.createObjectURL(blob);
-        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('saved. attach it to your post.');
-      }}, 'image/png');
-    }
+    deliverImage(brandCanvas(src, 30), 'wenflip-bag.png');
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
   finally{ btn.disabled=false; ic.className=_isIOS?'ico ico-download':'ico ico-clipboard'; tx.textContent=_isIOS?'Save image':'Copy as image'; }
 }

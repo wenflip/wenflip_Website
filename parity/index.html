@@ -235,6 +235,7 @@
 </div>
 
 <div class="toast" id="toast"></div>
+<script src="/shared.js"></script>
 
 <script>
 /* ============================================================
@@ -281,18 +282,6 @@ PAIRS.forEach(p => priceState[p.id] = { aPrice:null, bPrice:null });
 let lastFetch = null;
 
 /* ---------- formatters (matched to the main site) ---------- */
-const SUB=['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
-function fmtPrice(p){
-  if(p==null) return '—';
-  if(p<=0) return '$0';
-  if(p>=1000) return '$'+Math.floor(p).toLocaleString('en-US');
-  if(p>=1){ let s=(Math.floor(p*100)/100).toFixed(2).replace(/\.?0+$/,''); const[i,d]=s.split('.'); return '$'+(d?parseInt(i,10).toLocaleString('en-US')+'.'+d:parseInt(i,10).toLocaleString('en-US')); }
-  if(p>=0.0001){ const mag=Math.floor(Math.log10(p)); const f=Math.pow(10,3-mag); const t=Math.floor(p*f)/f; let s=t.toFixed(-mag+3).replace(/0+$/,'').replace(/\.$/,''); return '$'+s; }
-  const mag=Math.floor(Math.log10(p)); const lz=-mag-1; const f=Math.pow(10,3-mag);
-  const t=Math.floor(p*f)/f; const raw=t.toFixed(lz+4); const after=raw.split('.')[1]||'';
-  let z=0; for(let i=0;i<after.length;i++){ if(after[i]==='0')z++; else break; }
-  const sig=after.slice(z).replace(/0+$/,''); return '$0.0'+(SUB[z]||z)+sig;
-}
 function fmtMult(m){
   if(!isFinite(m)) return '∞';
   if(m>=1e9) return '1B+';
@@ -457,19 +446,10 @@ function closeParity(){
 document.addEventListener('keydown', e => { if(e.key==='Escape') closeParity(); });
 
 /* ---------- live prices ---------- */
-async function fetchSide(dexChain, pair){
-  const url = `https://api.dexscreener.com/latest/dex/pairs/${dexChain}/${pair}`;
-  const res = await fetch(url);
-  if(!res.ok) throw new Error('HTTP '+res.status);
-  const json = await res.json();
-  const pr = json.pair || (Array.isArray(json.pairs)?json.pairs[0]:null);
-  if(!pr || !pr.priceUsd) throw new Error('no pair data');
-  return parseFloat(pr.priceUsd);
-}
 async function refreshAll(){
   await Promise.all(PAIRS.map(async p => {
-    try{ priceState[p.id].aPrice = await fetchSide(p.a.dexChain, p.a.pair); }catch(e){ console.warn(p.a.sym,e); }
-    try{ priceState[p.id].bPrice = await fetchSide(p.b.dexChain, p.b.pair); }catch(e){ console.warn(p.b.sym,e); }
+    try{ priceState[p.id].aPrice = await fetchPairPrice(p.a.dexChain, p.a.pair); }catch(e){ console.warn(p.a.sym,e); }
+    try{ priceState[p.id].bPrice = await fetchPairPrice(p.b.dexChain, p.b.pair); }catch(e){ console.warn(p.b.sym,e); }
   }));
   const anyOk = PAIRS.some(p => priceState[p.id].aPrice!=null && priceState[p.id].bPrice!=null);
   if(anyOk) lastFetch = Date.now();
@@ -484,15 +464,6 @@ function renderUpdated(){
 setInterval(renderUpdated, 1000);
 
 /* ---------- image export (matched to the main site) ---------- */
-const _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-async function loadHtml2Canvas(){
-  if(window.html2canvas) return;
-  await new Promise((res,rej)=>{ const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-    s.integrity='sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==';
-    s.crossOrigin='anonymous'; s.onload=res; s.onerror=()=>rej(new Error('html2canvas failed')); document.head.appendChild(s); });
-}
-function showToast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200); }
 async function pcExport(){
   const btn=document.getElementById('pcShareBtn'), ic=document.getElementById('pcShareIcon'), tx=document.getElementById('pcShareText');
   btn.disabled=true; ic.className='ico ico-spin'; tx.textContent='Generating…';
@@ -500,22 +471,7 @@ async function pcExport(){
     await loadHtml2Canvas();
     const card=document.getElementById('pcCard');
     const src=await window.html2canvas(card,{backgroundColor:null,scale:3,useCORS:true,logging:false});
-    const out=document.createElement('canvas'); out.width=1080; out.height=1080;
-    const ctx=out.getContext('2d');
-    const bg=ctx.createLinearGradient(0,0,0,1080); bg.addColorStop(0,'#0d0d1e'); bg.addColorStop(1,'#0a0a14'); ctx.fillStyle=bg; ctx.fillRect(0,0,1080,1080);
-    const glow=ctx.createRadialGradient(540,150,0,540,150,640); glow.addColorStop(0,'rgba(46,224,106,0.10)'); glow.addColorStop(1,'transparent'); ctx.fillStyle=glow; ctx.fillRect(0,0,1080,1080);
-    ctx.drawImage(src,30,30,1020,1020);
-    if(_isIOS){
-      const link=document.createElement('a'); link.download='wenflip-parity.png'; link.href=out.toDataURL('image/png');
-      document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('saved. attach it to your post.');
-    } else {
-      out.toBlob(async blob=>{ try{
-        await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]); showToast('copied. paste it in your post.');
-      }catch{
-        const link=document.createElement('a'); link.download='wenflip-parity.png'; link.href=URL.createObjectURL(blob);
-        document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); showToast('saved. attach it to your post.');
-      }}, 'image/png');
-    }
+    deliverImage(brandCanvas(src, 30), 'wenflip-parity.png');
   }catch(err){ console.error(err); showToast('Screenshot failed — try again 😬'); }
   finally{ btn.disabled=false; ic.className=_isIOS?'ico ico-download':'ico ico-clipboard'; tx.textContent=_isIOS?'Save image':'Copy as image'; }
 }
