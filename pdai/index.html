@@ -36,7 +36,6 @@
   .pdai-page { padding: 0 20px 20px; }
   .pdai-wrap { max-width: 960px; margin: 22px auto 0; }
 
-  .pdai-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
   .pdai-price { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .pdai-worth { color: var(--muted); font-size: 15px; }
   .pdai-worth b { color: var(--text); font-weight: 600; }
@@ -72,13 +71,22 @@
   .loading-more { position: absolute; left: 10px; bottom: 34px; z-index: 4; font-size: 12px; color: var(--muted); background: rgba(17,17,31,0.85); padding: 3px 8px; border-radius: 6px; }
   .loading-more[hidden] { display: none; }
 
-  .next-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 12px; }
-  .next-card { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
-  .next-card .k { font-size: 12px; color: var(--muted); }
-  .next-card .n { font-size: 15px; font-weight: 600; margin-top: 2px; }
-  .next-card .d { font-size: 13px; margin-top: 2px; font-variant-numeric: tabular-nums; }
-  .next-card .d.up { color: var(--green); }
-  .next-card .d.hold { color: var(--muted); }
+  .walk-top { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+  .walk-x { text-align:right; }
+  .walk-x .big { font-family:'Space Grotesk',sans-serif; font-size:34px; font-weight:700; color:var(--green); line-height:1; font-variant-numeric:tabular-nums; }
+  .walk-x .lbl { font-size:12px; color:var(--muted); margin-top:4px; }
+
+  .flipstrip { margin:14px 0 4px; background:var(--bg-2); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
+  .fs-ends { display:flex; justify-content:space-between; gap:12px; }
+  .fs-end .k { font-size:11px; color:var(--muted); letter-spacing:.04em; }
+  .fs-end .n { font-size:14px; font-weight:600; margin-top:2px; }
+  .fs-end .p { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .fs-end.next { text-align:right; }
+  .fs-end.next .n { color:var(--green); }
+  .fs-bar { position:relative; height:10px; border-radius:99px; background:var(--bg-3); border:1px solid var(--line); margin:12px 0 8px; overflow:hidden; }
+  .fs-fill { position:absolute; inset:0 auto 0 0; width:0; background:var(--grad); border-radius:99px; transition:width .4s ease; }
+  .fs-cap { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
+  .fs-cap b { color:var(--text); font-weight:600; }
 
   .pdai-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin-top: 12px; font-size: 13px; color: var(--muted); }
   .pdai-foot b { color: var(--text); }
@@ -89,7 +97,7 @@
   @media (max-width: 600px) {
     .chart-box { height: 420px; }
     .pdai-price { font-size: 28px; }
-    .next-card .n { font-size: 14px; }
+    .walk-x .big { font-size: 28px; }
   }
 </style>
 </head>
@@ -106,9 +114,24 @@
 <main>
   <div class="pdai-wrap">
 
-    <div class="pdai-now">
-      <span class="pdai-price" id="nowPrice">—</span>
-      <span class="pdai-worth" id="nowWorth">loading the walk…</span>
+    <div class="walk-top">
+      <div>
+        <div class="pdai-price" id="nowPrice">—</div>
+        <div class="pdai-worth" id="nowWorth">loading the walk…</div>
+      </div>
+      <div class="walk-x">
+        <div class="big" id="toDollarX">—</div>
+        <div class="lbl">to one US dollar</div>
+      </div>
+    </div>
+
+    <div class="flipstrip">
+      <div class="fs-ends">
+        <div class="fs-end"><div class="k">holding</div><div class="n" id="fsHold">—</div><div class="p" id="fsHoldP">&nbsp;</div></div>
+        <div class="fs-end next"><div class="k">next flip</div><div class="n" id="fsNext">—</div><div class="p" id="fsNextP">&nbsp;</div></div>
+      </div>
+      <div class="fs-bar"><div class="fs-fill" id="fsFill"></div></div>
+      <div class="fs-cap"><span id="fsPct">&nbsp;</span><span id="fsX">&nbsp;</span></div>
     </div>
 
     <div class="pdai-controls">
@@ -129,19 +152,6 @@
       <div id="rungLabels" aria-hidden="true"></div>
       <div class="loading-more" id="loadingMore" hidden>loading older candles…</div>
       <div class="chart-msg" id="chartMsg"><span>loading the chart…</span></div>
-    </div>
-
-    <div class="next-row">
-      <div class="next-card">
-        <div class="k">next flip</div>
-        <div class="n" id="nextUpName">—</div>
-        <div class="d up" id="nextUpDist">&nbsp;</div>
-      </div>
-      <div class="next-card">
-        <div class="k">currently holding</div>
-        <div class="n" id="holdName">—</div>
-        <div class="d hold" id="holdDist">&nbsp;</div>
-      </div>
     </div>
 
     <div class="pdai-foot">
@@ -221,11 +231,6 @@
     if (p >= 1)    return '$' + p.toFixed(2).replace(/\.?0+$/, '');
     const mag = Math.floor(Math.log10(p));
     return '$' + p.toFixed(Math.max(0, -mag + 3)).replace(/0+$/, '').replace(/\.$/, '');
-  }
-  function pct(a, b) { // % move from a to b
-    const v = (b / a - 1) * 100;
-    const s = Math.abs(v) >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(1);
-    return (v >= 0 ? '+' : '') + s + '%';
   }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -467,26 +472,30 @@
     for (const r of LADDER) if (r.price <= price) return r;
     return null;
   }
+  // multiplier, the way CT says it: 613x, 18.4x, 1.10x
+  function fmtX(m) { return (m >= 100 ? Math.round(m).toLocaleString('en-US') : m >= 10 ? m.toFixed(1) : m.toFixed(2)) + 'x'; }
   function updateNow(p) {
     document.getElementById('nowPrice').textContent = fmtCoinPrice(p);
     const worth = rungFor(p);
     document.getElementById('nowWorth').innerHTML = worth ? `worth <b>${esc(worth.name)}</b>` : 'worth less than a toothbrush bristle';
+    document.getElementById('toDollarX').textContent = p >= 1 ? 'flipped' : fmtX(1 / p);
     setNear(p);
-    const upN = document.getElementById('nextUpName'), upD = document.getElementById('nextUpDist');
-    const hN = document.getElementById('holdName'), hD = document.getElementById('holdDist');
-    if (nextUp) {
-      upN.textContent = nextUp.r.name;
-      upD.textContent = `${fmtItemPrice(nextUp.r.price)} · ${pct(p, nextUp.r.price)} away`;
+    const H = holding && holding.r, N = nextUp && nextUp.r;
+    document.getElementById('fsHold').textContent = H ? H.name : 'nothing on this stretch';
+    document.getElementById('fsHoldP').textContent = H ? fmtItemPrice(H.price) : `below ${fmtItemPrice(RUNG_MIN)}`;
+    document.getElementById('fsNext').textContent = N ? N.name : 'one US dollar. flipped.';
+    document.getElementById('fsNextP').textContent = N ? fmtItemPrice(N.price) : '';
+    const fill = document.getElementById('fsFill'), pctEl = document.getElementById('fsPct'), xEl = document.getElementById('fsX');
+    if (H && N) {
+      // log-scale progress, same as the chart, so the bar and the chart always agree
+      const frac = Math.max(0, Math.min(1, Math.log(p / H.price) / Math.log(N.price / H.price)));
+      fill.style.width = (frac * 100).toFixed(1) + '%';
+      pctEl.innerHTML = `<b>${Math.round(frac * 100)}%</b> of the way`;
+      xEl.innerHTML = `<b>${fmtX(N.price / p)}</b> to flip`;
+    } else if (N) {
+      fill.style.width = '0%'; pctEl.innerHTML = '&nbsp;'; xEl.innerHTML = `<b>${fmtX(N.price / p)}</b> to flip`;
     } else {
-      upN.textContent = 'one US dollar. flipped.';
-      upD.textContent = 'the walk is over.';
-    }
-    if (holding) {
-      hN.textContent = holding.r.name;
-      hD.textContent = `${fmtItemPrice(holding.r.price)} · ${pct(holding.r.price, p)} above it`;
-    } else {
-      hN.textContent = 'nothing on this stretch';
-      hD.textContent = `below ${fmtItemPrice(RUNG_MIN)}`;
+      fill.style.width = '100%'; pctEl.innerHTML = 'the walk is over.'; xEl.innerHTML = '&nbsp;';
     }
     const left = RUNGS.filter(r => r.price > p).length;
     document.getElementById('rungsLeft').innerHTML = left
