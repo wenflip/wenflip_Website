@@ -38,13 +38,11 @@
 <body>
 
 <header class="hero container">
-  <!-- LIVE PILL — switched OFF (kept in source; uncomment to restore) -->
-  <!-- <span class="live-pill"><span class="pulse-dot"></span>Live · Multi-chain</span> -->
 
   <h1 class="logo">wenflip</h1>
   <p class="logo-tagline">what your coin is worth, in real stuff.</p>
 
-  <!-- HERO = MAKE A FLIP CARD — two-column (controls left / card right on desktop; card-first on mobile). TICKET 3 side-by-side pass -->
+  <!-- HERO = MAKE A FLIP CARD — card, then Surprise me / Copy, then the collapsed builder -->
   <div class="mafc-hero" id="mafcHero">
     <!-- CARD — the hero object. Always on screen; driven by auto-rotation,
          ⟳ Surprise me, and the builder controls below. One card, ever. -->
@@ -131,17 +129,14 @@
 <div class="container">
 <main>
 
-  <!-- Secondary utilities relocated out of "do your own math" (Task 2).
-       Quiet pills under the hero builder; click behaviour/routes unchanged
-       (#doorDunk still wired in app.js, /bag route intact). Deliberately
-       subordinate to the hero's "Copy as image". TEMPORARY home — the next
-       build fuses these into the builder as tabs and deletes them here. -->
+  <!-- Secondary utilities: quiet pills under the card maker, deliberately
+       subordinate to "Copy as image". #doorDunk is wired in app.js. -->
   <div class="hero-subnav">
     <button class="hero-sub-pill" id="doorDunk"><span class="ico ico-flame" aria-hidden="true"></span> Dunk on a coin</button>
     <a class="hero-sub-pill" href="/bag"><span class="ico ico-receipt" aria-hidden="true"></span> Bag check</a>
   </div>
 
-  <!-- 9-GRID — moved below the MAFC hero in TICKET 3 -->
+  <!-- THE BOARD — 9 coins, chain tabs + multiplier tabs -->
   <div class="hero-flip">
     <div class="jf-head">
       <h2 class="section-title">the <span class="grad">board</span></h2>
@@ -187,12 +182,8 @@
 
   <!-- ============================================================
        TRUST STRIP — "there is no token".
-       Promoted from the buried footer link into the body (V2 wireframe
-       §4), sitting between the games and the Buy PLS CTA so the trust
-       beat lands right before the ask. Copy is reused verbatim from
-       #tokenModal, which stays the canonical full version — the
-       "read the whole thing" link opens it via the existing
-       openTokenModal(). Footer "wen token?" link left alone (Task 8).
+       Short version of #tokenModal, which stays the full text;
+       "read the whole thing" opens it via openTokenModal().
        ============================================================ -->
   <section class="trust-strip" id="trustStrip">
     <h2 class="trust-strip-title">there is no wenflip token.</h2>
@@ -284,7 +275,7 @@
 
 
 
-<div class="calc-toast" id="calcToast"></div>
+<div class="toast" id="toast"></div>
 
 <!-- NO-TOKEN DISCLAIMER MODAL -->
 <div class="modal-backdrop" id="tokenModal" onclick="if(event.target===this)closeTokenModal()">
@@ -293,16 +284,15 @@
       <div><h3>There is no wenflip token.</h3></div>
       <button class="modal-close" aria-label="Close" onclick="closeTokenModal()">✕</button>
     </div>
-    <div class="modal-body" style="padding:20px 24px 32px;">
-      <p style="color:var(--text);font-size:15px;line-height:1.6;margin-bottom:14px;">No $WENFLIP. No $FLIP. No presale, no airdrop, no whitelist, no "official contract address." There is nothing to buy.</p>
-      <p style="color:var(--text);font-size:15px;line-height:1.6;margin-bottom:14px;">If you find a wenflip coin anywhere — on any chain, sold by anyone — it is a scam. We did not make it. We are not affiliated with it. Whoever is selling it is robbing you, not us. Do not buy it.</p>
-      <p style="color:var(--text);font-size:15px;line-height:1.6;margin-bottom:14px;">wenflip is a website. It tracks other people's coins climbing a ladder of real-world objects. That's the whole product. The joke is free and always will be.</p>
-      <p style="color:var(--text);font-size:15px;line-height:1.6;margin-bottom:14px;">If you ever see "wenflip is launching a token," assume the account was hacked.</p>
-      <p style="color:var(--text);font-size:15px;line-height:1.6;">Every other crypto meme is a token launch wearing a costume. We're the one that isn't. That's the point.</p>
+    <div class="modal-body token-body">
+      <p class="token-p">No $WENFLIP. No $FLIP. No presale, no airdrop, no whitelist, no "official contract address." There is nothing to buy.</p>
+      <p class="token-p">If you find a wenflip coin anywhere — on any chain, sold by anyone — it is a scam. We did not make it. We are not affiliated with it. Whoever is selling it is robbing you, not us. Do not buy it.</p>
+      <p class="token-p">wenflip is a website. It tracks other people's coins climbing a ladder of real-world objects. That's the whole product. The joke is free and always will be.</p>
+      <p class="token-p">If you ever see "wenflip is launching a token," assume the account was hacked.</p>
+      <p class="token-p">Every other crypto meme is a token launch wearing a costume. We're the one that isn't. That's the point.</p>
     </div>
   </div>
 </div>
 
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" data-cf-beacon='{"version":"2024.11.0","token":"e1aed0de5e18434c8019e1b9cb82b31c","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
