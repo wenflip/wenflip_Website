@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>wenflip — pDAI's long walk to $1</title>
+<meta name="description" content="pDAI's real price chart with every wenflip rung from a single staple to one US dollar drawn on it." />
+<link rel="canonical" href="https://wenflip.com/pdai" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://wenflip.com/pdai" />
+<meta property="og:title" content="wenflip — pDAI's long walk to $1" />
+<meta property="og:description" content="pDAI's price chart, with every rung between here and one US dollar drawn on it." />
+<meta property="og:site_name" content="wenflip.com" />
+<meta property="og:image" content="https://wenflip.com/og-image-v2.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="wenflip — pDAI's long walk to $1." />
+<meta name="twitter:image" content="https://wenflip.com/og-image-v2.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="wenflip — pDAI's long walk to $1" />
+<meta name="twitter:description" content="pDAI's price chart, with every rung between here and one US dollar drawn on it." />
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="theme-color" content="#0a0a14">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.dexscreener.com">
+<link rel="preconnect" href="https://api.geckoterminal.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+<link rel="stylesheet" href="/styles.css">
+<style>
+  .pdai-page { padding: 0 20px 20px; }
+  .pdai-wrap { max-width: 960px; margin: 22px auto 0; }
+
+  .pdai-now { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+  .pdai-price { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .pdai-worth { color: var(--muted); font-size: 15px; }
+  .pdai-worth b { color: var(--text); font-weight: 600; }
+
+  .pdai-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 14px 0 10px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg-2); }
+  .seg button { background: none; border: 0; padding: 7px 12px; font-size: 13px; color: var(--muted); cursor: pointer; }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button:hover { color: var(--text); }
+  .seg button.active { color: var(--on-accent); background: var(--accent); font-weight: 600; }
+
+  .chart-box {
+    position: relative; height: 520px; border: 1px solid var(--line); border-radius: 16px;
+    background: var(--bg-2); overflow: hidden; touch-action: none;
+  }
+  #chart { position: absolute; inset: 0; }
+  #rungLabels { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
+  .rl {
+    position: absolute; left: 8px; top: 0; max-width: calc(100% - 110px);
+    font-size: 11px; line-height: 14px; padding: 0 5px; border-radius: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    color: rgba(245,245,250,0.62); background: rgba(17,17,31,0.78);
+    transform: translateY(-100%); display: none;
+  }
+  .rl.feat { color: var(--gold); }
+  .rl.near { color: var(--green); font-weight: 600; }
+  .chart-msg {
+    position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; gap: 10px;
+    align-items: center; justify-content: center; text-align: center; color: var(--muted); font-size: 14px; padding: 20px;
+  }
+  .chart-msg button { background: var(--bg-3); border: 1px solid var(--line); border-radius: 10px; padding: 7px 14px; color: var(--text); cursor: pointer; }
+  .chart-msg[hidden] { display: none; }
+  .loading-more { position: absolute; left: 10px; bottom: 34px; z-index: 4; font-size: 12px; color: var(--muted); background: rgba(17,17,31,0.85); padding: 3px 8px; border-radius: 6px; }
+  .loading-more[hidden] { display: none; }
+
+  .next-row { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 12px; }
+  .next-card { background: var(--bg-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; }
+  .next-card .k { font-size: 12px; color: var(--muted); }
+  .next-card .n { font-size: 15px; font-weight: 600; margin-top: 2px; }
+  .next-card .d { font-size: 13px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .next-card .d.up { color: var(--green); }
+  .next-card .d.hold { color: var(--muted); }
+
+  .pdai-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin-top: 12px; font-size: 13px; color: var(--muted); }
+  .pdai-foot b { color: var(--text); }
+  .pdai-foot a { text-decoration: underline; text-underline-offset: 3px; }
+
+  .pdai-cta-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
+
+  @media (max-width: 600px) {
+    .chart-box { height: 420px; }
+    .pdai-price { font-size: 28px; }
+    .next-card .n { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container pdai-page">
+
+  <header class="site-head">
+    <div class="brand"><a class="wf" href="/">wenflip</a><span class="slash">/</span><h1 class="sec">pDAI</h1></div>
+    <p class="tag">pDAI's long walk to $1. A real chart, with every rung between a single staple and one US dollar drawn on it.</p>
+    <a class="backlink" href="/">← back to wenflip</a>
+  </header>
+
+<main>
+  <div class="pdai-wrap">
+
+    <div class="pdai-now">
+      <span class="pdai-price" id="nowPrice">—</span>
+      <span class="pdai-worth" id="nowWorth">loading the walk…</span>
+    </div>
+
+    <div class="pdai-controls">
+      <div class="seg" id="tfSeg" role="tablist" aria-label="Timeframe">
+        <button type="button" data-tf="15m">15m</button>
+        <button type="button" data-tf="1h">1H</button>
+        <button type="button" data-tf="4h">4H</button>
+        <button type="button" data-tf="1d" class="active">1D</button>
+      </div>
+      <div class="seg" id="viewSeg" role="tablist" aria-label="Price view">
+        <button type="button" data-view="walk" class="active">the whole walk</button>
+        <button type="button" data-view="fit">fit to price</button>
+      </div>
+    </div>
+
+    <div class="chart-box" id="chartBox">
+      <div id="chart"></div>
+      <div id="rungLabels" aria-hidden="true"></div>
+      <div class="loading-more" id="loadingMore" hidden>loading older candles…</div>
+      <div class="chart-msg" id="chartMsg"><span>loading the chart…</span></div>
+    </div>
+
+    <div class="next-row">
+      <div class="next-card">
+        <div class="k">next flip</div>
+        <div class="n" id="nextUpName">—</div>
+        <div class="d up" id="nextUpDist">&nbsp;</div>
+      </div>
+      <div class="next-card">
+        <div class="k">currently holding</div>
+        <div class="n" id="holdName">—</div>
+        <div class="d hold" id="holdDist">&nbsp;</div>
+      </div>
+    </div>
+
+    <div class="pdai-foot">
+      <span id="rungsLeft">&nbsp;</span>
+      <span>chart: <a href="https://www.geckoterminal.com/pulsechain/pools/0xfc64556faa683e6087f425819c7ca3c558e13ac1" target="_blank" rel="noopener" id="srcLink">GeckoTerminal</a> · live price: DexScreener</span>
+    </div>
+
+    <div class="pdai-cta-row">
+      <a class="full-ladder-btn full-ladder-btn-standings" href="/ladder">see the full ladder →</a>
+      <a class="full-ladder-btn full-ladder-btn-standings" href="https://wenpeg.wenflip.com" target="_blank" rel="noopener">hold the peg yourself →</a>
+    </div>
+  </div>
+</main>
+
+  <footer>
+    <div class="ftag">every coin gets a receipt.</div>
+    <div class="disc">not financial advice. barely advice.</div>
+    <div class="flinks">
+      <a href="/side-quests">side quests →</a>
+      <a href="https://x.com/wenflips" target="_blank" rel="noopener">follow @wenflips on X</a>
+    </div>
+  </footer>
+
+</div>
+
+<!-- Shared root data files first (TOKENS, LADDER), then the chart library, then the page script.
+     All plain classic scripts, no module. Lightweight Charts is pinned so a CDN update can't break the page. -->
+<script src="/coins.js"></script>
+<script src="/ladder.js"></script>
+<script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script>
+(function(){
+  // ===== config =====
+  const COIN = TOKENS.find(t => t.sym === 'pDAI');
+  // pDAI's token address on PulseChain (same address as DAI on Ethereum, forked at launch).
+  // Passed to GeckoTerminal so candles are always priced as pDAI, whichever side of the pool it sits on.
+  const PDAI_TOKEN = '0x6b175474e89094c44da98b954eedeac495271d0f';
+  const RUNG_MIN = 0.001, RUNG_MAX = 1;
+  const RUNGS = LADDER.filter(r => r.price >= RUNG_MIN && r.price <= RUNG_MAX); // price-descending
+  const GECKO_NET = { ethereum: 'eth', bsc: 'bsc', base: 'base', pulsechain: 'pulsechain' };
+  const TF = {
+    '15m': { unit: 'minute', agg: 15 },
+    '1h':  { unit: 'hour',   agg: 1 },
+    '4h':  { unit: 'hour',   agg: 4 },
+    '1d':  { unit: 'day',    agg: 1 },
+  };
+  const PAGE = 1000;           // GeckoTerminal max candles per request
+  const LIVE_MS = 60000;
+
+  // ===== price formatting (same as app.js fmtCoinPrice / fmtItemPrice) =====
+  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+  function fmtCoinPrice(p) {
+    if (p == null || !isFinite(p)) return '—';
+    if (p <= 0)    return '$0';
+    if (p >= 1000) return '$' + Math.floor(p).toLocaleString('en-US');
+    if (p >= 1) {
+      let s = (Math.floor(p * 100 * (1 + 1e-9)) / 100).toFixed(2).replace(/\.?0+$/, '');
+      const [int, dec] = s.split('.');
+      const intFmt = parseInt(int,10).toLocaleString('en-US');
+      return '$' + (dec ? intFmt + '.' + dec : intFmt);
+    }
+    if (p >= 0.0001) {
+      const mag = Math.floor(Math.log10(p));
+      const factor = Math.pow(10, 3 - mag);
+      let s = (Math.floor(p * factor * (1 + 1e-9)) / factor).toFixed(-mag + 3); // epsilon: 0.014 must not print as 0.01399
+      return '$' + s.replace(/0+$/, '').replace(/\.$/, '');
+    }
+    const mag2 = Math.floor(Math.log10(p));
+    const factor2 = Math.pow(10, 3 - mag2);
+    const raw = (Math.floor(p * factor2) / factor2).toFixed(-mag2 + 3);
+    const afterDot = raw.split('.')[1] || '';
+    let z = 0; while (afterDot[z] === '0') z++;
+    return '$0.0' + (SUB_DIGITS[z] || String(z)) + afterDot.slice(z).replace(/0+$/, '');
+  }
+  function fmtItemPrice(p) {
+    if (p >= 1000) return '$' + p.toLocaleString('en-US', {maximumFractionDigits: 0});
+    if (p >= 1)    return '$' + p.toFixed(2).replace(/\.?0+$/, '');
+    const mag = Math.floor(Math.log10(p));
+    return '$' + p.toFixed(Math.max(0, -mag + 3)).replace(/0+$/, '').replace(/\.$/, '');
+  }
+  function pct(a, b) { // % move from a to b
+    const v = (b / a - 1) * 100;
+    const s = Math.abs(v) >= 100 ? Math.round(v).toLocaleString('en-US') : v.toFixed(1);
+    return (v >= 0 ? '+' : '') + s + '%';
+  }
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  // ===== chart =====
+  const LC = window.LightweightCharts;
+  const box = document.getElementById('chartBox');
+  const msgEl = document.getElementById('chartMsg');
+  function showMsg(html) { msgEl.innerHTML = html; msgEl.hidden = false; }
+  function hideMsg() { msgEl.hidden = true; }
+
+  if (!LC || !COIN) {
+    showMsg('<span>the chart didn\'t load. refresh and try again.</span>');
+    return;
+  }
+
+  const chart = LC.createChart(document.getElementById('chart'), {
+    autoSize: true,
+    layout: {
+      background: { type: 'solid', color: 'transparent' },
+      textColor: '#8a8aa8',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      fontSize: 11,
+    },
+    grid: {
+      vertLines: { color: 'rgba(255,255,255,0.03)' },
+      horzLines: { visible: false },
+    },
+    rightPriceScale: {
+      mode: LC.PriceScaleMode.Logarithmic,
+      borderColor: 'rgba(255,255,255,0.08)',
+      scaleMargins: { top: 0.06, bottom: 0.06 },
+    },
+    timeScale: { borderColor: 'rgba(255,255,255,0.08)', timeVisible: false, rightOffset: 6 },
+    crosshair: { mode: LC.CrosshairMode.Normal },
+  });
+
+  // "the whole walk" pins the price axis to $0.001 → $1; "fit to price" lets it autoscale to the candles.
+  let view = 'walk';
+  const series = chart.addSeries(LC.CandlestickSeries, {
+    upColor: '#2ee06a', downColor: '#c9655c',
+    wickUpColor: '#2ee06a', wickDownColor: '#c9655c',
+    borderVisible: false,
+    priceFormat: { type: 'custom', formatter: fmtCoinPrice, minMove: 1e-8 },
+    autoscaleInfoProvider: (orig) => {
+      if (view === 'walk') return { priceRange: { minValue: RUNG_MIN * 0.92, maxValue: RUNG_MAX * 1.08 } };
+      return orig();
+    },
+  });
+
+  // ===== rung lines + labels =====
+  const labelsEl = document.getElementById('rungLabels');
+  const rungs = RUNGS.map(r => {
+    const line = series.createPriceLine({
+      price: r.price, lineWidth: 1, lineStyle: LC.LineStyle.Dashed,
+      color: r.featured ? 'rgba(251,191,36,0.55)' : 'rgba(255,255,255,0.13)',
+      axisLabelVisible: false, title: '',
+    });
+    const el = document.createElement('div');
+    el.className = 'rl' + (r.featured ? ' feat' : '');
+    el.textContent = (r.featured ? '★ ' : '') + r.name + ' · ' + fmtItemPrice(r.price);
+    labelsEl.appendChild(el);
+    return { r, line, el, near: false, shown: false, y: null };
+  });
+
+  let livePrice = null;
+  let lastClose = null;
+  let nextUp = null, holding = null;   // rung objects
+
+  function setNear(price) {
+    let up = null, hold = null;
+    for (const g of rungs) {             // rungs are price-descending
+      if (g.r.price > price) up = g;
+      else { hold = g; break; }
+    }
+    nextUp = up; holding = hold;
+    for (const g of rungs) {
+      const near = g === up || g === hold;
+      if (near !== g.near) {
+        g.near = near;
+        g.el.classList.toggle('near', near);
+        g.line.applyOptions({
+          color: near ? 'rgba(46,224,106,0.85)' : (g.r.featured ? 'rgba(251,191,36,0.55)' : 'rgba(255,255,255,0.13)'),
+          lineStyle: near ? LC.LineStyle.Solid : LC.LineStyle.Dashed,
+        });
+      }
+    }
+  }
+
+  // Label culling: every rung keeps its line; names only show where they fit.
+  // Priority: the two rungs hugging the price, then ★ featured, then whatever's closest to the price.
+  const LABEL_GAP = 15;
+  function layoutLabels() {
+    const paneH = box.clientHeight - chart.timeScale().height();
+    const ref = livePrice != null ? livePrice : (lastClose || 0.003);
+    const cand = [];
+    for (const g of rungs) {
+      const y = series.priceToCoordinate(g.r.price);
+      g.y = y;
+      if (y == null || y < 14 || y > paneH - 2) continue;
+      if (y > paneH - 34 && !g.near) continue; // keep clear of the TradingView logo, bottom-left
+      const prio = (g.near ? 0 : g.r.featured ? 1 : 2) * 1000 + Math.abs(Math.log10(g.r.price / ref));
+      cand.push({ g, y, prio });
+    }
+    cand.sort((a, b) => a.prio - b.prio);
+    const placed = [];
+    const show = new Set();
+    for (const c of cand) {
+      if (placed.some(y => Math.abs(y - c.y) < LABEL_GAP)) continue;
+      placed.push(c.y); show.add(c.g);
+    }
+    for (const g of rungs) {
+      const on = show.has(g);
+      if (on) g.el.style.transform = `translateY(${Math.round(g.y) - 1}px) translateY(-100%)`;
+      if (on !== g.shown) { g.el.style.display = on ? 'block' : 'none'; g.shown = on; }
+    }
+  }
+  // Price-axis drags don't fire an event, so re-lay labels every frame (88 rungs, cheap).
+  (function tick(){ layoutLabels(); requestAnimationFrame(tick); })();
+
+  // ===== candles from GeckoTerminal, paged backwards as you scroll left =====
+  let tf = '1d';
+  let bars = [];          // ascending by time
+  let tokenParam = PDAI_TOKEN;
+  let loading = false, exhausted = false, loadSeq = 0;
+
+  async function fetchCandles(beforeTs) {
+    const t = TF[tf];
+    const net = GECKO_NET[COIN.dexChain] || COIN.dexChain;
+    const q = new URLSearchParams({ aggregate: t.agg, limit: PAGE, currency: 'usd', token: tokenParam });
+    if (beforeTs) q.set('before_timestamp', beforeTs);
+    const url = `https://api.geckoterminal.com/api/v2/networks/${net}/pools/${COIN.pairAddress}/ohlcv/${t.unit}?${q}`;
+    const res = await fetch(url);
+    if (res.status === 429) throw new Error('rate');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const list = json?.data?.attributes?.ohlcv_list || [];
+    return list
+      .map(([ts, o, h, l, c]) => ({ time: ts, open: +o, high: +h, low: +l, close: +c }))
+      .filter(b => b.close > 0)
+      .sort((a, b) => a.time - b.time);
+  }
+
+  // If GeckoTerminal priced the wrong side of the pool, the close will be miles off DexScreener's live price.
+  function looksInverted(list) {
+    if (!livePrice || !list.length) return false;
+    const ratio = list[list.length - 1].close / livePrice;
+    return ratio > 20 || ratio < 0.05;
+  }
+
+  async function loadInitial() {
+    const seq = ++loadSeq;
+    loading = true; exhausted = false; bars = [];
+    showMsg('<span>loading the chart…</span>');
+    try {
+      let list;
+      try { list = await fetchCandles(); }
+      catch (e) {
+        if (tokenParam !== 'base' && /HTTP 4/.test(e.message)) { tokenParam = 'base'; list = await fetchCandles(); }
+        else throw e;
+      }
+      if (looksInverted(list)) {
+        tokenParam = tokenParam === 'quote' ? 'base' : 'quote';
+        list = await fetchCandles();
+      }
+      if (seq !== loadSeq) return;
+      if (!list.length) { showMsg('<span>no candles for this timeframe yet.</span>'); return; }
+      bars = list;
+      exhausted = list.length < PAGE;
+      series.setData(bars);
+      lastClose = bars[bars.length - 1].close;
+      chart.timeScale().applyOptions({ timeVisible: tf !== '1d' });
+      // open on the most recent stretch, like DexScreener; drag left for older history
+      const SHOW = { '15m': 192, '1h': 168, '4h': 180, '1d': 180 }[tf];
+      chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - SHOW), to: bars.length + 5 });
+      hideMsg();
+      if (livePrice == null) updateNow(lastClose);
+      else applyLiveToLastBar();
+    } catch (e) {
+      if (seq !== loadSeq) return;
+      showMsg(`<span>${e.message === 'rate' ? 'too many requests. give it a few seconds.' : 'couldn\'t load the chart history.'}</span><button type="button" id="retryBtn">try again</button>`);
+      document.getElementById('retryBtn').onclick = loadInitial;
+    } finally {
+      if (seq === loadSeq) loading = false;
+    }
+  }
+
+  const moreEl = document.getElementById('loadingMore');
+  async function loadOlder() {
+    if (loading || exhausted || !bars.length) return;
+    const seq = loadSeq;
+    loading = true; moreEl.hidden = false;
+    try {
+      const older = (await fetchCandles(bars[0].time)).filter(b => b.time < bars[0].time);
+      if (seq !== loadSeq) return;
+      if (!older.length) { exhausted = true; return; }
+      if (older.length < PAGE - 1) exhausted = true;
+      const ts = chart.timeScale();
+      const lr = ts.getVisibleLogicalRange();
+      bars = older.concat(bars);
+      series.setData(bars);
+      if (lr) ts.setVisibleLogicalRange({ from: lr.from + older.length, to: lr.to + older.length });
+    } catch (e) {
+      // rate limited or network blip: wait, then let the next scroll try again
+      await new Promise(r => setTimeout(r, e.message === 'rate' ? 10000 : 3000));
+    } finally {
+      if (seq === loadSeq) loading = false;
+      moreEl.hidden = true;
+    }
+  }
+  chart.timeScale().subscribeVisibleLogicalRangeChange(lr => {
+    if (lr && lr.from < 30) loadOlder();
+  });
+
+  // ===== live price from DexScreener (same source as the rest of the site) =====
+  async function fetchLive() {
+    try {
+      const url = `https://api.dexscreener.com/latest/dex/pairs/${COIN.dexChain}/${COIN.pairAddress}`;
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const json = await res.json();
+      const pair = json.pair || (json.pairs || [])[0];
+      const p = pair && parseFloat(pair.priceUsd);
+      if (p > 0) { livePrice = p; updateNow(p); applyLiveToLastBar(); }
+    } catch (e) { /* keep the last good price */ }
+    setTimeout(fetchLive, LIVE_MS);
+  }
+  function applyLiveToLastBar() {
+    if (!bars.length || livePrice == null) return;
+    const b = bars[bars.length - 1];
+    // only nudge the newest candle if the live price is plausibly the same series
+    if (livePrice / b.close > 3 || livePrice / b.close < 0.33) return;
+    const nb = { ...b, close: livePrice, high: Math.max(b.high, livePrice), low: Math.min(b.low, livePrice) };
+    bars[bars.length - 1] = nb;
+    series.update(nb);
+  }
+
+  // ===== header, next-flip cards, footer =====
+  function rungFor(price) {
+    for (const r of LADDER) if (r.price <= price) return r;
+    return null;
+  }
+  function updateNow(p) {
+    document.getElementById('nowPrice').textContent = fmtCoinPrice(p);
+    const worth = rungFor(p);
+    document.getElementById('nowWorth').innerHTML = worth ? `worth <b>${esc(worth.name)}</b>` : 'worth less than a toothbrush bristle';
+    setNear(p);
+    const upN = document.getElementById('nextUpName'), upD = document.getElementById('nextUpDist');
+    const hN = document.getElementById('holdName'), hD = document.getElementById('holdDist');
+    if (nextUp) {
+      upN.textContent = nextUp.r.name;
+      upD.textContent = `${fmtItemPrice(nextUp.r.price)} · ${pct(p, nextUp.r.price)} away`;
+    } else {
+      upN.textContent = 'one US dollar. flipped.';
+      upD.textContent = 'the walk is over.';
+    }
+    if (holding) {
+      hN.textContent = holding.r.name;
+      hD.textContent = `${fmtItemPrice(holding.r.price)} · ${pct(holding.r.price, p)} above it`;
+    } else {
+      hN.textContent = 'nothing on this stretch';
+      hD.textContent = `below ${fmtItemPrice(RUNG_MIN)}`;
+    }
+    const left = RUNGS.filter(r => r.price > p).length;
+    document.getElementById('rungsLeft').innerHTML = left
+      ? `<b>${left}</b> rung${left === 1 ? '' : 's'} left to one US dollar`
+      : 'pDAI flipped one US dollar.';
+  }
+
+  // ===== controls =====
+  function wireSeg(id, attr, onPick) {
+    document.querySelectorAll(`#${id} button`).forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b === btn));
+        onPick(btn.getAttribute(attr));
+      });
+    });
+  }
+  wireSeg('tfSeg', 'data-tf', v => { if (v !== tf) { tf = v; loadInitial(); } });
+  wireSeg('viewSeg', 'data-view', v => {
+    view = v;
+    // re-enable autoscale in case someone dragged the axis by hand
+    chart.priceScale('right').applyOptions({ autoScale: true });
+  });
+
+  // ===== kickoff =====
+  fetchLive();
+  loadInitial();
+})();
+</script>
+</body>
+</html>
