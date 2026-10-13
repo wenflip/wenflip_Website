@@ -177,10 +177,12 @@
 
 </div>
 
-<!-- Shared root data files first (TOKENS, LADDER), then the chart library, then the page script.
-     All plain classic scripts, no module. Lightweight Charts is pinned so a CDN update can't break the page. -->
+<!-- coins.js → ladder.js → shared.js (formatters, findRungIndex, fetchPairPrice), then the chart
+     library, then the page script. All plain classic scripts, no module. Lightweight Charts is pinned
+     so a CDN update can't break the page. -->
 <script src="/coins.js"></script>
 <script src="/ladder.js"></script>
+<script src="/shared.js"></script>
 <script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
 <script>
 (function(){
@@ -201,36 +203,13 @@
   const PAGE = 1000;           // GeckoTerminal max candles per request
   const LIVE_MS = 60000;
 
-  // ===== price formatting (same as app.js fmtCoinPrice / fmtItemPrice) =====
-  const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
-  function fmtCoinPrice(p) {
+  // Price axis and crosshair labels. Axis ticks are round numbers, so this rounds to 4 significant
+  // figures instead of truncating like fmtCoinPrice does (truncating prints a $0.014 tick as $0.01399).
+  function fmtAxisPrice(p) {
     if (p == null || !isFinite(p)) return '—';
-    if (p <= 0)    return '$0';
-    if (p >= 1000) return '$' + Math.floor(p).toLocaleString('en-US');
-    if (p >= 1) {
-      let s = (Math.floor(p * 100 * (1 + 1e-9)) / 100).toFixed(2).replace(/\.?0+$/, '');
-      const [int, dec] = s.split('.');
-      const intFmt = parseInt(int,10).toLocaleString('en-US');
-      return '$' + (dec ? intFmt + '.' + dec : intFmt);
-    }
-    if (p >= 0.0001) {
-      const mag = Math.floor(Math.log10(p));
-      const factor = Math.pow(10, 3 - mag);
-      let s = (Math.floor(p * factor * (1 + 1e-9)) / factor).toFixed(-mag + 3); // epsilon: 0.014 must not print as 0.01399
-      return '$' + s.replace(/0+$/, '').replace(/\.$/, '');
-    }
-    const mag2 = Math.floor(Math.log10(p));
-    const factor2 = Math.pow(10, 3 - mag2);
-    const raw = (Math.floor(p * factor2) / factor2).toFixed(-mag2 + 3);
-    const afterDot = raw.split('.')[1] || '';
-    let z = 0; while (afterDot[z] === '0') z++;
-    return '$0.0' + (SUB_DIGITS[z] || String(z)) + afterDot.slice(z).replace(/0+$/, '');
-  }
-  function fmtItemPrice(p) {
-    if (p >= 1000) return '$' + p.toLocaleString('en-US', {maximumFractionDigits: 0});
-    if (p >= 1)    return '$' + p.toFixed(2).replace(/\.?0+$/, '');
-    const mag = Math.floor(Math.log10(p));
-    return '$' + p.toFixed(Math.max(0, -mag + 3)).replace(/0+$/, '').replace(/\.$/, '');
+    if (p >= 1000)   return '$' + Math.round(p).toLocaleString('en-US');
+    if (p >= 0.0001) return '$' + Number(p.toPrecision(4));
+    return fmtCoinPrice(p);
   }
   const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -273,7 +252,7 @@
     upColor: '#2ee06a', downColor: '#c9655c',
     wickUpColor: '#2ee06a', wickDownColor: '#c9655c',
     borderVisible: false,
-    priceFormat: { type: 'custom', formatter: fmtCoinPrice, minMove: 1e-8 },
+    priceFormat: { type: 'custom', formatter: fmtAxisPrice, minMove: 1e-8 },
     autoscaleInfoProvider: (orig) => {
       if (view === 'walk') return { priceRange: { minValue: RUNG_MIN * 0.92, maxValue: RUNG_MAX * 1.08 } };
       return orig();
@@ -447,12 +426,7 @@
   // ===== live price from DexScreener (same source as the rest of the site) =====
   async function fetchLive() {
     try {
-      const url = `https://api.dexscreener.com/latest/dex/pairs/${COIN.dexChain}/${COIN.pairAddress}`;
-      const res = await fetch(url);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const json = await res.json();
-      const pair = json.pair || (json.pairs || [])[0];
-      const p = pair && parseFloat(pair.priceUsd);
+      const p = await fetchPairPrice(COIN.dexChain, COIN.pairAddress);
       if (p > 0) { livePrice = p; updateNow(p); applyLiveToLastBar(); }
     } catch (e) { /* keep the last good price */ }
     setTimeout(fetchLive, LIVE_MS);
@@ -467,16 +441,13 @@
     series.update(nb);
   }
 
-  // ===== header, next-flip cards, footer =====
-  function rungFor(price) {
-    for (const r of LADDER) if (r.price <= price) return r;
-    return null;
-  }
+  // ===== header, flip strip, footer =====
   // multiplier, the way CT says it: 613x, 18.4x, 1.10x
   function fmtX(m) { return (m >= 100 ? Math.round(m).toLocaleString('en-US') : m >= 10 ? m.toFixed(1) : m.toFixed(2)) + 'x'; }
   function updateNow(p) {
     document.getElementById('nowPrice').textContent = fmtCoinPrice(p);
-    const worth = rungFor(p);
+    // findRungIndex returns the cheapest rung for anything below the floor, so check the floor here
+    const worth = p >= LADDER[LADDER.length - 1].price ? LADDER[findRungIndex(p)] : null;
     document.getElementById('nowWorth').innerHTML = worth ? `worth <b>${esc(worth.name)}</b>` : 'worth less than a toothbrush bristle';
     document.getElementById('toDollarX').textContent = p >= 1 ? 'flipped' : fmtX(1 / p);
     setNear(p);
