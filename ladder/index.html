@@ -116,7 +116,7 @@
     if (p <= 0)    return '$0';
     if (p >= 1000) { return '$' + Math.floor(p).toLocaleString('en-US'); }
     if (p >= 1) {
-      const trunc = Math.floor(p * 100) / 100;
+      const trunc = Math.floor(+(p * 100).toPrecision(12)) / 100;
       let s = trunc.toFixed(2);
       s = s.replace(/\.?0+$/, '');
       const [int, dec] = s.split('.');
@@ -126,7 +126,7 @@
     if (p >= 0.0001) {
       const mag = Math.floor(Math.log10(p));
       const factor = Math.pow(10, 3 - mag);
-      const truncated = Math.floor(p * factor) / factor;
+      const truncated = Math.floor(+(p * factor).toPrecision(12)) / factor;
       const decPlaces = -mag + 3;
       let s = truncated.toFixed(decPlaces);
       s = s.replace(/0+$/, '').replace(/\.$/, '');
@@ -135,7 +135,7 @@
     const mag2 = Math.floor(Math.log10(p));
     const leadingZeros = -mag2 - 1;
     const factor2 = Math.pow(10, 3 - mag2);
-    const truncSig = Math.floor(p * factor2) / factor2;
+    const truncSig = Math.floor(+(p * factor2).toPrecision(12)) / factor2;
     const decPlaces2 = leadingZeros + 4;
     let raw = truncSig.toFixed(decPlaces2);
     const afterDot = raw.split('.')[1] || '';

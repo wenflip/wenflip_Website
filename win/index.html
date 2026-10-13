@@ -313,7 +313,7 @@
     if (p <= 0)    return '$0';
     if (p >= 1000) return '$' + Math.floor(p).toLocaleString('en-US');
     if (p >= 1) {
-      const trunc = Math.floor(p * 100) / 100;
+      const trunc = Math.floor(+(p * 100).toPrecision(12)) / 100;
       let s = trunc.toFixed(2).replace(/\.?0+$/, '');
       const [int, dec] = s.split('.');
       const intFmt = parseInt(int,10).toLocaleString('en-US');
@@ -322,14 +322,14 @@
     if (p >= 0.0001) {
       const mag = Math.floor(Math.log10(p));
       const factor = Math.pow(10, 3 - mag);
-      const truncated = Math.floor(p * factor) / factor;
+      const truncated = Math.floor(+(p * factor).toPrecision(12)) / factor;
       let s = truncated.toFixed(-mag + 3).replace(/0+$/, '').replace(/\.$/, '');
       return '$' + s;
     }
     const mag2 = Math.floor(Math.log10(p));
     const leadingZeros = -mag2 - 1;
     const factor2 = Math.pow(10, 3 - mag2);
-    const truncSig = Math.floor(p * factor2) / factor2;
+    const truncSig = Math.floor(+(p * factor2).toPrecision(12)) / factor2;
     let raw = truncSig.toFixed(leadingZeros + 4);
     const afterDot = raw.split('.')[1] || '';
     let zCount = 0;

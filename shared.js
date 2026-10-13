@@ -7,6 +7,8 @@
 // Used ONLY for live coin prices (board, cards, share cards).
 // Real-world item/ladder prices are passed through fmtItemPrice (identity).
 // All truncation chops toward zero — never rounds up.
+// Each multiply goes through toPrecision(12) before Math.floor, to strip binary
+// float noise: 1.15 * 100 is 114.99999999999999 in JS, which floored to $1.14.
 const SUB_DIGITS = ['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
 function fmtCoinPrice(p) {
   if (p == null) return '—';
@@ -19,7 +21,7 @@ function fmtCoinPrice(p) {
 
   // 1 ≤ p < 1000 → up to 2 decimals, truncated, strip trailing zeros
   if (p >= 1) {
-    const trunc = Math.floor(p * 100) / 100;
+    const trunc = Math.floor(+(p * 100).toPrecision(12)) / 100;
     let s = trunc.toFixed(2);            // "152.84"
     s = s.replace(/\.?0+$/, '');         // strip trailing zeros → "152.84" or "2.5"
     // add thousands sep for values ≥ 1000 (can't happen here but safe)
@@ -35,7 +37,7 @@ function fmtCoinPrice(p) {
     // Strategy: multiply up so first sig digit is in units place, floor to 4 sig figs
     const mag = Math.floor(Math.log10(p));  // e.g. -3 for 0.001176
     const factor = Math.pow(10, 3 - mag);    // 10^(3-(-3)) = 10^6
-    const truncated = Math.floor(p * factor) / factor;
+    const truncated = Math.floor(+(p * factor).toPrecision(12)) / factor;
     // Now format: need enough decimal places
     const decPlaces = -mag + 3;              // e.g. 6 for mag=-3
     let s = truncated.toFixed(decPlaces);
@@ -49,7 +51,7 @@ function fmtCoinPrice(p) {
   const mag2 = Math.floor(Math.log10(p));   // e.g. -6 for 0.00000713
   const leadingZeros = -mag2 - 1;            // e.g. 5
   const factor2 = Math.pow(10, 3 - mag2);   // shift 4 sig digits to units+
-  const truncSig = Math.floor(p * factor2) / factor2;
+  const truncSig = Math.floor(+(p * factor2).toPrecision(12)) / factor2;
   const decPlaces2 = leadingZeros + 4;
   let raw = truncSig.toFixed(decPlaces2);
   // Extract just the significant digits (after the leading zeros)
