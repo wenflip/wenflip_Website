@@ -76,11 +76,13 @@ header.site-head { padding: 44px 20px 8px; text-align: center; }
   margin: 16px auto 0; max-width: 520px; color: var(--muted);
   font-size: clamp(14px, 2vw, 17px); font-weight: 600; line-height: 1.5; text-wrap: balance;
 }
-.site-head .backlink {
+.backlink {
   display: inline-block; margin-top: 6px; padding: 12px 6px;
   font-size: 12px; font-weight: 700; letter-spacing: 0.06em; color: var(--muted);
 }
-.site-head .backlink:hover { color: var(--text); }
+.backlink:hover { color: var(--text); }
+/* "← back to wenflip" sits at the end of the page, after the page's own buttons, just above the footer. */
+.backlink-row { text-align: center; margin-top: 28px; }
 
 /* ===== FOOTER — same on every page ===== */
 footer {
