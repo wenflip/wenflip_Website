@@ -1,4 +1,4 @@
-// shared.js — helpers used by the homepage (app.js) and /bag, /standings, /parity.
+// shared.js — helpers used by the homepage (app.js) and /bag, /standings, /parity, /pdai.
 // Classic script (no modules, no exports): everything here is a global.
 // Load order on every page: coins.js → ladder.js → shared.js → the page's own script.
 // Anything defined here must NOT be declared again by a page that loads this file.
@@ -91,6 +91,42 @@ function findRungIndex(price) {
   return LADDER.length - 1;
 }
 
+
+// ── Flip card helpers (homepage card + /pdai card) ──────────────────────────
+
+// Honest progress from the rung a coin already cleared to the next rung up.
+// Integer 0–99. Same gap-based math the homepage ladder uses — NOT
+// coinPrice/nextRung (which is always ~90–99% because rungs sit close together).
+function flipProgressPct(coinPrice, clearedRung, nextRung) {
+  if (!nextRung) return 100;
+  const floor = clearedRung ? clearedRung.price : 0;
+  const span = nextRung.price - floor;
+  if (span <= 0) return 0;
+  return Math.min(99, Math.max(0, Math.round(((coinPrice - floor) / span) * 100)));
+}
+
+// Shrink a hero card's item name until it fits its box on BOTH axes — replaces
+// the old length-bucket guess that let long names clip. Fails safe: if the card
+// is measured while hidden (0 height), it stays at MAX rather than shrinking to
+// the floor. app.js runs it on every render + once after the webfont loads;
+// /pdai runs it on its off-screen share card before capturing.
+function fitHeroName(cardEl) {
+  if (!cardEl) return;
+  const obj  = cardEl.querySelector('.pump-dream-obj');
+  const name = cardEl.querySelector('.pump-dream-name');
+  if (!obj || !name) return;
+  const MAX = 64, MIN = 15;            // px — raised so short object names dominate the frame
+  let size = MAX;
+  name.style.lineHeight = '1.15';      // room for descenders (y, g, p)
+  name.style.fontSize = size + 'px';
+  // Step down until the name + its price line fit the hero box (height and width).
+  while (size > MIN &&
+         (obj.scrollHeight > obj.clientHeight + 1 ||
+          name.scrollWidth  > name.clientWidth  + 1)) {
+    size -= 1;
+    name.style.fontSize = size + 'px';
+  }
+}
 
 // ── DexScreener ─────────────────────────────────────────────────────────────
 
