@@ -533,7 +533,7 @@
       }
     }
 
-    const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>wenflip.com · @wenflips</span></div>`;
+    const stamp = `<div class="wf-stamp"><span>${dateStr}</span><span>@wenflips</span><span>wenflip.com</span></div>`;
 
     return head + hero + `<div class="wf-foot">${foot}${stamp}</div>`;
   }
@@ -991,7 +991,8 @@
       </div>
       <div class="fl-stamp">
         <span class="fl-date">${dateStr}</span>
-        <span class="fl-wm">wenflip.com · @wenflips</span>
+        <span>@wenflips</span>
+        <span class="fl-wm">wenflip.com</span>
       </div>
     `;
 

@@ -156,8 +156,10 @@
   .shot-chg{flex-shrink:0;width:56px;text-align:right;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;}
   .shot-chg.up{color:var(--green);}
   .shot-chg.down{color:var(--red);}
-  .shot-stamp{display:flex;justify-content:space-between;align-items:center;margin-top:18px;position:relative;z-index:1;
+  .shot-stamp{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:10px;margin-top:18px;position:relative;z-index:1;
     font-size:11px;color:rgba(46,224,106,0.60);font-weight:700;letter-spacing:0.06em;}
+  .shot-stamp > span:nth-child(2){text-align:center;}
+  .shot-stamp > span:nth-child(3){text-align:right;}
 </style>
 </head>
 <body>
@@ -293,7 +295,7 @@ function renderShot(rows){
       <div class="shot-scope">${scopeLabel()}</div>
     </div>
     <div class="shot-rows">${body || '<div class="shot-sub" style="text-align:center;padding:20px 0;">no coins in view</div>'}</div>
-    <div class="shot-stamp"><span>${dateStr}</span><span>wenflip.com/standings · @wenflips</span></div>
+    <div class="shot-stamp"><span>${dateStr}</span><span>@wenflips</span><span>wenflip.com/standings</span></div>
   `;
 }
 
