@@ -34,8 +34,12 @@
 <link rel="stylesheet" href="/styles.css">
 <style>
   .pdai-page { padding: 0 20px 20px; }
-  .pdai-wrap { max-width: 960px; margin: 22px auto 0; }
+  /* One fixed-width column on every screen, so the price/multiplier and holding/next-flip pairs
+     stay close together on a laptop instead of drifting to opposite edges. */
+  .pdai-wrap { max-width: 720px; margin: 22px auto 0; }
 
+  .pdai-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .pdai-logo { width: 40px; height: 40px; border-radius: 50%; flex: none; }
   .pdai-price { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .pdai-worth { color: var(--muted); font-size: 15px; }
   .pdai-worth b { color: var(--text); font-weight: 600; }
@@ -60,7 +64,6 @@
     color: rgba(245,245,250,0.62); background: rgba(17,17,31,0.78);
     transform: translateY(-100%); display: none;
   }
-  .rl.feat { color: var(--gold); }
   .rl.near { color: var(--green); font-weight: 600; }
   .chart-msg {
     position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; gap: 10px;
@@ -74,7 +77,8 @@
   .walk-top { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
   .walk-x { text-align:right; }
   .walk-x .big { font-family:'Space Grotesk',sans-serif; font-size:34px; font-weight:700; color:var(--green); line-height:1; font-variant-numeric:tabular-nums; }
-  .walk-x .lbl { font-size:12px; color:var(--muted); margin-top:4px; }
+  .walk-x { flex: none; }
+  .walk-x .lbl { font-size:12px; color:var(--muted); margin-top:4px; white-space:nowrap; }
 
   .flipstrip { margin:14px 0 4px; background:var(--bg-2); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
   .fs-ends { display:flex; justify-content:space-between; gap:12px; }
@@ -97,6 +101,7 @@
   @media (max-width: 600px) {
     .chart-box { height: 420px; }
     .pdai-price { font-size: 28px; }
+    .pdai-logo { width: 34px; height: 34px; }
     .walk-x .big { font-size: 28px; }
   }
 </style>
@@ -115,9 +120,12 @@
   <div class="pdai-wrap">
 
     <div class="walk-top">
-      <div>
-        <div class="pdai-price" id="nowPrice">—</div>
-        <div class="pdai-worth" id="nowWorth">loading the walk…</div>
+      <div class="pdai-id">
+        <img class="pdai-logo" src="/logos/pDAI_logo.png" alt="pDAI" width="40" height="40">
+        <div>
+          <div class="pdai-price" id="nowPrice">—</div>
+          <div class="pdai-worth" id="nowWorth">loading the walk…</div>
+        </div>
       </div>
       <div class="walk-x">
         <div class="big" id="toDollarX">—</div>
@@ -142,8 +150,8 @@
         <button type="button" data-tf="1d" class="active">1D</button>
       </div>
       <div class="seg" id="viewSeg" role="tablist" aria-label="Price view">
-        <button type="button" data-view="walk" class="active">the whole walk</button>
-        <button type="button" data-view="fit">fit to price</button>
+        <button type="button" data-view="fit" class="active">fit to price</button>
+        <button type="button" data-view="walk">the whole walk</button>
       </div>
     </div>
 
@@ -247,7 +255,7 @@
   });
 
   // "the whole walk" pins the price axis to $0.001 → $1; "fit to price" lets it autoscale to the candles.
-  let view = 'walk';
+  let view = 'fit';
   const series = chart.addSeries(LC.CandlestickSeries, {
     upColor: '#2ee06a', downColor: '#c9655c',
     wickUpColor: '#2ee06a', wickDownColor: '#c9655c',
@@ -264,12 +272,12 @@
   const rungs = RUNGS.map(r => {
     const line = series.createPriceLine({
       price: r.price, lineWidth: 1, lineStyle: LC.LineStyle.Dashed,
-      color: r.featured ? 'rgba(251,191,36,0.55)' : 'rgba(255,255,255,0.13)',
+      color: 'rgba(255,255,255,0.13)',
       axisLabelVisible: false, title: '',
     });
     const el = document.createElement('div');
-    el.className = 'rl' + (r.featured ? ' feat' : '');
-    el.textContent = (r.featured ? '★ ' : '') + r.name + ' · ' + fmtItemPrice(r.price);
+    el.className = 'rl';
+    el.textContent = r.name + ' · ' + fmtItemPrice(r.price);
     labelsEl.appendChild(el);
     return { r, line, el, near: false, shown: false, y: null };
   });
@@ -291,7 +299,7 @@
         g.near = near;
         g.el.classList.toggle('near', near);
         g.line.applyOptions({
-          color: near ? 'rgba(46,224,106,0.85)' : (g.r.featured ? 'rgba(251,191,36,0.55)' : 'rgba(255,255,255,0.13)'),
+          color: near ? 'rgba(46,224,106,0.85)' : 'rgba(255,255,255,0.13)',
           lineStyle: near ? LC.LineStyle.Solid : LC.LineStyle.Dashed,
         });
       }
@@ -299,7 +307,8 @@
   }
 
   // Label culling: every rung keeps its line; names only show where they fit.
-  // Priority: the two rungs hugging the price, then ★ featured, then whatever's closest to the price.
+  // Priority: the two rungs hugging the price, then whatever's closest to the price.
+  // Every other rung is plain and treated the same on this page.
   const LABEL_GAP = 15;
   function layoutLabels() {
     const paneH = box.clientHeight - chart.timeScale().height();
@@ -310,7 +319,7 @@
       g.y = y;
       if (y == null || y < 14 || y > paneH - 2) continue;
       if (y > paneH - 34 && !g.near) continue; // keep clear of the TradingView logo, bottom-left
-      const prio = (g.near ? 0 : g.r.featured ? 1 : 2) * 1000 + Math.abs(Math.log10(g.r.price / ref));
+      const prio = (g.near ? 0 : 1) * 1000 + Math.abs(Math.log10(g.r.price / ref));
       cand.push({ g, y, prio });
     }
     cand.sort((a, b) => a.prio - b.prio);
