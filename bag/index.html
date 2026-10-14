@@ -88,9 +88,11 @@
   .bc-obj-price{font-size:15px;color:var(--muted);font-variant-numeric:tabular-nums;margin-top:4px;}
   .bc-divider{height:1px;background:rgba(255,255,255,0.08);margin:16px 0 0;}
   .bc-stamp{
-    position:absolute;bottom:26px;left:26px;right:26px;display:flex;justify-content:space-between;align-items:center;
+    position:absolute;bottom:26px;left:26px;right:26px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;column-gap:10px;
     font-size:11px;color:rgba(46,224,106,0.60);font-weight:700;letter-spacing:0.06em;
   }
+  .bc-stamp > span:nth-child(2){text-align:center;}
+  .bc-stamp > span:nth-child(3){text-align:right;}
   .bc-sig{position:absolute;bottom:12px;left:26px;right:26px;text-align:center;font-size:10px;color:rgba(245,245,250,0.30);font-style:italic;letter-spacing:0.02em;}
 
   .updated{margin:18px 0 4px;text-align:center;color:var(--muted);font-size:12px;letter-spacing:0.06em;min-height:16px;}
@@ -281,7 +283,7 @@ function render(){
       <div class="bc-obj-price">${fmtItemPrice(rung.price)}</div>
     </div>
     <div class="bc-divider"></div>
-    <div class="bc-stamp"><span>${dateStr}</span><span>wenflip.com · @wenflips</span></div>
+    <div class="bc-stamp"><span>${dateStr}</span><span>@wenflips</span><span>wenflip.com</span></div>
     <div class="bc-sig">Live price · not a projection</div>
   `;
   shareRow.style.display='';

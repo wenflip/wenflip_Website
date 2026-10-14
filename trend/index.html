@@ -156,9 +156,11 @@
   .c-receipt b { color: var(--text); font-weight: 800; }
   .c-flavor { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 10px; }
   .c-stamp {
-    display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px;
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: baseline; column-gap: 10px; margin-top: 16px;
     font-size: 11px; font-weight: 800; letter-spacing: 0.06em; color: rgba(46,224,106,0.7);
   }
+  .c-stamp > span:nth-child(2) { text-align: center; }
+  .c-stamp > span:nth-child(3) { text-align: right; }
 </style>
 </head>
 <body>
@@ -239,6 +241,7 @@
           <div class="c-flavor" id="b_flavor" style="display:none"></div>
           <div class="c-stamp">
             <span id="b_date">—</span>
+            <span>@wenflips</span>
             <span>wenflip.com</span>
           </div>
         </div>
