@@ -1,4 +1,4 @@
-// shared.js — helpers used by the homepage (app.js) and /bag, /standings, /parity, /pdai.
+// shared.js — helpers used by the homepage (app.js) and /bag, /standings, /parity, /pdai, /hex.
 // Classic script (no modules, no exports): everything here is a global.
 // Load order on every page: coins.js → ladder.js → shared.js → the page's own script.
 // Anything defined here must NOT be declared again by a page that loads this file.
