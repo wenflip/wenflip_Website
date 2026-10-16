@@ -32,99 +32,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
 <link rel="stylesheet" href="/styles.css">
-<style>
-  .pdai-page { padding: 0 20px 20px; }
-  /* One fixed-width column on every screen, so the price/multiplier and holding/next-flip pairs
-     stay close together on a laptop instead of drifting to opposite edges. */
-  .pdai-wrap { max-width: 720px; margin: 22px auto 0; }
-
-  .pdai-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
-  .pdai-logo { width: 40px; height: 40px; border-radius: 50%; flex: none; }
-  .pdai-price { font-family: 'Space Grotesk', sans-serif; font-size: 34px; font-weight: 700; font-variant-numeric: tabular-nums; }
-  .pdai-worth { color: var(--muted); font-size: 15px; }
-  .pdai-worth b { color: var(--text); font-weight: 600; }
-
-  .pdai-controls { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; margin: 14px 0 10px; }
-  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg-2); }
-  .seg button { background: none; border: 0; padding: 7px 12px; font-size: 13px; color: var(--muted); cursor: pointer; }
-  .seg button + button { border-left: 1px solid var(--line); }
-  .seg button:hover { color: var(--text); }
-  .seg button.active { color: var(--on-accent); background: var(--accent); font-weight: 600; }
-
-  .chart-box {
-    position: relative; height: 520px; border: 1px solid var(--line); border-radius: 16px;
-    background: var(--bg-2); overflow: hidden; touch-action: none;
-  }
-  #chart { position: absolute; inset: 0; }
-  #rungLabels { position: absolute; inset: 0; pointer-events: none; z-index: 3; overflow: hidden; }
-  .rl {
-    position: absolute; left: 8px; top: 0; max-width: calc(100% - 110px);
-    font-size: 11px; line-height: 14px; padding: 0 5px; border-radius: 4px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    color: rgba(245,245,250,0.62); background: rgba(17,17,31,0.78);
-    transform: translateY(-100%); display: none;
-  }
-  .rl.near { color: var(--green); font-weight: 600; }
-  .chart-msg {
-    position: absolute; inset: 0; z-index: 4; display: flex; flex-direction: column; gap: 10px;
-    align-items: center; justify-content: center; text-align: center; color: var(--muted); font-size: 14px; padding: 20px;
-  }
-  .chart-msg button { background: var(--bg-3); border: 1px solid var(--line); border-radius: 10px; padding: 7px 14px; color: var(--text); cursor: pointer; }
-  .chart-msg[hidden] { display: none; }
-  .loading-more { position: absolute; left: 10px; bottom: 34px; z-index: 4; font-size: 12px; color: var(--muted); background: rgba(17,17,31,0.85); padding: 3px 8px; border-radius: 6px; }
-  .loading-more[hidden] { display: none; }
-
-  .walk-top { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
-  .walk-x { text-align:right; }
-  .walk-x .big { font-family:'Space Grotesk',sans-serif; font-size:34px; font-weight:700; color:var(--green); line-height:1; font-variant-numeric:tabular-nums; }
-  .walk-x { flex: none; }
-  .walk-x .lbl { font-size:12px; color:var(--muted); margin-top:4px; white-space:nowrap; }
-
-  .flipstrip { margin:14px 0 4px; background:var(--bg-2); border:1px solid var(--line); border-radius:16px; padding:14px 16px; }
-  .fs-ends { display:flex; justify-content:space-between; gap:12px; }
-  .fs-end .k { font-size:11px; color:var(--muted); letter-spacing:.04em; }
-  .fs-end .n { font-size:14px; font-weight:600; margin-top:2px; }
-  .fs-end .p { font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
-  .fs-end.next { text-align:right; }
-  .fs-end.next .n { color:var(--green); }
-  .fs-bar { position:relative; height:10px; border-radius:99px; background:var(--bg-3); border:1px solid var(--line); margin:12px 0 8px; overflow:hidden; }
-  .fs-fill { position:absolute; inset:0 auto 0 0; width:0; background:var(--grad); border-radius:99px; transition:width .4s ease; }
-  .fs-cap { display:flex; justify-content:space-between; font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums; }
-  .fs-cap b { color:var(--text); font-weight:600; }
-
-  .pdai-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; margin-top: 12px; font-size: 13px; color: var(--muted); }
-  .pdai-foot b { color: var(--text); }
-  .pdai-foot a { text-decoration: underline; text-underline-offset: 3px; }
-
-  /* Share buttons: same look as /bag. */
-  .share-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
-  .share-btn {
-    display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px; border-radius: 999px;
-    background: var(--grad); border: none; color: var(--on-accent); font-weight: 800; font-size: 14px; cursor: pointer;
-    font-family: 'Inter', sans-serif; box-shadow: 0 8px 30px rgba(46,224,106,0.32);
-    transition: transform .15s, box-shadow .2s;
-  }
-  .share-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(46,224,106,0.45); }
-  .share-btn:disabled { opacity: 0.5; pointer-events: none; }
-  .share-btn.ghost { background: rgba(255,255,255,0.06); box-shadow: none; border: 1px solid var(--line); color: var(--text); }
-  .share-btn.ghost:hover { background: rgba(255,255,255,0.12); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
-  /* The share card is the homepage flip card (wf-* / pump-* styles from styles.css),
-     rendered off-screen at its normal 360px size and captured on "Copy as image". */
-  .shot-stage { position: absolute; left: -99999px; top: 0; width: 360px; }
-
-  .pdai-cta-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
-
-  @media (max-width: 600px) {
-    .chart-box { height: 420px; }
-    .pdai-price { font-size: 28px; }
-    .pdai-logo { width: 34px; height: 34px; }
-    .walk-x .big { font-size: 28px; }
-  }
-</style>
+<link rel="stylesheet" href="/walk.css">
 </head>
 <body>
 
-<div class="container pdai-page">
+<div class="container walk-page">
 
   <header class="site-head">
     <div class="brand"><a class="wf" href="/">wenflip</a><span class="slash">/</span><h1 class="sec">pDAI</h1></div>
@@ -132,32 +44,11 @@
   </header>
 
 <main>
-  <div class="pdai-wrap">
+  <div class="walk-wrap">
 
-    <div class="walk-top">
-      <div class="pdai-id">
-        <img class="pdai-logo" src="/logos/pDAI_logo.png" alt="pDAI" width="40" height="40">
-        <div>
-          <div class="pdai-price" id="nowPrice">—</div>
-          <div class="pdai-worth" id="nowWorth">loading the walk…</div>
-        </div>
-      </div>
-      <div class="walk-x">
-        <div class="big" id="toDollarX">—</div>
-        <div class="lbl">to one US dollar</div>
-      </div>
-    </div>
+    <div id="walkHead"></div>
 
-    <div class="flipstrip">
-      <div class="fs-ends">
-        <div class="fs-end"><div class="k">holding</div><div class="n" id="fsHold">—</div><div class="p" id="fsHoldP">&nbsp;</div></div>
-        <div class="fs-end next"><div class="k">next flip</div><div class="n" id="fsNext">—</div><div class="p" id="fsNextP">&nbsp;</div></div>
-      </div>
-      <div class="fs-bar"><div class="fs-fill" id="fsFill"></div></div>
-      <div class="fs-cap"><span id="fsPct">&nbsp;</span><span id="fsX">&nbsp;</span></div>
-    </div>
-
-    <div class="pdai-controls">
+    <div class="walk-controls">
       <div class="seg" id="tfSeg" role="tablist" aria-label="Timeframe">
         <button type="button" data-tf="15m">15m</button>
         <button type="button" data-tf="1h">1H</button>
@@ -177,9 +68,9 @@
       <div class="chart-msg" id="chartMsg"><span>loading the chart…</span></div>
     </div>
 
-    <div class="pdai-foot">
+    <div class="walk-foot">
       <span id="rungsLeft">&nbsp;</span>
-      <span>chart: <a href="https://www.geckoterminal.com/pulsechain/pools/0xfc64556faa683e6087f425819c7ca3c558e13ac1" target="_blank" rel="noopener" id="srcLink">GeckoTerminal</a> · live price: DexScreener</span>
+      <span id="srcNote">&nbsp;</span>
     </div>
 
     <div class="share-row">
@@ -187,7 +78,7 @@
       <button type="button" class="share-btn ghost" id="linkBtn"><span class="ico ico-link" aria-hidden="true"></span> Copy link</button>
     </div>
 
-    <div class="pdai-cta-row">
+    <div class="walk-cta-row">
       <a class="full-ladder-btn full-ladder-btn-standings" href="/ladder">see the full ladder →</a>
       <a class="full-ladder-btn full-ladder-btn-standings" href="https://wenpeg.wenflip.com" target="_blank" rel="noopener">hold the peg yourself →</a>
     </div>
@@ -210,391 +101,25 @@
 <div class="shot-stage" aria-hidden="true"><div class="wf-flip-card flip-card" id="shotCard"></div></div>
 <div class="toast" id="toast"></div>
 
-<!-- coins.js → ladder.js → shared.js (formatters, findRungIndex, fetchPairPrice, flipProgressPct,
-     fitHeroName, copy-as-image helpers), then the chart
-     library, then the page script. All plain classic scripts, no module. Lightweight Charts is pinned
+<!-- coins.js → ladder.js → shared.js (formatters, findRungIndex, fetchDexPairs, flipProgressPct,
+     fitHeroName, copy-as-image helpers), then the chart library, then walk.js (the chart engine
+     shared with /hex), then this page's config. All plain classic scripts, no module. Lightweight Charts is pinned
      so a CDN update can't break the page. -->
 <script src="/coins.js"></script>
 <script src="/ladder.js"></script>
 <script src="/shared.js"></script>
 <script src="https://unpkg.com/lightweight-charts@5.2.1/dist/lightweight-charts.standalone.production.js"></script>
+<script src="/walk.js"></script>
 <script>
-(function(){
-  // ===== config =====
-  const COIN = TOKENS.find(t => t.sym === 'pDAI');
-  // pDAI's token address on PulseChain (same address as DAI on Ethereum, forked at launch).
-  // Passed to GeckoTerminal so candles are always priced as pDAI, whichever side of the pool it sits on.
-  const PDAI_TOKEN = '0x6b175474e89094c44da98b954eedeac495271d0f';
-  const RUNG_MIN = 0.001, RUNG_MAX = 1;
-  const RUNGS = LADDER.filter(r => r.price >= RUNG_MIN && r.price <= RUNG_MAX); // price-descending
-  const GECKO_NET = { ethereum: 'eth', bsc: 'bsc', base: 'base', pulsechain: 'pulsechain' };
-  const TF = {
-    '15m': { unit: 'minute', agg: 15 },
-    '1h':  { unit: 'hour',   agg: 1 },
-    '4h':  { unit: 'hour',   agg: 4 },
-    '1d':  { unit: 'day',    agg: 1 },
-  };
-  const PAGE = 1000;           // GeckoTerminal max candles per request
-  const LIVE_MS = 60000;
-
-  // Price axis and crosshair labels. Axis ticks are round numbers, so this rounds to 4 significant
-  // figures instead of truncating like fmtCoinPrice does (truncating prints a $0.014 tick as $0.01399).
-  function fmtAxisPrice(p) {
-    if (p == null || !isFinite(p)) return '—';
-    if (p >= 1000)   return '$' + Math.round(p).toLocaleString('en-US');
-    if (p >= 0.0001) return '$' + Number(p.toPrecision(4));
-    return fmtCoinPrice(p);
-  }
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-
-  // ===== chart =====
-  const LC = window.LightweightCharts;
-  const box = document.getElementById('chartBox');
-  const msgEl = document.getElementById('chartMsg');
-  function showMsg(html) { msgEl.innerHTML = html; msgEl.hidden = false; }
-  function hideMsg() { msgEl.hidden = true; }
-
-  if (!LC || !COIN) {
-    showMsg('<span>the chart didn\'t load. refresh and try again.</span>');
-    return;
-  }
-
-  const chart = LC.createChart(document.getElementById('chart'), {
-    autoSize: true,
-    layout: {
-      background: { type: 'solid', color: 'transparent' },
-      textColor: '#8a8aa8',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      fontSize: 11,
-    },
-    grid: {
-      vertLines: { color: 'rgba(255,255,255,0.03)' },
-      horzLines: { visible: false },
-    },
-    rightPriceScale: {
-      mode: LC.PriceScaleMode.Logarithmic,
-      borderColor: 'rgba(255,255,255,0.08)',
-      scaleMargins: { top: 0.06, bottom: 0.06 },
-    },
-    timeScale: { borderColor: 'rgba(255,255,255,0.08)', timeVisible: false, rightOffset: 6 },
-    crosshair: { mode: LC.CrosshairMode.Normal },
+  startWalk({
+    slug: 'pdai',
+    // pDAI's token address on PulseChain (same address as DAI on Ethereum, forked at launch).
+    // Passed to GeckoTerminal so candles are always priced as pDAI, whichever side of the pool it sits on.
+    coins: [{ sym: 'pDAI', token: '0x6b175474e89094c44da98b954eedeac495271d0f' }],
+    rungMin: 0.001, rungMax: 1,
+    walkFloor: 0.001,
+    goal: { name: 'one US dollar', short: '$1' },
   });
-
-  // "the whole walk" pins the price axis to $0.001 → $1; "fit to price" lets it autoscale to the candles.
-  let view = 'fit';
-  const series = chart.addSeries(LC.CandlestickSeries, {
-    upColor: '#2ee06a', downColor: '#c9655c',
-    wickUpColor: '#2ee06a', wickDownColor: '#c9655c',
-    borderVisible: false,
-    priceFormat: { type: 'custom', formatter: fmtAxisPrice, minMove: 1e-8 },
-    autoscaleInfoProvider: (orig) => {
-      if (view === 'walk') return { priceRange: { minValue: RUNG_MIN * 0.92, maxValue: RUNG_MAX * 1.08 } };
-      return orig();
-    },
-  });
-
-  // ===== rung lines + labels =====
-  const labelsEl = document.getElementById('rungLabels');
-  const rungs = RUNGS.map(r => {
-    const line = series.createPriceLine({
-      price: r.price, lineWidth: 1, lineStyle: LC.LineStyle.Dashed,
-      color: 'rgba(255,255,255,0.13)',
-      axisLabelVisible: false, title: '',
-    });
-    const el = document.createElement('div');
-    el.className = 'rl';
-    el.textContent = r.name + ' · ' + fmtItemPrice(r.price);
-    labelsEl.appendChild(el);
-    return { r, line, el, near: false, shown: false, y: null };
-  });
-
-  let livePrice = null;
-  let lastClose = null;
-  let nextUp = null, holding = null;   // rung objects
-
-  function setNear(price) {
-    let up = null, hold = null;
-    for (const g of rungs) {             // rungs are price-descending
-      if (g.r.price > price) up = g;
-      else { hold = g; break; }
-    }
-    nextUp = up; holding = hold;
-    for (const g of rungs) {
-      const near = g === up || g === hold;
-      if (near !== g.near) {
-        g.near = near;
-        g.el.classList.toggle('near', near);
-        g.line.applyOptions({
-          color: near ? 'rgba(46,224,106,0.85)' : 'rgba(255,255,255,0.13)',
-          lineStyle: near ? LC.LineStyle.Solid : LC.LineStyle.Dashed,
-        });
-      }
-    }
-  }
-
-  // Label culling: every rung keeps its line; names only show where they fit.
-  // Priority: the two rungs hugging the price, then whatever's closest to the price.
-  // Every other rung is plain and treated the same on this page.
-  const LABEL_GAP = 15;
-  function layoutLabels() {
-    const paneH = box.clientHeight - chart.timeScale().height();
-    const ref = livePrice != null ? livePrice : (lastClose || 0.003);
-    const cand = [];
-    for (const g of rungs) {
-      const y = series.priceToCoordinate(g.r.price);
-      g.y = y;
-      if (y == null || y < 14 || y > paneH - 2) continue;
-      if (y > paneH - 34 && !g.near) continue; // keep clear of the TradingView logo, bottom-left
-      const prio = (g.near ? 0 : 1) * 1000 + Math.abs(Math.log10(g.r.price / ref));
-      cand.push({ g, y, prio });
-    }
-    cand.sort((a, b) => a.prio - b.prio);
-    const placed = [];
-    const show = new Set();
-    for (const c of cand) {
-      if (placed.some(y => Math.abs(y - c.y) < LABEL_GAP)) continue;
-      placed.push(c.y); show.add(c.g);
-    }
-    for (const g of rungs) {
-      const on = show.has(g);
-      if (on) g.el.style.transform = `translateY(${Math.round(g.y) - 1}px) translateY(-100%)`;
-      if (on !== g.shown) { g.el.style.display = on ? 'block' : 'none'; g.shown = on; }
-    }
-  }
-  // Price-axis drags don't fire an event, so re-lay labels every frame (88 rungs, cheap).
-  (function tick(){ layoutLabels(); requestAnimationFrame(tick); })();
-
-  // ===== candles from GeckoTerminal, paged backwards as you scroll left =====
-  let tf = '1d';
-  let bars = [];          // ascending by time
-  let tokenParam = PDAI_TOKEN;
-  let loading = false, exhausted = false, loadSeq = 0;
-
-  async function fetchCandles(beforeTs) {
-    const t = TF[tf];
-    const net = GECKO_NET[COIN.dexChain] || COIN.dexChain;
-    const q = new URLSearchParams({ aggregate: t.agg, limit: PAGE, currency: 'usd', token: tokenParam });
-    if (beforeTs) q.set('before_timestamp', beforeTs);
-    const url = `https://api.geckoterminal.com/api/v2/networks/${net}/pools/${COIN.pairAddress}/ohlcv/${t.unit}?${q}`;
-    const res = await fetch(url);
-    if (res.status === 429) throw new Error('rate');
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const json = await res.json();
-    const list = json?.data?.attributes?.ohlcv_list || [];
-    return list
-      .map(([ts, o, h, l, c]) => ({ time: ts, open: +o, high: +h, low: +l, close: +c }))
-      .filter(b => b.close > 0)
-      .sort((a, b) => a.time - b.time);
-  }
-
-  // If GeckoTerminal priced the wrong side of the pool, the close will be miles off DexScreener's live price.
-  function looksInverted(list) {
-    if (!livePrice || !list.length) return false;
-    const ratio = list[list.length - 1].close / livePrice;
-    return ratio > 20 || ratio < 0.05;
-  }
-
-  async function loadInitial() {
-    const seq = ++loadSeq;
-    loading = true; exhausted = false; bars = [];
-    showMsg('<span>loading the chart…</span>');
-    try {
-      let list;
-      try { list = await fetchCandles(); }
-      catch (e) {
-        if (tokenParam !== 'base' && /HTTP 4/.test(e.message)) { tokenParam = 'base'; list = await fetchCandles(); }
-        else throw e;
-      }
-      if (looksInverted(list)) {
-        tokenParam = tokenParam === 'quote' ? 'base' : 'quote';
-        list = await fetchCandles();
-      }
-      if (seq !== loadSeq) return;
-      if (!list.length) { showMsg('<span>no candles for this timeframe yet.</span>'); return; }
-      bars = list;
-      exhausted = list.length < PAGE;
-      series.setData(bars);
-      lastClose = bars[bars.length - 1].close;
-      chart.timeScale().applyOptions({ timeVisible: tf !== '1d' });
-      // open on the most recent stretch, like DexScreener; drag left for older history
-      const SHOW = { '15m': 192, '1h': 168, '4h': 180, '1d': 180 }[tf];
-      chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, bars.length - SHOW), to: bars.length + 5 });
-      hideMsg();
-      if (livePrice == null) updateNow(lastClose);
-      else applyLiveToLastBar();
-    } catch (e) {
-      if (seq !== loadSeq) return;
-      showMsg(`<span>${e.message === 'rate' ? 'too many requests. give it a few seconds.' : 'couldn\'t load the chart history.'}</span><button type="button" id="retryBtn">try again</button>`);
-      document.getElementById('retryBtn').onclick = loadInitial;
-    } finally {
-      if (seq === loadSeq) loading = false;
-    }
-  }
-
-  const moreEl = document.getElementById('loadingMore');
-  async function loadOlder() {
-    if (loading || exhausted || !bars.length) return;
-    const seq = loadSeq;
-    loading = true; moreEl.hidden = false;
-    try {
-      const older = (await fetchCandles(bars[0].time)).filter(b => b.time < bars[0].time);
-      if (seq !== loadSeq) return;
-      if (!older.length) { exhausted = true; return; }
-      if (older.length < PAGE - 1) exhausted = true;
-      const ts = chart.timeScale();
-      const lr = ts.getVisibleLogicalRange();
-      bars = older.concat(bars);
-      series.setData(bars);
-      if (lr) ts.setVisibleLogicalRange({ from: lr.from + older.length, to: lr.to + older.length });
-    } catch (e) {
-      // rate limited or network blip: wait, then let the next scroll try again
-      await new Promise(r => setTimeout(r, e.message === 'rate' ? 10000 : 3000));
-    } finally {
-      if (seq === loadSeq) loading = false;
-      moreEl.hidden = true;
-    }
-  }
-  chart.timeScale().subscribeVisibleLogicalRangeChange(lr => {
-    if (lr && lr.from < 30) loadOlder();
-  });
-
-  // ===== live price from DexScreener (same source as the rest of the site) =====
-  async function fetchLive() {
-    try {
-      const p = await fetchPairPrice(COIN.dexChain, COIN.pairAddress);
-      if (p > 0) { livePrice = p; updateNow(p); applyLiveToLastBar(); }
-    } catch (e) { /* keep the last good price */ }
-    setTimeout(fetchLive, LIVE_MS);
-  }
-  function applyLiveToLastBar() {
-    if (!bars.length || livePrice == null) return;
-    const b = bars[bars.length - 1];
-    // only nudge the newest candle if the live price is plausibly the same series
-    if (livePrice / b.close > 3 || livePrice / b.close < 0.33) return;
-    const nb = { ...b, close: livePrice, high: Math.max(b.high, livePrice), low: Math.min(b.low, livePrice) };
-    bars[bars.length - 1] = nb;
-    series.update(nb);
-  }
-
-  // ===== header, flip strip, footer =====
-  // multiplier, the way CT says it: 613x, 18.4x, 1.10x
-  function fmtX(m) { return (m >= 100 ? Math.round(m).toLocaleString('en-US') : m >= 10 ? m.toFixed(1) : m.toFixed(2)) + 'x'; }
-  function updateNow(p) {
-    document.getElementById('nowPrice').textContent = fmtCoinPrice(p);
-    // findRungIndex returns the cheapest rung for anything below the floor, so check the floor here
-    const worth = p >= LADDER[LADDER.length - 1].price ? LADDER[findRungIndex(p)] : null;
-    document.getElementById('nowWorth').innerHTML = worth ? `worth <b>${esc(worth.name)}</b>` : 'worth less than a toothbrush bristle';
-    document.getElementById('toDollarX').textContent = p >= 1 ? 'flipped' : fmtX(1 / p);
-    setNear(p);
-    const H = holding && holding.r, N = nextUp && nextUp.r;
-    document.getElementById('fsHold').textContent = H ? H.name : 'nothing on this stretch';
-    document.getElementById('fsHoldP').textContent = H ? fmtItemPrice(H.price) : `below ${fmtItemPrice(RUNG_MIN)}`;
-    document.getElementById('fsNext').textContent = N ? N.name : 'one US dollar. flipped.';
-    document.getElementById('fsNextP').textContent = N ? fmtItemPrice(N.price) : '';
-    const fill = document.getElementById('fsFill'), pctEl = document.getElementById('fsPct'), xEl = document.getElementById('fsX');
-    if (H && N) {
-      // same gap math as the homepage card (flipProgressPct), so the page, the share card
-      // and the homepage always show the same %
-      const pct = flipProgressPct(p, H, N);
-      fill.style.width = pct + '%';
-      pctEl.innerHTML = `<b>${pct}%</b> of the way`;
-      xEl.innerHTML = `<b>${fmtX(N.price / p)}</b> to flip`;
-    } else if (N) {
-      fill.style.width = '0%'; pctEl.innerHTML = '&nbsp;'; xEl.innerHTML = `<b>${fmtX(N.price / p)}</b> to flip`;
-    } else {
-      fill.style.width = '100%'; pctEl.innerHTML = 'the walk is over.'; xEl.innerHTML = '&nbsp;';
-    }
-    const left = RUNGS.filter(r => r.price > p).length;
-    document.getElementById('rungsLeft').innerHTML = left
-      ? `<b>${left}</b> rung${left === 1 ? '' : 's'} left to one US dollar`
-      : 'pDAI flipped one US dollar.';
-  }
-
-  // ===== share card =====
-  // The homepage flip card, with two /pdai touches: the pill shows the walk to $1
-  // (instead of the 24h %), and the stamp points at wenflip.com/pdai.
-  function renderShareCard(p) {
-    const idx = findRungIndex(p);
-    const cleared = LADDER[idx], next = LADDER[idx - 1];
-    const belowFloor = p < LADDER[LADDER.length - 1].price;
-    const pill = p >= 1 ? 'past $1' : `${fmtX(1 / p)} to $1`;
-    let hero, foot = '';
-    if (belowFloor) {
-      const pct = Math.min(99, Math.round((p / cleared.price) * 100));
-      hero = `<div class="pump-flips-lbl wf-chase">CHASING</div><div class="pump-dream-name">${esc(cleared.name)}</div>`;
-      foot = `<div class="pump-divider"></div>
-        <div class="wf-receipt">not on the board yet · <b>${pct}%</b> of the way there</div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1, pct)}%"></div></div>`;
-    } else if (!next) {
-      hero = `<div class="pump-flips-lbl">CLEARED EVERYTHING ✓</div><div class="pump-dream-name">the entire ladder</div>`;
-    } else {
-      const pct = flipProgressPct(p, cleared, next);
-      hero = `<div class="pump-flips-lbl">FLIPPED ✓</div><div class="pump-dream-name">${esc(cleared.name)}</div>`;
-      foot = `<div class="pump-divider"></div>
-        <div class="wf-receipt">${pct}% to <span class="wf-to">${esc(next.name)}</span></div>
-        <div class="sc-bar-track"><div class="sc-bar-fill" style="width:${Math.max(1, pct)}%"></div></div>`;
-    }
-    const dateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    const card = document.getElementById('shotCard');
-    card.innerHTML = `
-      <div class="wf-head">
-        <img class="pump-logo" src="${COIN.logo}" alt="pDAI"/>
-        <div class="pump-coin-id">
-          <div class="pump-coin-sym">pDAI</div>
-          <div class="pump-coin-name-sm"><span class="wf-coin-name">pDAI · </span>${fmtCoinPrice(p)}</div>
-        </div>
-        <div class="wf-chg-pill up">${pill}</div>
-      </div>
-      <div class="pump-dream-obj">${hero}</div>
-      <div class="wf-foot">${foot}<div class="wf-stamp"><span>${dateStr}</span><span>@wenflips</span><span>wenflip.com/pdai</span></div></div>`;
-    fitHeroName(card);
-    return card;
-  }
-
-  const pngBtn = document.getElementById('pngBtn'), pngIcon = document.getElementById('pngIcon'), pngText = document.getElementById('pngText');
-  function resetPngBtn() {
-    pngBtn.disabled = false;
-    pngIcon.className = _isIOS ? 'ico ico-download' : 'ico ico-clipboard';
-    pngText.textContent = _isIOS ? 'Save image' : 'Copy as image';
-  }
-  pngBtn.addEventListener('click', async () => {
-    if (livePrice == null) { showToast('No price yet — give it a second 😬'); return; }
-    pngBtn.disabled = true; pngIcon.className = 'ico ico-spin'; pngText.textContent = 'Generating…';
-    try {
-      await loadHtml2Canvas();
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      const card = renderShareCard(livePrice);
-      const src = await window.html2canvas(card, { backgroundColor: null, scale: 3, useCORS: true, logging: false });
-      deliverImage(brandCanvas(src, 0), 'wenflip-pdai.png');
-    } catch (err) { console.error(err); showToast('Screenshot failed — try again 😬'); }
-    finally { resetPngBtn(); }
-  });
-  document.getElementById('linkBtn').addEventListener('click', async () => {
-    try { await navigator.clipboard.writeText(location.origin + '/pdai'); showToast('Link copied 🔗'); }
-    catch { showToast('Copy failed — grab it from the address bar'); }
-  });
-  resetPngBtn();
-
-  // ===== controls =====
-  function wireSeg(id, attr, onPick) {
-    document.querySelectorAll(`#${id} button`).forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll(`#${id} button`).forEach(b => b.classList.toggle('active', b === btn));
-        onPick(btn.getAttribute(attr));
-      });
-    });
-  }
-  wireSeg('tfSeg', 'data-tf', v => { if (v !== tf) { tf = v; loadInitial(); } });
-  wireSeg('viewSeg', 'data-view', v => {
-    view = v;
-    // re-enable autoscale in case someone dragged the axis by hand
-    chart.priceScale('right').applyOptions({ autoScale: true });
-  });
-
-  // ===== kickoff =====
-  fetchLive();
-  loadInitial();
-})();
 </script>
 </body>
 </html>
