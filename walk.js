@@ -1,5 +1,5 @@
 /* ============================================================================
-   walk.js  —  the "long walk" chart engine behind /pdai and /hex
+   walk.js  —  the "long walk" chart engine behind /pdai, /hex and /pwbtc
    ----------------------------------------------------------------------------
    A real price chart (GeckoTerminal candles, DexScreener live price) on a log
    scale, with every ladder rung between cfg.rungMin and cfg.rungMax drawn on it.
@@ -21,6 +21,10 @@
      rungMin:   0.0001,              // rungs drawn: LADDER prices in [rungMin, rungMax]
      rungMax:   1,                   // also the goal ("to one US dollar")
      goal:      { name: 'one US dollar', short: '$1' },
+                                     // goal.liveSym (optional, e.g. 'BTC'): the goal is that
+                                     // coin's live price instead of rungMax. Rungs then run from
+                                     // rungMin up to wherever the goal is right now, and a goal
+                                     // line (goal.color) rides on the chart.
      walkFloor: 0.001 | 'auto',      // bottom of "the whole walk". 'auto' = the rung just
                                      // under the lowest price either coin has shown.
    }
@@ -32,10 +36,15 @@
 
 function startWalk(cfg) {
   const DUO = cfg.coins.length > 1;
-  const GOAL = cfg.rungMax;
+  // The finish line. Fixed (rungMax) on most pages; with goal.liveSym it's that coin's live
+  // price, null until the first price arrives.
+  const LIVE_GOAL = cfg.goal.liveSym || null;
+  const goalTok = LIVE_GOAL ? TOKENS.find(t => t.sym === LIVE_GOAL) : null;
+  let GOAL = LIVE_GOAL ? null : cfg.rungMax;
   const NEAR_GREEN = 'rgba(46,224,106,0.85)';
   const LINE_DIM = 'rgba(255,255,255,0.13)';
-  const RUNGS = LADDER.filter(r => r.price >= cfg.rungMin && r.price <= cfg.rungMax); // price-descending
+  // every rung that could be drawn (price-descending); the ones at or under GOAL are drawn (live[])
+  const RUNGS = LADDER.filter(r => r.price >= cfg.rungMin && (LIVE_GOAL || r.price <= cfg.rungMax));
   const GECKO_NET = { ethereum: 'eth', bsc: 'bsc', base: 'base', pulsechain: 'pulsechain' };
   const TF = {
     '15m': { unit: 'minute', agg: 15 },
@@ -78,7 +87,7 @@ function startWalk(cfg) {
   const nameOf = c => c.t ? c.t.sym : c.sym;
 
   const LC = window.LightweightCharts;
-  if (!LC || coins.some(c => !c.t)) {
+  if (!LC || coins.some(c => !c.t) || (LIVE_GOAL && !goalTok)) {
     showMsg('<span>the chart didn\'t load. refresh and try again.</span>');
     return;
   }
@@ -113,7 +122,7 @@ function startWalk(cfg) {
         </div>
         <div class="walk-x">
           <div class="big" data-k="x">—</div>
-          <div class="lbl">to ${esc(cfg.goal.name)}</div>
+          <div class="lbl">to ${esc(cfg.goal.name)}</div>${LIVE_GOAL ? '<div class="lbl" data-k="goalP">&nbsp;</div>' : ''}
         </div>
       </div>
       ${flipstripHTML()}`;
@@ -143,10 +152,10 @@ function startWalk(cfg) {
   const k = (c, key) => c.el.querySelector(`[data-k="${key}"]`);
 
   // chart source note
-  const geckoUrl = c => `https://www.geckoterminal.com/${GECKO_NET[c.t.dexChain] || c.t.dexChain}/pools/${c.t.pairAddress}`;
+  const geckoUrl = c => `https://www.geckoterminal.com/${GECKO_NET[c.t.dexChain] || c.t.dexChain}/pools/${c.t.pairAddress.toLowerCase()}`;
   $('srcNote').innerHTML = DUO
     ? `chart: GeckoTerminal (${coins.map(c => `<a href="${geckoUrl(c)}" target="_blank" rel="noopener">${esc(c.sym)}</a>`).join(' · ')}) · live price: DexScreener`
-    : `chart: <a href="${geckoUrl(coins[0])}" target="_blank" rel="noopener" id="srcLink">GeckoTerminal</a> · live price: DexScreener`;
+    : `chart: <a href="${geckoUrl(coins[0])}" target="_blank" rel="noopener" id="srcLink">GeckoTerminal</a> · live price${LIVE_GOAL ? `s (${esc(coins[0].sym)} + ${esc(LIVE_GOAL)})` : ''}: DexScreener`;
 
   // ===== chart =====
   const chart = LC.createChart($('chart'), {
@@ -176,10 +185,10 @@ function startWalk(cfg) {
   function walkMin() {
     if (cfg.walkFloor !== 'auto') return cfg.walkFloor;
     if (!isFinite(lowSeen)) return 0.001;
-    const r = RUNGS.find(r => r.price <= lowSeen);  // first rung at or under the low
-    return r ? r.price : cfg.rungMin;
+    const g = live.find(g => g.r.price <= lowSeen);  // first rung at or under the low
+    return g ? g.r.price : cfg.rungMin;
   }
-  const walkRange = () => ({ priceRange: { minValue: walkMin() * 0.92, maxValue: GOAL * 1.08 } });
+  const walkRange = () => (GOAL == null ? null : { priceRange: { minValue: walkMin() * 0.92, maxValue: GOAL * 1.08 } });
   const priceFormat = { type: 'custom', formatter: fmtAxisPrice, minMove: 1e-8 };
 
   for (const c of coins) {
@@ -192,7 +201,7 @@ function startWalk(cfg) {
       priceFormat,
       autoscaleInfoProvider: (orig) => {
         if (!candleOn()) return null;
-        if (view === 'walk') return walkRange();
+        if (view === 'walk' && GOAL != null) return walkRange();
         return orig();
       },
     });
@@ -206,7 +215,7 @@ function startWalk(cfg) {
         priceFormat,
         autoscaleInfoProvider: (orig) => {
           if (!lineOn()) return null;
-          if (view === 'walk') return walkRange();
+          if (view === 'walk' && GOAL != null) return walkRange();
           return orig();
         },
       });
@@ -229,22 +238,51 @@ function startWalk(cfg) {
   // ===== rung lines + labels =====
   const labelsEl = $('rungLabels');
   const rungs = RUNGS.map(r => {
-    const line = anchor.createPriceLine({
-      price: r.price, lineWidth: 1, lineStyle: LC.LineStyle.Dashed,
-      color: LINE_DIM,
-      axisLabelVisible: false, title: '',
-    });
     const el = document.createElement('div');
     el.className = 'rl';
     el.textContent = r.name + ' · ' + fmtItemPrice(r.price);
     labelsEl.appendChild(el);
-    return { r, line, el, near: null, shown: false, y: null };   // near = highlight colour or null
+    return { r, line: null, el, near: null, shown: false, y: null };   // near = highlight colour or null
   });
+  let live = [];   // the rungs drawn right now: everything at or under GOAL (price-descending)
+  function syncRungs() {
+    live = [];
+    for (const g of rungs) {
+      const on = GOAL != null && g.r.price <= GOAL;
+      if (on && !g.line) {
+        g.line = anchor.createPriceLine({
+          price: g.r.price, lineWidth: 1, lineStyle: LC.LineStyle.Dashed,
+          color: LINE_DIM,
+          axisLabelVisible: false, title: '',
+        });
+      } else if (!on && g.line) {
+        anchor.removePriceLine(g.line);
+        g.line = null; g.near = null;
+        g.el.classList.remove('near'); g.el.style.color = '';
+      }
+      if (on) live.push(g);
+      else if (g.shown) { g.el.style.display = 'none'; g.shown = false; }
+    }
+  }
+  syncRungs();
+
+  // live goal (goal.liveSym): a solid line in the goal's colour, with its price on the axis
+  const goalLine = LIVE_GOAL ? anchor.createPriceLine({
+    price: 1, lineVisible: false, axisLabelVisible: false,
+    color: cfg.goal.color || '#f7931a', lineWidth: 2, lineStyle: LC.LineStyle.Solid,
+    title: cfg.goal.short,
+  }) : null;
+  function setGoal(p) {
+    if (p === GOAL) return;
+    GOAL = p;
+    syncRungs();
+    goalLine.applyOptions({ price: p, lineVisible: true, axisLabelVisible: true });
+  }
 
   // the rungs hugging a price: [next rung up, rung it's holding]
   function rungsAround(price) {
     let up = null, hold = null;
-    for (const g of rungs) {             // rungs are price-descending
+    for (const g of live) {             // rungs are price-descending
       if (g.r.price > price) up = g;
       else { hold = g; break; }
     }
@@ -260,7 +298,7 @@ function startWalk(cfg) {
       if (p == null) continue;
       for (const g of rungsAround(p)) if (g && !want.has(g)) want.set(g, DUO ? c.color : NEAR_GREEN);
     }
-    for (const g of rungs) {
+    for (const g of live) {
       const col = want.get(g) || null;
       if (col === g.near) continue;
       g.near = col;
@@ -281,7 +319,7 @@ function startWalk(cfg) {
     const refs = visCoins().map(priceOf).filter(p => p != null);
     if (!refs.length) refs.push(0.003);
     const cand = [];
-    for (const g of rungs) {
+    for (const g of live) {
       const y = anchor.priceToCoordinate(g.r.price);
       g.y = y;
       if (y == null || y < 14 || y > paneH - 2) continue;
@@ -297,7 +335,7 @@ function startWalk(cfg) {
       if (placed.some(y => Math.abs(y - c.y) < LABEL_GAP)) continue;
       placed.push(c.y); on.add(c.g);
     }
-    for (const g of rungs) {
+    for (const g of live) {
       const s = on.has(g);
       if (s) g.el.style.transform = `translateY(${Math.round(g.y) - 1}px) translateY(-100%)`;
       if (s !== g.shown) { g.el.style.display = s ? 'block' : 'none'; g.shown = s; }
@@ -315,7 +353,7 @@ function startWalk(cfg) {
     const net = GECKO_NET[c.t.dexChain] || c.t.dexChain;
     const q = new URLSearchParams({ aggregate: t.agg, limit: PAGE, currency: 'usd', token: c.tokenParam });
     if (beforeTs) q.set('before_timestamp', beforeTs);
-    const url = `https://api.geckoterminal.com/api/v2/networks/${net}/pools/${c.t.pairAddress}/ohlcv/${t.unit}?${q}`;
+    const url = `https://api.geckoterminal.com/api/v2/networks/${net}/pools/${c.t.pairAddress.toLowerCase()}/ohlcv/${t.unit}?${q}`;
     const res = await fetch(url);
     if (res.status === 429) throw new Error('rate');
     if (!res.ok) throw new Error('HTTP ' + res.status);
@@ -471,22 +509,28 @@ function startWalk(cfg) {
   });
 
   // ===== live price from DexScreener (same source as the rest of the site) =====
-  // Both coins in one request when they share a chain.
+  // One request per chain: both coins (and a live goal, if it's on the same chain) together.
   async function fetchLive() {
+    const items = coins.map(c => ({ c, t: c.t }));
+    if (goalTok) items.push({ goal: true, t: goalTok });
     const byChain = {};
-    for (const c of coins) (byChain[c.t.dexChain] = byChain[c.t.dexChain] || []).push(c);
-    await Promise.all(Object.entries(byChain).map(async ([chain, cs]) => {
+    for (const it of items) (byChain[it.t.dexChain] = byChain[it.t.dexChain] || []).push(it);
+    await Promise.all(Object.entries(byChain).map(async ([chain, its]) => {
       try {
-        const pairs = await fetchDexPairs(chain, cs.map(c => c.t.pairAddress), 10000);
-        for (const c of cs) {
-          const pr = pairs[c.t.pairAddress.toLowerCase()];
+        const pairs = await fetchDexPairs(chain, its.map(it => it.t.pairAddress), 10000);
+        for (const it of its) {
+          const pr = pairs[it.t.pairAddress.toLowerCase()];
           const p = pr && parseFloat(pr.priceUsd);
-          if (p > 0) { c.live = p; noteLow(p); applyLiveToLastBar(c); }
+          if (!(p > 0)) continue;
+          if (it.goal) { setGoal(p); continue; }
+          const c = it.c;
+          c.live = p; noteLow(p); applyLiveToLastBar(c);
         }
       } catch (e) { /* keep the last good price */ }
     }));
     refreshAll();
-    setTimeout(fetchLive, LIVE_MS);
+    // no goal yet (live-goal pages) → try again soon instead of in a minute
+    setTimeout(fetchLive, GOAL == null ? 5000 : LIVE_MS);
   }
   function applyLiveToLastBar(c) {
     if (!c.bars.length || c.live == null) return;
@@ -507,6 +551,8 @@ function startWalk(cfg) {
     // findRungIndex returns the cheapest rung for anything below the floor, so check the floor here
     const worth = p >= LADDER[LADDER.length - 1].price ? LADDER[findRungIndex(p)] : null;
     k(c, 'worth').innerHTML = worth ? `worth <b>${esc(worth.name)}</b>` : 'worth less than a toothbrush bristle';
+    if (GOAL == null) { k(c, 'x').textContent = '—'; return; }   // live goal not in yet
+    if (LIVE_GOAL) k(c, 'goalP').textContent = `${cfg.goal.short} = $${Math.round(GOAL).toLocaleString('en-US')}`;
     k(c, 'x').textContent = p >= GOAL ? 'flipped' : fmtX(GOAL / p);
     const [up, hold] = rungsAround(p);
     c.next = up; c.hold = hold;
@@ -530,11 +576,11 @@ function startWalk(cfg) {
     }
   }
 
-  const rungsLeftTo = p => RUNGS.filter(r => r.price > p).length;
+  const rungsLeftTo = p => live.filter(g => g.r.price > p).length;
   function updateFooter() {
     const el = $('rungsLeft');
     const shown = visCoins().filter(c => priceOf(c) != null);
-    if (!shown.length) return;
+    if (!shown.length || GOAL == null) return;
     if (shown.length === 1) {
       const c = shown[0], left = rungsLeftTo(priceOf(c));
       el.innerHTML = left
@@ -554,7 +600,7 @@ function startWalk(cfg) {
     const [hi, lo] = pa >= pb ? [a, b] : [b, a];
     const ph = priceOf(hi), pl = priceOf(lo);
     const ratio = ph / pl;
-    const apart = RUNGS.filter(r => r.price > pl && r.price <= ph).length;
+    const apart = live.filter(g => g.r.price > pl && g.r.price <= ph).length;
     return { hi, lo, ratio, apart, even: ratio < 1.005 };
   }
   function updateGap() {
@@ -656,7 +702,7 @@ function startWalk(cfg) {
   }
   pngBtn.addEventListener('click', async () => {
     const cardCoins = visCoins();
-    if (cardCoins.some(c => c.live == null)) { showToast('No price yet — give it a second 😬'); return; }
+    if (GOAL == null || cardCoins.some(c => c.live == null)) { showToast('No price yet — give it a second 😬'); return; }
     pngBtn.disabled = true; pngIcon.className = 'ico ico-spin'; pngText.textContent = 'Generating…';
     try {
       await loadHtml2Canvas();
